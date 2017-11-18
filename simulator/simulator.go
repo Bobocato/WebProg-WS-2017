@@ -1,4 +1,4 @@
-package main
+package simulator
 
 import (
 	"fmt"
@@ -12,12 +12,12 @@ func main() {
 
 //User struct for the DB
 type User struct {
-	UserID    int
-	Username  string
-	Password  string
-	HouseID   int
-	LastLogin string
-	Cookie    string
+	UserID       int
+	Username     string
+	Password     string
+	HouseID      int
+	Lastregister string
+	Cookie       int
 }
 
 //House struct for the DB
@@ -60,6 +60,13 @@ type Scene struct {
 	Devices   []int
 }
 
+//SimulatorControl struct for the DB
+type SimulatorControl struct {
+	CurrentDayTime string
+	FutureDayTime  string
+	Zoom           int
+}
+
 func initDB() {
 	//connect to DB
 	session, err := mgo.Dial("localhost:27017")
@@ -82,6 +89,7 @@ func initDB() {
 	lampcoll := session.DB("web_prog").C("lamps")
 	shuttercoll := session.DB("web_prog").C("shutter")
 	scenecoll := session.DB("web_prog").C("scenes")
+	simcoll := session.DB("web_prog").C("simulatorControl")
 
 	if len(collectionNames) == 0 {
 		//MongoDB will create the collections automaticly when used
@@ -93,13 +101,13 @@ func initDB() {
 		err = lampcoll.DropCollection()
 		err = shuttercoll.DropCollection()
 		err = scenecoll.DropCollection()
+		err = simcoll.DropCollection()
 	}
 	//Load Test Data
-	//Userdata {userID, username, password, houseID, lastLogin}
+	//Userdata {userID, username, password, houseID, lastregister}
 	err = usercoll.Insert(
-		&User{1, "jesse", "password", 1, "17.11.2017_15:58", "123456789123456789"},
-		&User{2, "test", "test", 1, "17.11.2017_09:42", "987654321987654321"})
-	fmt.Println(err)
+		&User{1, "jesse", "password", 1, "17.11.2017_15:58", 123456789123456789},
+		&User{2, "test", "test", 1, "17.11.2017_09:42", 987654321987654321})
 	//Housedata {houseID, name}
 	err = housecoll.Insert(
 		&House{1, "myHouse"})
@@ -116,6 +124,9 @@ func initDB() {
 	chosenDevices := []int{1}
 	err = scenecoll.Insert(
 		&Scene{1, "eveningscene", "19:43", false, false, 0, 15, chosenDevices})
+	//SimController Data {CurrentDayTime, FutureDayTime, Zoom}
+	err = simcoll.Insert(
+		&SimulatorControl{"18.11.2017_12:23", "18.11.2018_12:23", 400})
 
 	fmt.Println("Finished")
 }
