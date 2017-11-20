@@ -128,5 +128,5 @@ func initDB() {
 	err = simcoll.Insert(
 		&SimulatorControl{"18.11.2017_12:23", "18.11.2018_12:23", 400})
 
-	fmt.Println("Finished")
+	fmt.Println("Finished filling the DB")
 }

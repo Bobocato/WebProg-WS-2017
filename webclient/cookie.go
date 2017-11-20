@@ -1,7 +1,7 @@
-package cookie
+package webclient
 
 import (
-	"fmt"
+	"WebProg/simulator"
 	"log"
 	"math/rand"
 	"time"
@@ -10,49 +10,90 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-//User struct for the DB
-type User struct {
-	UserID       int
-	Username     string
-	Password     string
-	HouseID      int
-	Lastregister string
-	Cookie       int
-}
-
+//CreateCookie creates a unique cookie and return it
 func CreateCookie() (key int) {
 	//TODO make random int check in DB if exists...
 	//Startup a pseudorandom generator and create the first key
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	key = r.Int()
+	//Connect to the DB
 	session := connectDB()
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
-	result := User{}
-	err := usercoll.Find(bson.M{"Cookie": r}).One(&result)
+	result := simulator.User{}
+	//Loop until unused int is found
+	uniqueCookie := false
+	for !uniqueCookie {
+		key = r.Int()
+		err := usercoll.Find(bson.M{"Cookie": r}).One(&result)
+		if err != nil {
+
+			//log.Fatal(err)
+		} else {
+			uniqueCookie = true
+		}
+	}
+	//Naked return for the key
+	return
+}
+
+//SetCookie sets a cookie for a user
+func SetCookie(username string) {
+	//TODO set cookie for User in DB
+	//get Cookie
+	cookie := CreateCookie()
+	//Connect to the DB
+	session := connectDB()
+	defer session.Close()
+	usercoll := session.DB("web_prog").C("users")
+	colQuerier := bson.M{"username": username}
+	change := bson.M{"$set": bson.M{"cookie": cookie}}
+	err := usercoll.Update(colQuerier, change)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(result)
-
-	return
 }
 
-func SetCookie(username string) {
-	//TODO set cookie for User in DB
-}
-
+//DeleteCookieUser deletes all cookies a user has in the DB
 func DeleteCookieUser(username string) {
-	//TODO delete cookie for user
+	//TODO delete cookies for user
+	//Connect to the DB
+	session := connectDB()
+	defer session.Close()
+	usercoll := session.DB("web_prog").C("users")
+	colQuerier := bson.M{"username": username}
+	change := bson.M{"$set": bson.M{"cookie": 0}}
+	err := usercoll.Update(colQuerier, change)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
+//DeleteCookieCookie deletes a specific cookie
 func DeleteCookieCookie(cookie int) {
 	//TODO delete specific cookie
+	session := connectDB()
+	defer session.Close()
+	usercoll := session.DB("web_prog").C("users")
+	colQuerier := bson.M{"cookie": cookie}
+	change := bson.M{"$set": bson.M{"cookie": 0}}
+	err := usercoll.Update(colQuerier, change)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func CheckCookie(cookie int) (username string) {
+//CheckCookie checks if the cookie is listed for a user and sends back the Userdata
+func CheckCookie(cookie int) (user simulator.User) {
 	//TODO check if cookie is valid and send user back
-	return
+	session := connectDB()
+	defer session.Close()
+	usercoll := session.DB("web_prog").C("users")
+	result := simulator.User{}
+	err := usercoll.Find(bson.M{"cookie": cookie}).One(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result
 }
 
 func connectDB() (session *mgo.Session) {
