@@ -1,7 +1,6 @@
-package webclient
+package database
 
 import (
-	"WebProg/simulator"
 	"log"
 	"math/rand"
 	"time"
@@ -19,14 +18,14 @@ func CreateCookie() (key int) {
 	session := connectDB()
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
-	result := simulator.User{}
+	result := User{}
 	//Loop until unused int is found
 	uniqueCookie := false
 	for !uniqueCookie {
 		key = r.Int()
 		err := usercoll.Find(bson.M{"Cookie": r}).One(&result)
 		if err != nil {
-
+			uniqueCookie = false
 			//log.Fatal(err)
 		} else {
 			uniqueCookie = true
@@ -83,15 +82,22 @@ func DeleteCookieCookie(cookie int) {
 }
 
 //CheckCookie checks if the cookie is listed for a user and sends back the Userdata
-func CheckCookie(cookie int) (user simulator.User) {
+func CheckCookie(cookie int) (user User) {
 	//TODO check if cookie is valid and send user back
 	session := connectDB()
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
-	result := simulator.User{}
+	result := User{
+		UserID:       -1,
+		Username:     "nil",
+		Password:     "nil",
+		HouseID:      -1,
+		Lastregister: time.Now(),
+		Cookie:       -1,
+	}
 	err := usercoll.Find(bson.M{"cookie": cookie}).One(&result)
 	if err != nil {
-		log.Fatal(err)
+		//do nothing
 	}
 	return result
 }
