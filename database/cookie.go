@@ -25,10 +25,10 @@ func CreateCookie() (key int) {
 		key = r.Int()
 		err := usercoll.Find(bson.M{"Cookie": r}).One(&result)
 		if err != nil {
-			uniqueCookie = false
+			uniqueCookie = true
 			//log.Fatal(err)
 		} else {
-			uniqueCookie = true
+			uniqueCookie = false
 		}
 	}
 	//Naked return for the key

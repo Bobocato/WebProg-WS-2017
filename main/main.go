@@ -1,12 +1,9 @@
 package main
 
-import(
-	"fmt"
-	"WebProg/webclient/cookie"
+import (
+	"WebProg/webclient"
 )
 
-main(){
-	key := CreateCookie()
-	fmt.Fprintln(key)
+func main() {
+	webclient.InitWS()
 }
-
