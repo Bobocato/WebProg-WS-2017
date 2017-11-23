@@ -8,6 +8,10 @@ import (
 	"text/template"
 )
 
+type header struct {
+	Title string
+}
+
 //InitWS starts the Webservers for the home UI
 func InitWS() {
 	//Handle functions and css+js injection for the diffrent pages
@@ -16,6 +20,7 @@ func InitWS() {
 	//http.Handle("/login", http.StripPrefix("/login", http.FileServer(http.Dir("webclient/css"))))
 	//http.Handle("/login", http.FileServer(http.Dir("webclient/html/")))
 	//http.Handle("/login", http.FileServer(http.Dir("webclient/js/")))
+	http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../webclient/CSS"))))
 	http.HandleFunc("/login", loginHandler)
 
 	http.HandleFunc("/register", registerHandler)
@@ -43,9 +48,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		//TODO Show login Page
-		t := template.New("loginTemplate")
-		t, _ = t.ParseFiles("html/login.html", nil)
-		t.Execute()
+		header := header{
+			Title: "Login to:Huus",
+		}
+		t := template.Must(template.ParseFiles("../webclient/html/header.html", "../webclient/html/login.html"))
+		t.ExecuteTemplate(w, "header", header)
+		t.ExecuteTemplate(w, "login", nil)
+		//t.ExecuteTemplate(w, "ending", nil)
+		//http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../webclient/CSS"))))
 	}
 	//SetCookie(w ResponseWriter, cookie *Cookie)
 }
@@ -63,6 +73,14 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			//User was created and should be logged in
 		}
 	} else {
-		//TODO Show login Page
+		//TODO Show register page
+		header := header{
+			Title: "Register to:Huus",
+		}
+		t := template.Must(template.ParseFiles("../webclient/html/header.html", "../webclient/html/register.html"))
+		t.ExecuteTemplate(w, "header", header)
+		t.ExecuteTemplate(w, "register", nil)
+		//t.ExecuteTemplate(w, "ending", nil)
+		//http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../webclient/CSS"))))
 	}
 }
