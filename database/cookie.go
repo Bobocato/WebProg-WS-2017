@@ -45,7 +45,12 @@ func SetCookie(username string) {
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
 	colQuerier := bson.M{"username": username}
-	change := bson.M{"$set": bson.M{"cookie": cookie}}
+	//Get the current cookies
+	Result := User{}
+	usercoll.Find(bson.M{"Username": username}).One(&Result)
+	cookies := Result.Cookie
+	cookies = append(cookies, cookie)
+	change := bson.M{"$set": bson.M{"Cookie": cookies}}
 	err := usercoll.Update(colQuerier, change)
 	if err != nil {
 		log.Fatal(err)
@@ -60,7 +65,7 @@ func DeleteCookieUser(username string) {
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
 	colQuerier := bson.M{"username": username}
-	change := bson.M{"$set": bson.M{"cookie": 0}}
+	change := bson.M{"$set": bson.M{"Cookie": make([]int, 0)}}
 	err := usercoll.Update(colQuerier, change)
 	if err != nil {
 		log.Fatal(err)
@@ -74,7 +79,7 @@ func DeleteCookieCookie(cookie int) {
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
 	colQuerier := bson.M{"cookie": cookie}
-	change := bson.M{"$set": bson.M{"cookie": 0}}
+	change := bson.M{"$set": bson.M{"Cookie": make([]int, 0)}}
 	err := usercoll.Update(colQuerier, change)
 	if err != nil {
 		log.Fatal(err)
@@ -93,7 +98,7 @@ func CheckCookie(cookie int) (user User) {
 		Password:     "nil",
 		HouseID:      -1,
 		Lastregister: time.Now(),
-		Cookie:       -1,
+		Cookie:       make([]int, 0),
 	}
 	err := usercoll.Find(bson.M{"cookie": cookie}).One(&result)
 	if err != nil {

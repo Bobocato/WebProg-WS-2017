@@ -19,7 +19,7 @@ type User struct {
 	Password     string
 	HouseID      int
 	Lastregister time.Time
-	Cookie       int
+	Cookie       []int
 }
 
 //House struct for the DB
@@ -89,7 +89,7 @@ func LoginUser(username string, password string) (user User) {
 		Password:     "nil",
 		HouseID:      -1,
 		Lastregister: time.Now(),
-		Cookie:       -1,
+		Cookie:       make([]int, 0),
 	}
 	err = usercoll.Find(bson.M{"username": username, "password": password}).One(&user)
 	if err != nil {
@@ -99,7 +99,7 @@ func LoginUser(username string, password string) (user User) {
 			Password:     "nil",
 			HouseID:      -1,
 			Lastregister: time.Now(),
-			Cookie:       -1,
+			Cookie:       make([]int, 0),
 		}
 	}
 	return user
@@ -126,7 +126,7 @@ func RegisterUser(username string, password string) (newUser User) {
 		Password:     "nil",
 		HouseID:      -1,
 		Lastregister: time.Now(),
-		Cookie:       -1,
+		Cookie:       make([]int, 0),
 	}
 	err = usercoll.Find(bson.M{"username": username}).One(&newUser)
 	if err != nil {
@@ -137,7 +137,7 @@ func RegisterUser(username string, password string) (newUser User) {
 		id, _ := usercoll.Count()
 		id++
 		err = usercoll.Insert(
-			&User{id, username, password, 1, time.Now(), cookie})
+			&User{id, username, password, 1, time.Now(), make([]int, cookie)})
 
 		newUser = User{
 			UserID:       id,
@@ -145,7 +145,7 @@ func RegisterUser(username string, password string) (newUser User) {
 			Password:     password,
 			HouseID:      1,
 			Lastregister: time.Now(),
-			Cookie:       cookie,
+			Cookie:       make([]int, 0),
 		}
 	} else {
 		//Name in use return empty user with id -1
@@ -155,7 +155,7 @@ func RegisterUser(username string, password string) (newUser User) {
 			Password:     "nil",
 			HouseID:      -1,
 			Lastregister: time.Now(),
-			Cookie:       -1,
+			Cookie:       make([]int, 0),
 		}
 	}
 	return newUser
@@ -200,8 +200,8 @@ func initDB() {
 	//Load Test Data
 	//Userdata {userID, username, password, houseID, lastregister}
 	err = usercoll.Insert(
-		&User{1, "jesse", "password", 1, time.Now(), 123456789123456789},
-		&User{2, "test", "test", 1, time.Now(), 987654321987654321})
+		&User{1, "jesse", "password", 1, time.Now(), make([]int, 123456789123456789)},
+		&User{2, "test", "test", 1, time.Now(), make([]int, 987654321987654321)})
 	//Housedata {houseID, name}
 	err = housecoll.Insert(
 		&House{1, "myHouse"})

@@ -72,3 +72,11 @@ h1 {
 .login {
   display: block;
 }
+
+#wronguser{
+  display: none;
+}
+
+#nouser{
+  display: none;
+}
