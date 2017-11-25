@@ -1,16 +1,14 @@
 package database
 
 import (
-	"fmt"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
-func main() {
-	initDB()
-}
+//--------------------------------------------------------------------
+// This class will give structs and small functions for the database
+//--------------------------------------------------------------------
 
 //User struct for the DB
 type User struct {
@@ -69,8 +67,7 @@ type SimulatorControl struct {
 	Zoom           int
 }
 
-//LoginUser takes the username and passwort and returns a matching user if exists, if not the user will have the id -1
-func LoginUser(username string, password string) (user User) {
+func connectDB() (session *mgo.Session) {
 	//connect to DB
 	session, err := mgo.Dial("localhost:27017")
 	if err != nil {
@@ -78,101 +75,17 @@ func LoginUser(username string, password string) (user User) {
 		panic(err)
 	}
 	//defer is a call after the functions return/end
-	defer session.Close()
+	//defer session.Close()
 	//Set mode
 	session.SetMode(mgo.Monotonic, true)
 	//session.SetSafe(&mgo.Safe{})
-	usercoll := session.DB("web_prog").C("users")
-	user = User{
-		UserID:       -1,
-		Username:     "nil",
-		Password:     "nil",
-		HouseID:      -1,
-		Lastregister: time.Now(),
-		Cookie:       make([]int, 0),
-	}
-	err = usercoll.Find(bson.M{"username": username, "password": password}).One(&user)
-	if err != nil {
-		user = User{
-			UserID:       -1,
-			Username:     "nil",
-			Password:     "nil",
-			HouseID:      -1,
-			Lastregister: time.Now(),
-			Cookie:       make([]int, 0),
-		}
-	}
-	return user
+	return
 }
 
-//RegisterUser takes the username and passwort and returns a new user if the username is unused,
-//if not the returned user will have the id -1
-func RegisterUser(username string, password string) (newUser User) {
-	//connect to DB
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		//defer will be called but function will be stopped
-		panic(err)
-	}
-	//defer is a call after the functions return/end
-	defer session.Close()
-	//Set mode
-	session.SetMode(mgo.Monotonic, true)
-	//session.SetSafe(&mgo.Safe{})
-	usercoll := session.DB("web_prog").C("users")
-	newUser = User{
-		UserID:       -1,
-		Username:     "nil",
-		Password:     "nil",
-		HouseID:      -1,
-		Lastregister: time.Now(),
-		Cookie:       make([]int, 0),
-	}
-	err = usercoll.Find(bson.M{"username": username}).One(&newUser)
-	if err != nil {
-		//No user uses the username => create new User
-		//create new cookie
-		cookie := CreateCookie()
-		//get new id
-		id, _ := usercoll.Count()
-		id++
-		err = usercoll.Insert(
-			&User{id, username, password, 1, time.Now(), make([]int, cookie)})
-
-		newUser = User{
-			UserID:       id,
-			Username:     username,
-			Password:     password,
-			HouseID:      1,
-			Lastregister: time.Now(),
-			Cookie:       make([]int, 0),
-		}
-	} else {
-		//Name in use return empty user with id -1
-		newUser = User{
-			UserID:       -1,
-			Username:     "nil",
-			Password:     "nil",
-			HouseID:      -1,
-			Lastregister: time.Now(),
-			Cookie:       make([]int, 0),
-		}
-	}
-	return newUser
-}
-
+/*
 func initDB() {
 	//connect to DB
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		//defer will be called but function will be stopped
-		panic(err)
-	}
-	//defer is a call after the functions return/end
-	defer session.Close()
-	//Set mode
-	session.SetMode(mgo.Monotonic, true)
-	//session.SetSafe(&mgo.Safe{})
+	session := connectDB()
 	//Check if DB is empty
 	maindb := session.DB("web_prog")
 	collectionNames, err := maindb.CollectionNames()
@@ -224,3 +137,4 @@ func initDB() {
 
 	fmt.Println("Finished filling the DB")
 }
+*/

@@ -13,7 +13,7 @@ type header struct {
 	Title string
 }
 
-//Create a global Uservariable with the standart id of -1
+//Create a global uservariable with the standart id of -1
 var currentUser = database.User{
 	UserID:       -1,
 	Username:     "nil",
@@ -23,19 +23,60 @@ var currentUser = database.User{
 	Cookie:       make([]int, 0),
 }
 
-//InitWS starts the Webservers for the home UI
+//InitWS starts the Webservers for the home UI. This is called from main.go
 func InitWS() {
 	//Create a fileserver and uplaod the CSS and JS files. These will be loaded through the templates.
 	http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../webclient/CSS"))))
 	http.Handle("/JS/", http.StripPrefix("/JS/", http.FileServer(http.Dir("../webclient/JS"))))
-	//Hanlde diffrent sites.
+	//Hanlde diffrent pages.
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/register", registerHandler)
 	http.HandleFunc("/shs", mainPageHandler)
+	//Handle ajax requests
+	http.HandleFunc("/api/lamp", lampHandler)
+	http.HandleFunc("/api/shutter", shutterHandler)
+	http.HandleFunc("/api/scene", sceneHandler)
+	//Start listening on port 8080
 	http.ListenAndServe(":8080", nil)
 }
 
+//--------------------------------
+//----------Ajax Handler----------
+//--------------------------------
+func lampHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+
+	} else if r.Method == "GET" {
+
+	} else if r.Method == "DELETE" {
+
+	}
+}
+
+func shutterHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+
+	} else if r.Method == "GET" {
+
+	} else if r.Method == "DELETE" {
+
+	}
+}
+
+func sceneHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+
+	} else if r.Method == "GET" {
+
+	} else if r.Method == "DELETE" {
+
+	}
+}
+
+//--------------------------------
+//----------Page Handler----------
+//--------------------------------
 //Index Page => forwarding and automatic login
 func handler(w http.ResponseWriter, r *http.Request) {
 	//TODO get cookie and try to log in user

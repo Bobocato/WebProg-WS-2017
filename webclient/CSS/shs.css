@@ -1,1 +1,5 @@
 /** Write CSS code here! **/
+.container {
+    display: grid;
+    grid-template-columns: 10
+}

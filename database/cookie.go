@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -105,19 +104,4 @@ func CheckCookie(cookie int) (user User) {
 		//do nothing
 	}
 	return result
-}
-
-func connectDB() (session *mgo.Session) {
-	//connect to DB
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		//defer will be called but function will be stopped
-		panic(err)
-	}
-	//defer is a call after the functions return/end
-	//defer session.Close()
-	//Set mode
-	session.SetMode(mgo.Monotonic, true)
-	//session.SetSafe(&mgo.Safe{})
-	return
 }
