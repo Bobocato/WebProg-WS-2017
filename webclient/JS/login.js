@@ -10,6 +10,9 @@ document.addEventListener(
     } else if (queryString[1] == "error=notLoggedin") {
       console.log("Not logged in!");
       document.getElementById("nouser").style.display = "block";
+    } else if(queryString[1] == "error=goodbye") {
+      console.log("Logout completed");
+      document.getElementById("logout").style.display = "block";
     }
   },
   false

@@ -15,6 +15,7 @@ type header struct {
 }
 
 //Create a global uservariable with the standart id of -1
+//TODO change this, every User will be logged in with this account variable is serverwide....
 var currentUser = database.User{
 	UserID:       -1,
 	Username:     "nil",
@@ -38,6 +39,7 @@ func InitWS() {
 	http.HandleFunc("/api/lamp", lampHandler)
 	http.HandleFunc("/api/shutter", shutterHandler)
 	http.HandleFunc("/api/scene", sceneHandler)
+	http.HandleFunc("/api/logout", logoutHandler)
 	//Start listening on port 8080
 	http.ListenAndServe(":8080", nil)
 }
@@ -45,6 +47,15 @@ func InitWS() {
 //--------------------------------
 //----------Ajax Handler----------
 //--------------------------------
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		r.ParseForm()
+		username := r.Form["username_login"][0]
+		database.DeleteCookieUser(username)
+		http.Redirect(w, r, "/login?error=goodbye", 301)
+	}
+}
+
 func lampHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)

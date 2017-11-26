@@ -10,6 +10,7 @@ import (
 func LoginUser(username string, password string) (user User) {
 	//connect to DB
 	session := connectDB()
+	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
 	user = User{
 		UserID:       -1,
@@ -38,6 +39,7 @@ func LoginUser(username string, password string) (user User) {
 func RegisterUser(username string, password string) (newUser User) {
 	//connect to DB
 	session := connectDB()
+	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
 	newUser = User{
 		UserID:       -1,

@@ -96,3 +96,12 @@ body {
   height: 20%;
   background-color: coral;
 }
+
+/** Modals for datainput **/
+.blur {
+  z-index: -20;
+  display: none;
+  width: 100%;
+  height: 100%;
+  filter: blur(10px);
+}
