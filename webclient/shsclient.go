@@ -2,6 +2,7 @@ package webclient
 
 import (
 	"WebProg/database"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -46,8 +47,17 @@ func InitWS() {
 //--------------------------------
 func lampHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
+		decoder := json.NewDecoder(r.Body)
+		defer r.Body.Close()
+		var lamp database.Lamp
+		err := decoder.Decode(&lamp)
+		if err != nil {
+			//Rip decoder
+			panic(err)
+		}
+		database.Pushlamp(lamp)
 	} else if r.Method == "GET" {
+		//lamps := database.Getlamps()
 
 	} else if r.Method == "DELETE" {
 
@@ -65,6 +75,16 @@ func shutterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func sceneHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+
+	} else if r.Method == "GET" {
+
+	} else if r.Method == "DELETE" {
+
+	}
+}
+
+func roomHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 	} else if r.Method == "GET" {
@@ -96,7 +116,7 @@ func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		t := template.Must(template.ParseFiles("../webclient/html/shs/header.html", "../webclient/html/shs/shs.html"))
 		t.ExecuteTemplate(w, "header", header)
-		t.ExecuteTemplate(w, "register", nil)
+		t.ExecuteTemplate(w, "shs", nil)
 		//t.ExecuteTemplate(w, "ending", nil)
 	} else {
 		//There is no logged in User

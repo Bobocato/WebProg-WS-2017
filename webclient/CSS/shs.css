@@ -1,5 +1,51 @@
-/** Write CSS code here! **/
-.container {
+/** Add grid names to classes **/
+.sidebar {
+  grid-area: sidebar;
+}
+
+.rooms {
+  grid-area: rooms;
+  display: subgrid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 25% 25% 25% 25%; 
+  grid-template-areas: 
+    "room room"
+    "room room"
+    "room room"
+    "room room"
+}
+.room{
+    grid-area: room;
+    height: 10%;
+    width: 50%;
+    background-color: blue;
+    border-style: solid;
+    border-width: 3px;
+    border-color: red;
+}
+.senes {
+  grid-area: scenes;
+  display: subgrid;
+  
+}
+.scene{
+    height: 10%;
+    width: 50%;
+    background-color: green;
+    border-style: solid;
+    border-width: 3px;
+    border-color: red;
+}
+
+/** Desktop version **/
+@media (min-width: 700px) {
+  .container {
     display: grid;
-    grid-template-columns: 10
+    grid-column-gap: 3%;
+    grid-template-columns: 15% auto;
+    grid-template-rows: 50% 50%;
+    grid-template-areas:
+      "sidebar rooms"
+      "sidebar scenes";
+  }
 }

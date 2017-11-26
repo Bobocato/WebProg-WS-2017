@@ -26,7 +26,7 @@ type House struct {
 	Name    string
 }
 
-//Room struct for the DB
+//Room struct for the DB in a real world this would have a houseID
 type Room struct {
 	RoomID int
 	Name   string
