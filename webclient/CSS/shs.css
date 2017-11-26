@@ -26,32 +26,46 @@ body {
   height: 50%;
   width: 80%;
   background-color: chocolate;
-  display: grid;
-  grid-template-columns: repeat(3, 31.5%);
-  grid-template-rows: repeat(2, 48%);
-  grid-template-areas:
-    "room room room room room room"
-    "room room room room room room";
-  grid-column-gap: 2%;
-  grid-row-gap: 2%;
-  justify-items: center;
-  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  overflow-y: auto;
+}
+
+.room{
+  width: 31%;
+  height: 46%;
+  background-color: lightgreen;
+  border-style: solid;
+  border-color: green;
+  border-width: 2px;
+  flex-shrink: 0;
+  margin-top: 0.5%;
+  margin-bottom: 0.5%
 }
 
 .scenes {
   height: 50%;
   width: 80%;
   background-color: seagreen;
-  display: grid;
-  grid-template-columns: 99%;
-  grid-template-rows: repeat(4, 23.5%);
-  grid-template-areas:
-    "scene"
-    "scene"
-    "scene"
-    "scene";
-  grid-row-gap: 2%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  overflow-y: auto;
 }
+
+.scene{
+  width: 95%;
+  height: 25%;
+  background-color: lightblue;
+  border-style: solid;
+  border-color: blue;
+  border-width: 2px;
+  flex-shrink: 0;
+  margin-top: 0.5%;
+  margin-bottom: 0.5%
+}
+
 
 .statistics{
   width: 100%;
