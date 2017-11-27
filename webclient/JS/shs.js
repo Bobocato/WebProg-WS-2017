@@ -2,6 +2,9 @@
 document.addEventListener(
     "DOMContentLoaded",
     function() {
+
+        getRooms();
+
         //TODO Write JS code here
         function showModal (modalName){
             //Blur Page
@@ -21,6 +24,18 @@ document.addEventListener(
 
         function logout(){
             //TODO logout the user
+        }
+
+        function getRooms(){
+            // Url: /api/room
+            //Method: "GET"
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "/api/room", true)
+            xhr.send()
+            
+            xhr.addEventListener("load", function(){
+                console.log(xhr.responseText);
+            })
         }
 
         function sendAjax(method, url, data ){

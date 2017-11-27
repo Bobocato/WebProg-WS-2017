@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -22,7 +23,7 @@ func CreateCookie() (key int) {
 	uniqueCookie := false
 	for !uniqueCookie {
 		key = r.Int()
-		err := usercoll.Find(bson.M{"Cookie": r}).One(&result)
+		err := usercoll.Find(bson.M{"cookie": r}).One(&result)
 		if err != nil {
 			uniqueCookie = true
 			//log.Fatal(err)
@@ -35,10 +36,8 @@ func CreateCookie() (key int) {
 }
 
 //SetCookie sets a cookie for a user
-func SetCookie(username string) {
-	//TODO set cookie for User in DB
-	//get Cookie
-	cookie := CreateCookie()
+func SetCookie(username string, cookie int) {
+	//Set cookie for User in DB
 	//Connect to the DB
 	session := connectDB()
 	defer session.Close()
@@ -49,7 +48,7 @@ func SetCookie(username string) {
 	usercoll.Find(bson.M{"Username": username}).One(&Result)
 	cookies := Result.Cookie
 	cookies = append(cookies, cookie)
-	change := bson.M{"$set": bson.M{"Cookie": cookies}}
+	change := bson.M{"$set": bson.M{"cookie": cookies}}
 	err := usercoll.Update(colQuerier, change)
 	if err != nil {
 		log.Fatal(err)
@@ -64,7 +63,7 @@ func DeleteCookieUser(username string) {
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
 	colQuerier := bson.M{"username": username}
-	change := bson.M{"$set": bson.M{"Cookie": make([]int, 0)}}
+	change := bson.M{"$set": bson.M{"cookie": make([]int, 0)}}
 	err := usercoll.Update(colQuerier, change)
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +77,7 @@ func DeleteCookieCookie(cookie int) {
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
 	colQuerier := bson.M{"cookie": cookie}
-	change := bson.M{"$set": bson.M{"Cookie": make([]int, 0)}}
+	change := bson.M{"$set": bson.M{"cookie": make([]int, 0)}}
 	err := usercoll.Update(colQuerier, change)
 	if err != nil {
 		log.Fatal(err)
@@ -100,6 +99,8 @@ func CheckCookie(cookie int) (user User) {
 		Cookie:       make([]int, 0),
 	}
 	err := usercoll.Find(bson.M{"cookie": cookie}).One(&result)
+	fmt.Print("CheckCookie Result:")
+	fmt.Println(result)
 	if err != nil {
 		//do nothing
 	}

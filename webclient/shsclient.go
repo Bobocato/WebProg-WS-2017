@@ -16,14 +16,14 @@ type header struct {
 
 //Create a global uservariable with the standart id of -1
 //TODO change this, every User will be logged in with this account variable is serverwide....
-var currentUser = database.User{
+/*var currentUser = database.User{
 	UserID:       -1,
 	Username:     "nil",
 	Password:     "nil",
 	HouseID:      -1,
 	Lastregister: time.Now(),
 	Cookie:       make([]int, 0),
-}
+}*/
 
 //InitWS starts the Webservers for the home UI. This is called from main.go
 func InitWS() {
@@ -40,6 +40,7 @@ func InitWS() {
 	http.HandleFunc("/api/shutter", shutterHandler)
 	http.HandleFunc("/api/scene", sceneHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
+	http.HandleFunc("/api/room", roomHandler)
 	//Start listening on port 8080
 	http.ListenAndServe(":8080", nil)
 }
@@ -111,15 +112,21 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 //Index Page => forwarding and automatic login
 func handler(w http.ResponseWriter, r *http.Request) {
 	//TODO get cookie and try to log in user
-	key := database.CreateCookie()
-	keyStr := strconv.Itoa(key)
-	fmt.Fprintf(w, keyStr, r.URL.Path[1:])
-	fmt.Fprintf(w, currentUser.Username, r.URL.Path[1:])
+	user := cookieLogin(r)
+	fmt.Println(user)
+	if user.UserID == -1 {
+		//No User in the cookies
+		http.Redirect(w, r, "/login", 301)
+	} else {
+		//User with cookie authenticated, send user to main page
+		http.Redirect(w, r, "/shs", 301)
+	}
 }
 
 //Load the main page
 func mainPageHandler(w http.ResponseWriter, r *http.Request) {
-	if currentUser.UserID != -1 {
+	user := cookieLogin(r)
+	if user.UserID != -1 {
 		//There is a logged in user
 		//Show main page
 		header := header{
@@ -138,6 +145,12 @@ func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 
 //Loginpage POST Handler for login requests and else for loading the page
 func loginHandler(w http.ResponseWriter, r *http.Request) {
+	//Try to log the cookie user in
+	user := cookieLogin(r)
+	fmt.Println(user)
+	if user.UserID != -1 {
+		http.Redirect(w, r, "/shs", 301)
+	}
 	//Is he trying to "GET" the page, or request a login?
 	if r.Method == "POST" {
 		r.ParseForm()
@@ -147,11 +160,17 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		if user.UserID == -1 {
 			//No user with this name and pw
 			http.Redirect(w, r, "/login?error=wrongUser", 301)
-
 		} else {
 			//Log user in
-			//TODO set cookie
-			currentUser = user
+			cookieValue := database.CreateCookie()
+			database.SetCookie(username, cookieValue)
+			cookieValueStr := strconv.Itoa(cookieValue)
+			cookie := http.Cookie{
+				Name:   username,
+				Value:  cookieValueStr,
+				MaxAge: 0,
+			}
+			http.SetCookie(w, &cookie)
 			http.Redirect(w, r, "/shs", 301)
 		}
 	} else {
@@ -164,11 +183,15 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		t.ExecuteTemplate(w, "login", nil)
 		//t.ExecuteTemplate(w, "ending", nil)
 	}
-	//SetCookie(w ResponseWriter, cookie *Cookie)
 }
 
 //Registerhandler POST for new registrations and else for html gets
 func registerHandler(w http.ResponseWriter, r *http.Request) {
+	//Try to log the cookie user in
+	user := cookieLogin(r)
+	if user.UserID != -1 {
+		http.Redirect(w, r, "/shs", 301)
+	}
 	//Is he trying to "GET" the page, or request a registration?
 	if r.Method == "POST" {
 		r.ParseForm()
@@ -178,11 +201,19 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		if user.UserID == -1 {
 			//User can't be registerd Name is used
 			//Name already taken
-			http.Redirect(w, r, "/login?error=usernameTaken", 301)
+			//TODO make js and html for this! (register site error message)
+			http.Redirect(w, r, "/register?error=usernameTaken", 301)
 		} else {
 			//User was created and should be logged in
-			//TODO set cookie
-			currentUser = user
+			cookieValue := database.CreateCookie()
+			database.SetCookie(username, cookieValue)
+			cookieValueStr := strconv.Itoa(cookieValue)
+			cookie := http.Cookie{
+				Name:   username,
+				Value:  cookieValueStr,
+				MaxAge: 0,
+			}
+			http.SetCookie(w, &cookie)
 			http.Redirect(w, r, "/shs", 301)
 		}
 	} else {
@@ -193,6 +224,28 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		t := template.Must(template.ParseFiles("../webclient/html/login/header.html", "../webclient/html/login/register.html"))
 		t.ExecuteTemplate(w, "header", header)
 		t.ExecuteTemplate(w, "register", nil)
+		//The ending seems to automatic, at least the documents got an end
 		//t.ExecuteTemplate(w, "ending", nil)
 	}
+}
+
+func cookieLogin(r *http.Request) (user database.User) {
+	fmt.Println("cookieLogin")
+	user = database.User{
+		UserID:       -1,
+		Username:     "nil",
+		Password:     "nil",
+		HouseID:      -1,
+		Lastregister: time.Now(),
+		Cookie:       make([]int, 0),
+	}
+	for _, cookie := range r.Cookies() {
+		str, _ := strconv.Atoi(cookie.Value)
+		fmt.Println(cookie)
+		user := database.CheckCookie(str)
+		if user.UserID != -1 {
+			return user
+		}
+	}
+	return user
 }
