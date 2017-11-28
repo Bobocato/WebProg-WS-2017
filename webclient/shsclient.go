@@ -30,6 +30,7 @@ func InitWS() {
 	//Create a fileserver and uplaod the CSS and JS files. These will be loaded through the templates.
 	http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../webclient/CSS"))))
 	http.Handle("/JS/", http.StripPrefix("/JS/", http.FileServer(http.Dir("../webclient/JS"))))
+	http.Handle("/ICON/", http.StripPrefix("/ICON/", http.FileServer(http.Dir("../webclient/ICON"))))
 	//Hanlde diffrent pages.
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/login", loginHandler)
@@ -59,6 +60,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 
 func lampHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
+
 		decoder := json.NewDecoder(r.Body)
 		defer r.Body.Close()
 		var lamp database.Lamp
@@ -69,7 +71,10 @@ func lampHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		database.Pushlamp(lamp)
 	} else if r.Method == "GET" {
-		//lamps := database.Getlamps()
+		lamps := database.Getlamps()
+		response, _ := json.Marshal(lamps)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 
 	} else if r.Method == "DELETE" {
 
@@ -80,7 +85,10 @@ func shutterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 	} else if r.Method == "GET" {
-
+		shutters := database.Getshutter()
+		response, _ := json.Marshal(shutters)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	} else if r.Method == "DELETE" {
 
 	}
@@ -90,6 +98,10 @@ func sceneHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 	} else if r.Method == "GET" {
+		scenes := database.Getsences()
+		response, _ := json.Marshal(scenes)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 
 	} else if r.Method == "DELETE" {
 
@@ -100,6 +112,10 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 	} else if r.Method == "GET" {
+		rooms := database.Getrooms()
+		response, _ := json.Marshal(rooms)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 
 	} else if r.Method == "DELETE" {
 
@@ -111,9 +127,9 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 //--------------------------------
 //Index Page => forwarding and automatic login
 func handler(w http.ResponseWriter, r *http.Request) {
-	//TODO get cookie and try to log in user
+	//get cookie and try to log in user
 	user := cookieLogin(r)
-	fmt.Println(user)
+	//fmt.Println(user)
 	if user.UserID == -1 {
 		//No User in the cookies
 		http.Redirect(w, r, "/login", 301)
@@ -147,7 +163,7 @@ func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	//Try to log the cookie user in
 	user := cookieLogin(r)
-	fmt.Println(user)
+	//fmt.Println(user)
 	if user.UserID != -1 {
 		http.Redirect(w, r, "/shs", 301)
 	}
@@ -197,6 +213,8 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		username := r.Form["username_register"][0]
 		password := r.Form["password_register"][0]
+		fmt.Print(username)
+		fmt.Println(password)
 		user := database.RegisterUser(username, password)
 		if user.UserID == -1 {
 			//User can't be registerd Name is used
@@ -230,7 +248,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func cookieLogin(r *http.Request) (user database.User) {
-	fmt.Println("cookieLogin")
+	//fmt.Println("cookieLogin")
 	user = database.User{
 		UserID:       -1,
 		Username:     "nil",
@@ -241,7 +259,7 @@ func cookieLogin(r *http.Request) (user database.User) {
 	}
 	for _, cookie := range r.Cookies() {
 		str, _ := strconv.Atoi(cookie.Value)
-		fmt.Println(cookie)
+		//fmt.Println(cookie)
 		user := database.CheckCookie(str)
 		if user.UserID != -1 {
 			return user

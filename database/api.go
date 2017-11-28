@@ -9,6 +9,7 @@ import "gopkg.in/mgo.v2/bson"
 //Getrooms gives an slice of all rooms back to the requesting person
 func Getrooms() []Room {
 	session := connectDB()
+	defer session.Close()
 	roomcoll := session.DB("web_prog").C("rooms")
 	var rooms []Room
 	err := roomcoll.Find(nil).All(&rooms)
@@ -23,6 +24,7 @@ func Getrooms() []Room {
 //Getlamps gives an slice of all lamps back to the requesting person
 func Getlamps() []Lamp {
 	session := connectDB()
+	defer session.Close()
 	lampcoll := session.DB("web_prog").C("lamps")
 	var lamps []Lamp
 	err := lampcoll.Find(nil).All(&lamps)
@@ -37,6 +39,7 @@ func Getlamps() []Lamp {
 //Getshutter gives an slice of all shutter back to the requesting person
 func Getshutter() []Shutter {
 	session := connectDB()
+	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
 	var shutter []Shutter
 	err := shuttercoll.Find(nil).All(&shutter)
@@ -51,6 +54,7 @@ func Getshutter() []Shutter {
 //Getsences gives an slice of all shutter back to the requesting person
 func Getsences() []Scene {
 	session := connectDB()
+	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
 	var scene []Scene
 	err := scenecoll.Find(nil).All(&scene)
@@ -69,6 +73,7 @@ func Getsences() []Scene {
 //Pushroom will put an new room in the collection
 func Pushroom(room Room) {
 	session := connectDB()
+	defer session.Close()
 	roomcoll := session.DB("web_prog").C("rooms")
 	err := roomcoll.Insert(room)
 	if err != nil {
@@ -81,6 +86,7 @@ func Pushroom(room Room) {
 //Pushlamp will put an new lamp in the collection
 func Pushlamp(lamp Lamp) {
 	session := connectDB()
+	defer session.Close()
 	lampcoll := session.DB("web_prog").C("lamps")
 	err := lampcoll.Insert(lamp)
 	if err != nil {
@@ -93,6 +99,7 @@ func Pushlamp(lamp Lamp) {
 //Pushshutter will put an new shutter in the collection
 func Pushshutter(shutter Shutter) {
 	session := connectDB()
+	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
 	err := shuttercoll.Insert(shutter)
 	if err != nil {
@@ -105,6 +112,7 @@ func Pushshutter(shutter Shutter) {
 //Pushscene will put an new scene in the collection
 func Pushscene(scene Scene) {
 	session := connectDB()
+	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
 	err := scenecoll.Insert(scene)
 	if err != nil {
@@ -121,6 +129,7 @@ func Pushscene(scene Scene) {
 //Deleteroom removes a room with the given ID
 func Deleteroom(roomID int) {
 	session := connectDB()
+	defer session.Close()
 	roomcoll := session.DB("web_prog").C("rooms")
 	err := roomcoll.Remove(bson.M{"roomid": roomID})
 	if err != nil {
@@ -131,6 +140,7 @@ func Deleteroom(roomID int) {
 //Deletelamp removes a lamp with the given ID
 func Deletelamp(lampID int) {
 	session := connectDB()
+	defer session.Close()
 	lampcoll := session.DB("web_prog").C("lamps")
 	err := lampcoll.Remove(bson.M{"lampid": lampID})
 	if err != nil {
@@ -141,6 +151,7 @@ func Deletelamp(lampID int) {
 //Deleteshutter removes a lamp with the given ID
 func Deleteshutter(shutterID int) {
 	session := connectDB()
+	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
 	err := shuttercoll.Remove(bson.M{"shutterid": shutterID})
 	if err != nil {
@@ -151,6 +162,7 @@ func Deleteshutter(shutterID int) {
 //Deletescene removes a scene with the given ID
 func Deletescene(sceneID int) {
 	session := connectDB()
+	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scene")
 	err := scenecoll.Remove(bson.M{"sceneid": sceneID})
 	if err != nil {

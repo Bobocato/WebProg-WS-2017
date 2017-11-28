@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -51,14 +52,13 @@ func RegisterUser(username string, password string) (newUser User) {
 	}
 	err := usercoll.Find(bson.M{"username": username}).One(&newUser)
 	if err != nil {
+		fmt.Print("Create new User")
 		//No user uses the username => create new User
-		//create new cookie
-		cookie := CreateCookie()
 		//get new id
 		id, _ := usercoll.Count()
 		id++
 		err = usercoll.Insert(
-			&User{id, username, password, 1, time.Now(), make([]int, cookie)})
+			&User{id, username, password, 1, time.Now(), make([]int, 1)})
 
 		newUser = User{
 			UserID:       id,

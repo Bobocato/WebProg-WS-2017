@@ -1,29 +1,31 @@
 {{define "shs"}}
-<div class="blur"></div>
 <div class="container">
     <!-- Basic elements  -->
     <div class="sidebar">
-        <div class="statistics"></div>
-        <div class="newDevice"></div>
-        <div class="newRoom"></div>
-        <div class="newScene"></div>
-        <div class="logout"></div>
+        <div class="newRoom">
+            <h2>Neuer Raum</h2>
+        </div>
+        <div class="newDevice">
+            <h2>Neues Gerät</h2>
+        </div>
+        <div class="newScene">
+            <h2>Neue Scene</h2>
+        </div>
+        <div class="settings">
+            <h2>Einstellungen</h2>
+        </div>
+        <div class="logout">
+            <h2>Logout</h2>
+        </div>
     </div>
-    <div class="rooms">
-        <div class="room"></div>
-        <div class="room"></div>
-        <div class="room"></div>
-        <div class="room"></div>
-        <div class="room"></div>
-        <div class="room"></div>
-
-    </div>
-    <div class="scenes">
-        <div class="scene"></div>
-        <div class="scene"></div>
-        <div class="scene"></div>
-    </div>
+    <div class="rooms"></div>
+    <div class="scenes"></div>
     <!-- Datainputmodals -->
-    
+    <div class="modalContainer">
+        <div id="roomModal"></div>
+        <div id="deviceModal"></div>
+        <div id="sceneModal"></div>
+        <div id="settingsModal"></div>
+    </div>
 </div>
 {{end}}
