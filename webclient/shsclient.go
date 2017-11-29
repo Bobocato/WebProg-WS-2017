@@ -49,6 +49,7 @@ func InitWS() {
 //--------------------------------
 //----------Ajax Handler----------
 //--------------------------------
+//TODO Write update handlers
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		r.ParseForm()
