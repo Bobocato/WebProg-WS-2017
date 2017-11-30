@@ -1,10 +1,14 @@
+//Global Scope
+//These variables can be used globally and will be used to save Ajax requests
+var rooms, lamps, shutters, scenes;
+
 //Start page when DOM is loaded
 document.addEventListener(
   "DOMContentLoaded",
   function() {
     showRoom();
     showScene();
-    //TODO Write JS code here
+
     function showModal(modalName) {
       //Blur Page
       document.getElementsByClassName("container")[0].style.filter =
@@ -17,26 +21,27 @@ document.addEventListener(
           document.getElementById("settingsModal").style.display = "block";
           break;
         case "newDevice":
-          document.getElementById("deviceModal").style.display = "block";
+          document.getElementById("newDeviceModal").style.display = "block";
           break;
         case "newRoom":
-          document.getElementById("roomModal").style.display = "block";
+          document.getElementById("newRoomModal").style.display = "block";
           break;
         case "newScene":
-          document.getElementById("sceneModal").style.display = "block";
+          document.getElementById("newSceneModal").style.display = "block";
           break;
       }
-      /*
-      document
-      .getElementById(modalName + "Close")
-      .addEventListener("click", function() {
-      //Close Modal
-      //Unblur Page
-      document.getElementsByClassName("container")[0].style.filter = "blur(0)";
-      //Enable other Pagecontent
-      document.getElementsByClassName("container")[0].disabled = false;
+      let allX = document.getElementsByClassName("closeX");
+      [].forEach.call(allX, function(element) {
+        element.addEventListener("click", function() {
+          //Close Modal
+          element.parentElement.style.display = "none";
+          //Unblur Page
+          document.getElementsByClassName("container")[0].style.filter =
+            "blur(0)";
+          //Enable other Pagecontent
+          document.getElementsByClassName("container")[0].disabled = false;
+        });
       });
-      */
     }
 
     function logout() {
@@ -45,7 +50,6 @@ document.addEventListener(
 
     function showRoom() {
       //Start all Ajax calls and set promises
-      let rooms, lamps, shutters;
       Promise.all([
         ajaxCalls("/api/room").then(
           function(res) {
