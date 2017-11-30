@@ -3,6 +3,7 @@ document.addEventListener(
   "DOMContentLoaded",
   function() {
     showRoom();
+    showScene();
     //TODO Write JS code here
     function showModal(modalName) {
       //Blur Page
@@ -80,7 +81,7 @@ document.addEventListener(
 
     function showRoom() {
       //Start all Ajax calls and set promises
-      let rooms, lamps, shutter;
+      let rooms, lamps, shutters;
       Promise.all([
         ajaxCalls("/api/room").then(
           function(res) {
@@ -100,7 +101,7 @@ document.addEventListener(
         ),
         ajaxCalls("/api/shutter").then(
           function(res) {
-            shutter = JSON.parse(res.responseText);
+            shutters = JSON.parse(res.responseText);
           },
           function(err) {
             console.log(err);
@@ -108,10 +109,10 @@ document.addEventListener(
         )
       ]).then(function() {
         //All promises are fullfilled
-        console.log("All data should be here");
+        console.log("All Roomdata should be here");
         console.log(rooms);
         console.log(lamps);
-        console.log(shutter);
+        console.log(shutters);
         let roomsElement = document.getElementsByClassName("rooms")[0];
         rooms.forEach(room => {
           //Fragement for one Room
@@ -119,21 +120,24 @@ document.addEventListener(
           //Outer Div
           let roomDiv = document.createElement("DIV");
           roomDiv.setAttribute("class", "room");
+          roomDiv.setAttribute("id", room.RoomID);
           //Name in Div
           let nameTag = document.createElement("H2");
           nameTag.setAttribute("class", "roomTitle");
           nameTag.textContent = room.Name;
           roomDiv.appendChild(nameTag);
           //"X" for deleting the room
+          /*
           let closeX = document.createElement("SPAN");
           closeX.setAttribute("class", "deleteRoom");
           closeX.setAttribute("id", room.RoomID);
           closeX.textContent = "X";
           roomDiv.appendChild(closeX);
+          */
           //Lamps
           lamps.forEach(lamp => {
-            let outerLampDiv = document.createElement("DIV");
-            outerLampDiv.setAttribute = ("class", "lamps");
+            //let outerLampDiv = document.createElement("DIV");
+            //outerLampDiv.setAttribute("class", "lamps");
             if (lamp.RoomID == room.RoomID) {
               //Outer Div
               let lampDiv = document.createElement("DIV");
@@ -145,56 +149,151 @@ document.addEventListener(
               lampName.textContent = lamp.Name;
               lampDiv.appendChild(lampName);
               //"X" for deleting the lamp
+              /*
               let closeX = document.createElement("SPAN");
               closeX.setAttribute("class", "deleteLamp");
               closeX.setAttribute("id", lamp.LampID);
               closeX.textContent = "X";
               lampDiv.appendChild(closeX);
+              */
               //Toggle switch from https://www.w3schools.com/howto/howto_css_switch.asp
               let switchLabel = document.createElement("LABEL");
               switchLabel.setAttribute("class", "switch");
               let switchInput = document.createElement("INPUT");
               switchInput.setAttribute("type", "checkbox");
+              switchInput.setAttribute("id", "Lamp:" + lamp.LampID);
+              if (lamp.Status == 1) {
+                switchInput.setAttribute("checked", "checked");
+              }
               switchLabel.appendChild(switchInput);
               let switchSpan = document.createElement("SPAN");
               switchSpan.setAttribute("class", "slider round");
               switchLabel.appendChild(switchSpan);
               lampDiv.appendChild(switchLabel);
               //Append lamps to RoomDiv
-              outerLampDiv.appendChild(lampDiv);
-              roomDiv.appendChild(outerLampDiv);
+              //outerLampDiv.appendChild(lampDiv);
+              roomDiv.appendChild(lampDiv);
             }
           });
+
+          shutters.forEach(shutter => {
+            if (shutter.RoomID == room.RoomID) {
+              //Outer Div
+              let shutterDiv = document.createElement("DIV");
+              shutterDiv.setAttribute("class", "shutter");
+              shutterDiv.setAttribute("id", shutter.ShutterID);
+              //Nametag
+              let shutterName = document.createElement("H4");
+              shutterName.setAttribute("class", "shutterTitle");
+              shutterName.textContent = shutter.Name;
+              shutterDiv.appendChild(shutterName);
+              //Input for setting shutterstatus
+              let shutterInput = document.createElement("INPUT");
+              shutterInput.setAttribute("type", "number");
+              shutterInput.setAttribute("value", shutter.Status);
+              shutterInput.setAttribute("max", "100");
+              shutterInput.setAttribute("min", "0");
+              shutterInput.setAttribute("class", "shutterInput");
+              shutterInput.setAttribute("id", shutter.ShutterID);
+              shutterDiv.appendChild(shutterInput);
+              //Append Shutter to room
+              roomDiv.appendChild(shutterDiv);
+            }
+          });
+          //Check if ".rooms" is empty
+          if (
+            document.getElementsByClassName("rooms")[0].children.length != 0
+          ) {
+            document
+              .getElementsByClassName("rooms")[0]
+              .children.forEach(room => {
+                room.remove();
+              });
+          }
           //Append to fragment and then to DOM
           roomFragment.appendChild(roomDiv);
           roomsElement.appendChild(roomFragment);
         });
       });
+    }
 
-      //Url: /api/room
-      //Method: "GET"
-      /*
-      let xhr = new XMLHttpRequest();
-      xhr.addEventListener("load", function() {
-        console.log(xhr);
-        let roomFragment = document.createDocumentFragment();
+    function showScene() {
+      let scenes;
+      Promise.all([
+        ajaxCalls("/api/scene").then(
+          function(res) {
+            scenes = JSON.parse(res.responseText);
+          },
+          function(err) {
+            console.log(err);
+          }
+        )
+      ]).then(function() {
+        //All promises are fullfilled
+        console.log(scenes);
+        let sceneElement = document.getElementsByClassName("scenes")[0];
+        scenes.forEach(scene => {
+          let sceneFragment = document.createDocumentFragment();
+          //outer Div
+          let sceneDiv = document.createElement("DIV");
+          sceneDiv.setAttribute("class", "scene");
+          sceneDiv.setAttribute("id", scene.SceneID);
+          //startButton
+          let sceneStart = document.createElement("INPUT");
+          sceneStart.setAttribute("type", "button");
+          sceneStart.setAttribute("class", "sceneStartBtn");
+          sceneStart.setAttribute("id", scene.SceneID);
+          sceneStart.setAttribute("value", "Starten");
+          sceneDiv.appendChild(sceneStart);
+          //Name
+          let sceneName = document.createElement("H4");
+          sceneName.setAttribute("class", "sceneTitle");
+          sceneName.textContent = scene.Name;
+          sceneDiv.appendChild(sceneName);
+          //Time/Sunset/Sunrise
+          let sceneTime = document.createElement("H4");
+          sceneTime.setAttribute("class", "sceneTime");
+          let totaloffset = scene.Negoffset + scene.Posoffset;
+          if (scene.Sunrise) {
+            sceneTime.textContent =
+              "Wird zum Sonnenaufgang mit einem Offset von " +
+              totaloffset +
+              "min. ausgeführt";
+          } else if (scene.Sunset) {
+            sceneTime.textContent =
+              "Wird zum Sonnenuntergang mit einem Offset von " +
+              totaloffset +
+              " min. ausgeführt";
+          } else {
+            sceneTime.textContent =
+              "Wird um " +
+              scene.Time +
+              " mit einem Offset von " +
+              totaloffset +
+              " min. ausgeführt";
+          }
+          sceneDiv.appendChild(sceneTime);
+          //Active or not
+          //Toggle switch from https://www.w3schools.com/howto/howto_css_switch.asp
+          let switchLabel = document.createElement("LABEL");
+          switchLabel.setAttribute("class", "switch");
+          let switchInput = document.createElement("INPUT");
+          switchInput.setAttribute("type", "checkbox");
+          switchInput.setAttribute("id", "Scene:" + scene.SceneID);
+          if (scene.Active) {
+            switchInput.setAttribute("checked", "checked");
+          }
+          switchLabel.appendChild(switchInput);
+          let switchSpan = document.createElement("SPAN");
+          switchSpan.setAttribute("class", "slider round");
+          switchLabel.appendChild(switchSpan);
+          sceneDiv.appendChild(switchLabel);
 
-        //Check if ".rooms" is empty
-        if (document.getElementsByClassName("rooms")[0].children.length != 0) {
-          document.getElementsByClassName("rooms")[0].children.forEach(room => {
-            room.remove();
-          });
-        }
+          //Append to Dom
+          sceneFragment.appendChild(sceneDiv);
+          sceneElement.appendChild(sceneFragment);
+        });
       });
-      let url = "/api/room";
-      xhr.open("GET", url, true);
-      xhr.send();
-
-      //".rooms" should be empty now => load and insert new rooms
-      rooms = getData("room");
-      console.log(rooms);
-      console.log("does this wait");
-      */
     }
 
     function ajaxCalls(path) {

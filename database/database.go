@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
@@ -52,12 +53,15 @@ type Shutter struct {
 type Scene struct {
 	SceneID   int
 	Name      string
+	Active    bool
 	Time      string
 	Sunset    bool
 	Sunrise   bool
 	Posoffset int
 	Negoffset int
-	Devices   []int
+	Lamps     []int
+	Shutters  []int
+	entity    []int
 }
 
 //SimulatorControl struct for the DB
@@ -82,19 +86,21 @@ func connectDB() (session *mgo.Session) {
 	return
 }
 
-/*
-func initDB() {
+//InitDB creates a small DB
+func InitDB() {
 	//connect to DB
 	session := connectDB()
 	//Check if DB is empty
 	maindb := session.DB("web_prog")
 	collectionNames, err := maindb.CollectionNames()
-
+	if err != nil {
+		//chill
+	}
 	usercoll := session.DB("web_prog").C("users")
 	housecoll := session.DB("web_prog").C("houses")
 	roomcoll := session.DB("web_prog").C("rooms")
 	lampcoll := session.DB("web_prog").C("lamps")
-	shuttercoll := session.DB("web_prog").C("shutter")
+	shuttercoll := session.DB("web_prog").C("shutters")
 	scenecoll := session.DB("web_prog").C("scenes")
 	simcoll := session.DB("web_prog").C("simulatorControl")
 
@@ -113,8 +119,8 @@ func initDB() {
 	//Load Test Data
 	//Userdata {userID, username, password, houseID, lastregister}
 	err = usercoll.Insert(
-		&User{1, "jesse", "password", 1, time.Now(), make([]int, 123456789123456789)},
-		&User{2, "test", "test", 1, time.Now(), make([]int, 987654321987654321)})
+		&User{1, "jesse", "password", 1, time.Now(), make([]int, 1)},
+		&User{2, "test", "test", 1, time.Now(), make([]int, 1)})
 	//Housedata {houseID, name}
 	err = housecoll.Insert(
 		&House{1, "myHouse"})
@@ -127,14 +133,12 @@ func initDB() {
 	//Shutterdata {shutterID, name, status, roomID}
 	err = shuttercoll.Insert(
 		&Shutter{1, "bedroomshutter", 60, 1})
-	//Scenedata {sceneID, name, time, sunset, sunrise, posoffset, negoffset, devices}
-	chosenDevices := []int{1}
+	//Scenedata {sceneID, name, time, sunset, sunrise, posoffset, negoffset, lamps, shutters, entity}
 	err = scenecoll.Insert(
-		&Scene{1, "eveningscene", "19:43", false, false, 0, 15, chosenDevices})
+		&Scene{1, "eveningscene", true, "19:43", false, false, 0, 15, make([]int, 1), make([]int, 1), make([]int, 1)})
 	//SimController Data {CurrentDayTime, FutureDayTime, Zoom}
 	err = simcoll.Insert(
 		&SimulatorControl{"18.11.2017_12:23", "18.11.2018_12:23", 400})
 
 	fmt.Println("Finished filling the DB")
 }
-*/

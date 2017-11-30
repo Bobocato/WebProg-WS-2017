@@ -3,6 +3,7 @@ html,
 body {
   margin: 0;
   height: 100%;
+  /** Get a font for every System **/
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
@@ -40,24 +41,57 @@ body {
   margin-bottom: 0.5%;
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row;
   justify-content: space-evenly;
+  overflow-y: auto;
 }
 
 .roomTitle {
   text-align: center;
   margin-top: 3%;
+  width: 100%;
+  height: 15%;
 }
-
+/**
 .deleteRoom {
   float: right;
   position: relative;
   top: 0;
   right: 0;
 }
-
+**/
 .lamp {
   width: 33%;
   height: 33%;
+  background-color: antiquewhite;
+  text-align: center;
+}
+
+.lampTitle {
+  margin-top: 5%;
+  margin-bottom: 5%;
+  word-break: break-all;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.shutter {
+  width: 33%;
+  height: 33%;
+  background-color: antiquewhite;
+  text-align: center;
+}
+
+.shutterTitle {
+  margin-top: 5%;
+  margin-bottom: 5%;
+  word-break: break-all;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.shutterInput {
+  width: 50%;
 }
 
 /** Scenes **/
@@ -82,6 +116,47 @@ body {
   flex-shrink: 0;
   margin-top: 0.5%;
   margin-bottom: 0.5%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
+  word-break: break-all;
+}
+
+.sceneStartBtn {
+  height: 100%;
+  width: 15%;
+  background-color: #555555;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.sceneTitle {
+  margin: 0;
+  margin-top: 2%;
+  word-break: break-all;
+}
+
+.sceneTime {
+  margin: 0;
+  margin-bottom: 2%;
+  width: 75%;
+  word-break: break-all;
+}
+
+@media screen and (min-width: 1350px) {
+  .sceneTime {
+    margin-top: 2%;
+    margin-left: 4%;
+  }
+  .sceneTitle {
+    margin-left: 4%;
+  }
 }
 
 /** Sidebar stuff **/
