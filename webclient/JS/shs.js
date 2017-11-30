@@ -38,45 +38,9 @@ document.addEventListener(
       });
       */
     }
+
     function logout() {
       //TODO logout the user
-    }
-    //This function will male the Ajax calls for the "GET"-Part of the api
-    function getData(entity) {
-      //Url: /api/room
-      //Method: "GET"
-      let xhr = new XMLHttpRequest();
-      xhr.addEventListener("load", function() {
-        console.log(xhr);
-        shortUrl = xhr.responseURL.split("api");
-        let entity;
-        switch (shortUrl[1]) {
-          case "/room":
-            entity = JSON.parse(xhr.responseText);
-            console.log(entity[0]);
-            break;
-          case "/lamp":
-            entity = JSON.parse(xhr.responseText);
-            console.log(entity[0]);
-            break;
-          case "/scene":
-            entity = JSON.parse(xhr.responseText);
-            console.log(entity[0]);
-            break;
-          case "/shutter":
-            entity = JSON.parse(xhr.responseText);
-            console.log(entity[0]);
-            break;
-          case "/logout":
-            entity = JSON.parse(xhr.responseText);
-            console.log(entity);
-            break;
-        }
-        return entity;
-      });
-      let url = "/api/" + entity;
-      xhr.open("GET", url, true);
-      xhr.send();
     }
 
     function showRoom() {

@@ -171,6 +171,11 @@ body {
   text-align: center;
   color: white;
 }
+.simulatorData {
+  width: 100%;
+  height: 12%;
+  background-color: #ff83f9;
+}
 
 .settings {
   width: 100%;
@@ -199,7 +204,7 @@ body {
 
 .logout {
   width: 100%;
-  height: 20%;
+  height: 8%;
   background-color: coral;
 }
 
@@ -214,6 +219,47 @@ body {
 }
 
 /** Modals for datainput **/
+
+.modal {
+  width: 75%;
+  height: 85%;
+  top: 7.5%;
+  left: 12.5%;
+  position: absolute;
+  background-color: lightblue;
+  display: none;
+}
+
+.closeX {
+  cursor: pointer;
+  margin-right: 2%;
+  margin-top: 2%;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.modalHeading {
+  text-align: center;
+}
+
+.formElement {
+  margin-left: 5%;
+}
+
+table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+table {
+  width: 42%;
+}
+
+.tableContainer {
+  display: flex;
+}
 
 /** Toggle switch from https://www.w3schools.com/howto/howto_css_switch.asp **/
 /* The switch - the box around the slider */

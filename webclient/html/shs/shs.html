@@ -2,6 +2,10 @@
 <div class="container">
     <!-- Basic elements  -->
     <div class="sidebar">
+        <div class="simulatorData">
+            <h2 id="simDate"></h2>
+            <h2 id="simTime"></h2>
+        </div>
         <div class="newRoom">
             <h2>Neuer Raum</h2>
         </div>
@@ -24,15 +28,250 @@
 <!-- Datainputmodals -->
 <div class="modalContainer">
     <!-- Sidebar Modals -->
-    <div class="modal" id="newRoomModal"></div>
-    <div class="modal" id="newDeviceModal"></div>
-    <div class="modal" id="newSceneModal"></div>
-    <div class="modal" id="settingsModal"></div>
-    <!-- Main modals -->
-    <div class="modal" id="roomModal"></div>
-    <div class="modal" id="sceneModal"></div>
-    <div class="modal" id="lampModal"></div>
-    <div class="modal" id="shutterModal"></div>
+    <div class="modal" id="newRoomModal">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading">Neuer Raum</h2>
+        <div class="formConatiner">
+            <span class="formElement">Name des Raumes:</span>
+            <br>
+            <input class="formElement" type="text" name="roomName">
+            <br>
+            <input class="formElement" type="button" name "submit" value="Erstellen">
+        </div>
+    </div>
+    <div class="modal" id="newDeviceModal">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading">Neues Gerät</h2>
+        <div class="formConatiner">
+            <span class="formElement">Art des Gerätes:</span>
+            <br>
+            <select class="formElement" name="kindDevice">
+                <option value="lamp">Lampe</option>
+                <option value="shutter">Rollläden</option>
+                <option value="entity">Entität</option>
+            </select>
+            <br>
+            <span class="formElement">Zugehöriger Raum</span>
+            <br>
+            <select class="formElement" name="deviceRoom">
+                <!-- JS will insert some options here -->
+            </select>
+            <br>
+            <span class="formElement">Name des Gerätes:</span>
+            <br>
+            <input class="formElement" type="text" name="roomName">
+            <br>
+            <input class="formElement" type="button" name "submit" value="Erstellen">
+        </div>
+    </div>
+    <div class="modal" id="newSceneModal">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading">Neue Szene</h2>
+        <div class="formConatiner">
+            <span class="formElement">Name der Szene:</span>
+            <br>
+            <input class="formElement" type="text" name="sceneName">
+            <h3 class="modalHeading">Zeitpunkt</h3>
+            <select class="formElement" name="kindDevice">
+                <option value="time">Zeitpunkt</option>
+                <option value="sunrise">Sonnenaufgang</option>
+                <option value="sunset">Sonnenuntergang</option>
+            </select>
+            <br>
+            <div id="timeDiv">
+                <span class="formElement">Zeit:</span>
+                <br>
+                <input class="formElement" type="text" placeholder="15:13">
+            </div>
+            <h3 class="modalHeading">Geräte</h3>
+            <div class="tableContainer">
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Hinzufügen</th>
+                        <th>Gerät</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Hinzufügen</th>
+                        <th>Gerät</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+            </div>
+            <h3 class="modalHeading">Aktionen</h3>
+            <div class="tableContainer">
+                <table class="actionTable formElement">
+                    <tr>
+                        <th>Aktion</th>
+                        <th>Gerät</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+                <table class="actionTable formElement">
+                    <tr>
+                        <th>Aktion</th>
+                        <th>Gerät</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="settingsModal">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading">Einstellungen</h2>
+        <div class="formConatiner">
+            <h3 class="modalHeading">Account löschen</h3>
+            <br>
+            <span class="formElement">Achtung, dies kann nicht rückgängig gemacht werden!</span>
+            <br>
+            <input class="formElement" type="button" name="deleteUser" value="löschen">
+        </div>
+    </div>
+    <!-- Show Data modals -->
+    <div class="modal" id="roomModal">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading" id="roomName">
+            <!-- JS will add a Roomname here -->
+        </h2>
+        <div class="formConatiner">
+            <h3 class="modalHeading">Ändern des Namens:</h3>
+            <br>
+            <input class="formElement" type="text" name="roomName">
+            <h3 class="modalHeading">Entfernen von Geräten:</h3>
+            <br>
+            <div class="tableContainer">
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Gerät</th>
+                        <th>Entfernen</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Gerät</th>
+                        <th>Entfernen</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+            </div>
+            <br>
+            <span class="formElement">Raum löschen:</span>
+            <br>
+            <input type="button" value="löschen" id="deleteRoom">
+            <br>
+            <span class="formElement">Änderungen speichern</span>
+            <br>
+            <input type="button" value="Speichern" id="saveRoomSettings">
+        </div>
+    </div>
+    <div class="modal" id="sceneModal">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading" id="sceneName">
+            <!-- JS will add a Roomname here -->
+        </h2>
+        <div class="formConatiner">
+            <h3 class="modalHeading">Ändern des Namens:</h3>
+            <br>
+            <input class="formElement" type="text" name="sceneName">
+            <h3 class="modalHeading">Hinzufügen von Geräten:</h3>
+            <br>
+            <div class="tableContainer">
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Hinzufügen</th>
+                        <th>Gerät</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Hinzufügen</th>
+                        <th>Gerät</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+            </div>
+            <br>
+            <h3 class="modalHeading">Entfernen und ändern von Geräten:</h3>
+            <br>
+            <div class="tableContainer">
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Gerät</th>
+                        <th>Zustand</th>
+                        <th>Entfernen</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+                <table class="deviceTable formElement">
+                    <tr>
+                        <th>Gerät</th>
+                        <th>Zustand</th>
+                        <th>Entfernen</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+            </div>
+
+            <br>
+            <span class="formElement">Raum löschen:</span>
+            <br>
+            <input type="button" class="formElement" value="löschen" id="deleteRoom">
+            <br>
+            <span class="formElement">Änderungen speichern</span>
+            <br>
+            <input type="button" class="formElement" value="Speichern" id="saveRoomSettings">
+        </div>
+    </div>
+    <div class="modal" id="lampModal">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading" id="lampName">
+            <!-- JS will add a Roomname here -->
+        </h2>
+        <div class="formConatiner">
+            <h3 class="modalHeading">Ändern des Namens:</h3>
+            <br>
+            <input class="formElement" type="text" name="lampName">
+            <h3 class="modalHeading">Ändern des Status:</h3>
+            <br>
+            <label class="switch formElement">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <h3 class="modalHeading">Entfernen der Lampe:</h3>
+            <br>
+            <input type="button" class="formElement" value="entfernen" id="deleteLamp">
+            <br>
+            <h3 class="modalHeading">Änderungen speichern</h3>
+            <br>
+            <input type="button" class="formElement" value="Speichern" id="saveLamp">
+        </div>
+    </div>
+    <div class="modal" id="shutterModal" style="display: block">
+        <span class="closeX">X</span>
+        <h2 class="modalHeading" id="shutterName">
+            <!-- JS will add a Roomname here -->
+        </h2>
+        <div class="formConatiner">
+            <h3 class="modalHeading">Ändern des Namens:</h3>
+            <br>
+            <input class="formElement" type="text" name="shutterName">
+            <h3 class="modalHeading">Ändern des Status:</h3>
+            <br>
+            <input type="number" class="formElement" min="0" max="100">
+            <h3 class="modalHeading">Entfernen der Rollläden:</h3>
+            <br>
+            <input type="button" class="formElement" value="entfernen" id="deleteShutter">
+            <br>
+            <h3 class="modalHeading">Änderungen speichern</h3>
+            <br>
+            <input type="button" class="formElement" value="Speichern" id="saveShutter">
+        </div>
+    </div>
     <div class="modal" id="entityModal"></div>
 </div>
 {{end}}
