@@ -8,6 +8,10 @@ body {
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+.disabled {
+  pointer-events: none;
+}
+
 .container {
   width: 100%;
   height: 100%;
@@ -91,7 +95,26 @@ body {
 }
 
 .shutterInput {
-  width: 50%;
+  width: 35%;
+}
+
+.radiator {
+  width: 33%;
+  height: 33%;
+  background-color: antiquewhite;
+  text-align: center;
+}
+
+.radiatorTitle {
+  margin-top: 5%;
+  margin-bottom: 5%;
+  word-break: break-all;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.radiatorInput {
+  width: 35%;
 }
 
 /** Scenes **/
@@ -252,15 +275,35 @@ th,
 td {
   border: 1px solid black;
   border-collapse: collapse;
+  text-align: center;
 }
 table {
   width: 42%;
 }
 
-.tableContainer {
-  display: flex;
+.actionTable {
+  width: 90%;
 }
 
+.tableContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.deviceTable {
+  /** TODO make tr same size in every table **/
+}
+
+@media screen and (max-width: 800px) {
+  .tableContainer {
+    flex-direction: column;
+  }
+  .deviceTable {
+    margin-top: 2%;
+    width: 90%;
+  }
+}
 /** Toggle switch from https://www.w3schools.com/howto/howto_css_switch.asp **/
 /* The switch - the box around the slider */
 .switch {

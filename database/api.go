@@ -51,6 +51,21 @@ func Getshutter() []Shutter {
 	return shutter
 }
 
+//Getradiators gives a slice of all radiators back to the requesting person
+func Getradiators() []Radiator {
+	session := connectDB()
+	defer session.Close()
+	radiatorcoll := session.DB("web_prog").C("radiators")
+	var radiators []Radiator
+	err := radiatorcoll.Find(nil).All(&radiators)
+	if err != nil {
+		//No shutter
+	} else {
+		//there are shutter
+	}
+	return radiators
+}
+
 //Getsences gives an slice of all shutter back to the requesting person
 func Getsences() []Scene {
 	session := connectDB()
@@ -71,55 +86,80 @@ func Getsences() []Scene {
 //-----------------------------------------------------
 
 //Pushroom will put an new room in the collection
-func Pushroom(room Room) {
+func Pushroom(room Room) bool {
 	session := connectDB()
 	defer session.Close()
 	roomcoll := session.DB("web_prog").C("rooms")
+	id, _ := roomcoll.Count()
+	id++
+	room.RoomID = id
 	err := roomcoll.Insert(room)
+	success := false
 	if err != nil {
-
 	} else {
-
+		success = true
 	}
+	return success
 }
 
 //Pushlamp will put an new lamp in the collection
-func Pushlamp(lamp Lamp) {
+func Pushlamp(lamp Lamp) bool {
 	session := connectDB()
 	defer session.Close()
 	lampcoll := session.DB("web_prog").C("lamps")
+	id, _ := lampcoll.Count()
+	id++
+	lamp.LampID = id
 	err := lampcoll.Insert(lamp)
 	if err != nil {
-
-	} else {
-
+		return false
 	}
+	return true
 }
 
 //Pushshutter will put an new shutter in the collection
-func Pushshutter(shutter Shutter) {
+func Pushshutter(shutter Shutter) bool {
 	session := connectDB()
 	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
+	id, _ := shuttercoll.Count()
+	id++
+	shutter.ShutterID = id
 	err := shuttercoll.Insert(shutter)
 	if err != nil {
-
-	} else {
-
+		return false
 	}
+	return true
+}
+
+//Pushradiator will put an new radiator in the collection
+func Pushradiator(radiator Radiator) bool {
+	session := connectDB()
+	defer session.Close()
+	radiatorcoll := session.DB("web_prog").C("radiators")
+	id, _ := radiatorcoll.Count()
+	id++
+	radiator.RadiatorID = id
+	err := radiatorcoll.Insert(radiator)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 //Pushscene will put an new scene in the collection
-func Pushscene(scene Scene) {
+func Pushscene(scene Scene) bool {
 	session := connectDB()
 	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
+	id, _ := scenecoll.Count()
+	id++
+	scene.SceneID = id
 	err := scenecoll.Insert(scene)
 	if err != nil {
-
-	} else {
-
+		return false
 	}
+	return true
 }
 
 //---------------------------------------------------
@@ -148,12 +188,23 @@ func Deletelamp(lampID int) {
 	}
 }
 
-//Deleteshutter removes a lamp with the given ID
+//Deleteshutter removes a shutter with the given ID
 func Deleteshutter(shutterID int) {
 	session := connectDB()
 	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
 	err := shuttercoll.Remove(bson.M{"shutterid": shutterID})
+	if err != nil {
+
+	}
+}
+
+//Deleteradiator removes a radiator with the given ID
+func Deleteradiator(radiatorID int) {
+	session := connectDB()
+	defer session.Close()
+	radiatorcoll := session.DB("web_prog").C("radiators")
+	err := radiatorcoll.Remove(bson.M{"radiatorid": radiatorID})
 	if err != nil {
 
 	}

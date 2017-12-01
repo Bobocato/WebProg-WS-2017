@@ -49,6 +49,14 @@ type Shutter struct {
 	RoomID    int
 }
 
+//Radiator struct for the DB
+type Radiator struct {
+	RadiatorID int
+	Name       string
+	Status     int
+	RoomID     int
+}
+
 //Scene struct for the DB
 type Scene struct {
 	SceneID   int
@@ -101,6 +109,7 @@ func InitDB() {
 	roomcoll := session.DB("web_prog").C("rooms")
 	lampcoll := session.DB("web_prog").C("lamps")
 	shuttercoll := session.DB("web_prog").C("shutters")
+	radiatorcoll := session.DB("web_prog").C("radiators")
 	scenecoll := session.DB("web_prog").C("scenes")
 	simcoll := session.DB("web_prog").C("simulatorControl")
 
@@ -113,6 +122,7 @@ func InitDB() {
 		err = roomcoll.DropCollection()
 		err = lampcoll.DropCollection()
 		err = shuttercoll.DropCollection()
+		err = radiatorcoll.DropCollection()
 		err = scenecoll.DropCollection()
 		err = simcoll.DropCollection()
 	}
@@ -133,6 +143,9 @@ func InitDB() {
 	//Shutterdata {shutterID, name, status, roomID}
 	err = shuttercoll.Insert(
 		&Shutter{1, "bedroomshutter", 60, 1})
+	//Radiatordata
+	err = radiatorcoll.Insert(
+		&Radiator{1, "Wohnzimmer Heizung", 21, 1})
 	//Scenedata {sceneID, name, time, sunset, sunrise, posoffset, negoffset, lamps, shutters, entity}
 	err = scenecoll.Insert(
 		&Scene{1, "eveningscene", true, "19:43", false, false, 0, 15, make([]int, 1), make([]int, 1), make([]int, 1)})

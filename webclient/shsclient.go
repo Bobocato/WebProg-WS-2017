@@ -39,6 +39,7 @@ func InitWS() {
 	//Handle ajax requests
 	http.HandleFunc("/api/lamp", lampHandler)
 	http.HandleFunc("/api/shutter", shutterHandler)
+	http.HandleFunc("/api/radiator", radiatorHandler)
 	http.HandleFunc("/api/scene", sceneHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/room", roomHandler)
@@ -61,22 +62,23 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 
 func lampHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
 		decoder := json.NewDecoder(r.Body)
-		defer r.Body.Close()
 		var lamp database.Lamp
 		err := decoder.Decode(&lamp)
 		if err != nil {
-			//Rip decoder
 			panic(err)
 		}
-		database.Pushlamp(lamp)
+		defer r.Body.Close()
+		fmt.Println(lamp.Name)
+		success := database.Pushlamp(lamp)
+		response, _ := json.Marshal(success)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	} else if r.Method == "GET" {
 		lamps := database.Getlamps()
 		response, _ := json.Marshal(lamps)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
-
 	} else if r.Method == "DELETE" {
 
 	}
@@ -84,7 +86,18 @@ func lampHandler(w http.ResponseWriter, r *http.Request) {
 
 func shutterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
+		decoder := json.NewDecoder(r.Body)
+		var shutter database.Shutter
+		err := decoder.Decode(&shutter)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		fmt.Println(shutter.Name)
+		success := database.Pushshutter(shutter)
+		response, _ := json.Marshal(success)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	} else if r.Method == "GET" {
 		shutters := database.Getshutter()
 		response, _ := json.Marshal(shutters)
@@ -95,9 +108,45 @@ func shutterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func radiatorHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		decoder := json.NewDecoder(r.Body)
+		var radiator database.Radiator
+		err := decoder.Decode(&radiator)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		fmt.Println(radiator.Name)
+		success := database.Pushradiator(radiator)
+		response, _ := json.Marshal(success)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	} else if r.Method == "GET" {
+		radiator := database.Getradiators()
+		response, _ := json.Marshal(radiator)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+
+	} else if r.Method == "DELETE" {
+
+	}
+}
+
 func sceneHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
+		decoder := json.NewDecoder(r.Body)
+		var scene database.Scene
+		err := decoder.Decode(&scene)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		fmt.Println(scene.Name)
+		success := database.Pushscene(scene)
+		response, _ := json.Marshal(success)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	} else if r.Method == "GET" {
 		scenes := database.Getsences()
 		response, _ := json.Marshal(scenes)
@@ -111,6 +160,18 @@ func sceneHandler(w http.ResponseWriter, r *http.Request) {
 
 func roomHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
+		decoder := json.NewDecoder(r.Body)
+		var room database.Room
+		err := decoder.Decode(&room)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		fmt.Println(room.Name)
+		success := database.Pushroom(room)
+		response, _ := json.Marshal(success)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 
 	} else if r.Method == "GET" {
 		rooms := database.Getrooms()

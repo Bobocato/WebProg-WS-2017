@@ -1,11 +1,10 @@
 package main
 
 import (
-	"WebProg/database"
 	"WebProg/webclient"
 )
 
 func main() {
-	database.InitDB()
+	//database.InitDB()
 	webclient.InitWS()
 }
