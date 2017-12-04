@@ -43,6 +43,7 @@ func InitWS() {
 	http.HandleFunc("/api/scene", sceneHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/room", roomHandler)
+	http.HandleFunc("/api/settings", settingsHandler)
 	//Start listening on port 8080
 	http.ListenAndServe(":8080", nil)
 }
@@ -51,6 +52,12 @@ func InitWS() {
 //----------Ajax Handler----------
 //--------------------------------
 //TODO Write update handlers
+func settingsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "DELETE" {
+		//TODO Delete User
+	}
+}
+
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		r.ParseForm()
@@ -152,7 +159,6 @@ func sceneHandler(w http.ResponseWriter, r *http.Request) {
 		response, _ := json.Marshal(scenes)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
-
 	} else if r.Method == "DELETE" {
 
 	}

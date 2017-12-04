@@ -67,9 +67,9 @@ type Scene struct {
 	Sunrise   bool
 	Posoffset int
 	Negoffset int
-	Lamps     []int
-	Shutters  []int
-	entity    []int
+	Lamps     []Lamp
+	Shutters  []Shutter
+	Radiators []Radiator
 }
 
 //SimulatorControl struct for the DB
@@ -148,7 +148,7 @@ func InitDB() {
 		&Radiator{1, "Wohnzimmer Heizung", 21, 1})
 	//Scenedata {sceneID, name, time, sunset, sunrise, posoffset, negoffset, lamps, shutters, entity}
 	err = scenecoll.Insert(
-		&Scene{1, "eveningscene", true, "19:43", false, false, 0, 15, make([]int, 1), make([]int, 1), make([]int, 1)})
+		&Scene{1, "eveningscene", true, "19:43", false, false, 0, 15, make([]Lamp, 1), make([]Shutter, 1), make([]Radiator, 1)})
 	//SimController Data {CurrentDayTime, FutureDayTime, Zoom}
 	err = simcoll.Insert(
 		&SimulatorControl{"18.11.2017_12:23", "18.11.2018_12:23", 400})

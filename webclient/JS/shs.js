@@ -8,6 +8,34 @@ document.addEventListener(
   function() {
     getRoom(roomDOM);
     getScene(sceneDOM);
+    //---------------------------------
+    //---------Helper Functions--------
+    //---------------------------------
+
+    function getDevice(kind, id) {
+      let device;
+      //Get all Device Data
+      if (kind == "lamp") {
+        lamps.forEach(lamp => {
+          if (lamp.LampID == id) {
+            device = lamp;
+          }
+        });
+      } else if (kind == "shutter") {
+        shutters.forEach(shutter => {
+          if (id == shutter.ShutterID) {
+            device = shutter;
+          }
+        });
+      } else if (kind == "radiator") {
+        radiators.forEach(radiator => {
+          if (id == radiator.RadiatorID) {
+            device = radiator;
+          }
+        });
+      }
+      return device;
+    }
 
     //---------------------------------
     //----Ajax Calls with Callbacks----
@@ -287,7 +315,9 @@ document.addEventListener(
         sceneElement.appendChild(sceneFragment);
       });
     }
-
+    //----------------------------------
+    //-----Show and Hide the Modals-----
+    //----------------------------------
     function showModal(modalName) {
       //Blur Page
       document.getElementsByClassName("container")[0].style.filter =
@@ -317,7 +347,20 @@ document.addEventListener(
           break;
         case "newScene":
           document.getElementById("newSceneModal").style.display = "block";
+          //TODO delete old data that could be there
+
           //I dont want to reload the Devices here to save bandwith, i will use the saved ones...
+          //Hide and show Time Field when sunset or sunrise are choosen
+          let timeSelect = document.getElementById("newSceneTime");
+          let timeInput = document.getElementById("timeDiv");
+          timeSelect.addEventListener("change", function() {
+            if (timeSelect.value == "time") {
+              timeInput.style.display = "block";
+            } else {
+              timeInput.style.display = "none";
+            }
+          });
+
           let even = false;
           let evenFragment = document.createDocumentFragment();
           let unevenFragment = document.createDocumentFragment();
@@ -390,79 +433,7 @@ document.addEventListener(
             //--- Add Button listener---
             //--------------------------
             addBtn.addEventListener("click", function(e) {
-              //Get device Data
-              let device = e.target.id.split(":");
-              //Get all Device Data
-              if (device[0] == "lamp") {
-                lamps.forEach(lamp => {
-                  if (lamp.LampID == device[1]) {
-                    device = lamp;
-                  }
-                });
-              } else if (device[0] == "shutter") {
-                shutters.forEach(shutter => {
-                  if (device[1] == shutter.ShutterID) {
-                    device = shutter;
-                  }
-                });
-              } else if (device[0] == "radiator") {
-                radiators.forEach(radiator => {
-                  if (device[1] == radiator.RadiatorID) {
-                    device = radiator;
-                  }
-                });
-              }
-              //Remove from old Table
-              e.target.parentElement.parentElement.remove();
-              //Add to Aktion Table
-              let actionTable = document.getElementById("newSceneAktions");
-              let trFragment = document.createDocumentFragment();
-              let tr = document.createElement("TR");
-              let aktionTd = document.createElement("TD");
-              let deleteTd = document.createElement("TD");
-              let deleteBtn = document.createElement("INPUT");
-              deleteBtn.setAttribute("type", "button");
-              deleteBtn.setAttribute("value", "Entfernen");
-
-              deleteBtn.addEventListener("click", function(e) {
-                /**TODO **/
-                //Decide which table to use
-                if (
-                  document.getElementById("newSceneDevicesLeft").children
-                    .length >=
-                  document.getElementById("newSceneDevicesRight").children
-                    .length
-                ) {
-                } else {
-                }
-              });
-              deleteTd.appendChild(deleteBtn);
-              let aktionInput = document.createElement("INPUT");
-              if (typeof device.LampID != "undefined") {
-                aktionInput.setAttribute("type", "checkbox");
-                aktionInput.setAttribute("id", "lamp:" + device.LampID);
-                deleteBtn.setAttribute("id", "lamp:" + device.LampID);
-              } else if (typeof device.ShutterID != "undefined") {
-                aktionInput.setAttribute("type", "number");
-                aktionInput.setAttribute("max", "100");
-                aktionInput.setAttribute("min", "0");
-                aktionInput.setAttribute("id", "shutter:" + device.ShutterID);
-                deleteBtn.setAttribute("id", "shutter:" + device.ShutterID);
-              } else if (typeof device.RadiatorID != "undefined") {
-                aktionInput.setAttribute("type", "number");
-                aktionInput.setAttribute("max", "35");
-                aktionInput.setAttribute("min", "0");
-                aktionInput.setAttribute("id", "shutter:" + device.RadiatorID);
-                deleteBtn.setAttribute("id", "shutter:" + device.RadiatorID);
-              }
-              aktionTd.appendChild(aktionInput);
-              let deviceTd = document.createElement("TD");
-              deviceTd.textContent = device.Name;
-              tr.appendChild(aktionTd);
-              tr.appendChild(deviceTd);
-              tr.appendChild(deleteTd);
-              trFragment.appendChild(tr);
-              actionTable.appendChild(trFragment);
+              newSceneAddDeviceListener(e);
             });
             addTd.appendChild(addBtn);
             tr.appendChild(addTd);
@@ -507,13 +478,129 @@ document.addEventListener(
           break;
       }
     }
-
     function logout() {
       //TODO logout the user
     }
-    //-------------------------
-    //---Ajaxcalls with post---
-    //-------------------------
+    //------------------------------------
+    //---Eventlistener for modal inters---
+    //------------------------------------
+    function newSceneAddDeviceListener(e) {
+      //Get device Data
+      let device = e.target.id.split(":");
+      device = getDevice(device[0], device[1]);
+      //Remove from old Table
+      e.target.parentElement.parentElement.remove();
+      //Add to Aktion Table
+      let actionTable = document.getElementById("newSceneAktions");
+      let trFragment = document.createDocumentFragment();
+      let tr = document.createElement("TR");
+      let aktionTd = document.createElement("TD");
+      let deleteTd = document.createElement("TD");
+      let deleteBtn = document.createElement("INPUT");
+      deleteBtn.setAttribute("type", "button");
+      deleteBtn.setAttribute("value", "Entfernen");
+
+      deleteBtn.addEventListener("click", function(e) {
+        newSceneDeleteDeviceListener(e.target);
+      });
+
+      deleteTd.appendChild(deleteBtn);
+      let aktionInput = document.createElement("INPUT");
+      if (typeof device.LampID != "undefined") {
+        aktionInput.setAttribute("type", "checkbox");
+        aktionInput.setAttribute("id", "lamp:" + device.LampID);
+        deleteBtn.setAttribute("id", "lamp:" + device.LampID);
+      } else if (typeof device.ShutterID != "undefined") {
+        aktionInput.setAttribute("type", "number");
+        aktionInput.setAttribute("max", "100");
+        aktionInput.setAttribute("min", "0");
+        aktionInput.setAttribute("id", "shutter:" + device.ShutterID);
+        deleteBtn.setAttribute("id", "shutter:" + device.ShutterID);
+      } else if (typeof device.RadiatorID != "undefined") {
+        aktionInput.setAttribute("type", "number");
+        aktionInput.setAttribute("max", "35");
+        aktionInput.setAttribute("min", "0");
+        aktionInput.setAttribute("id", "radiator:" + device.RadiatorID);
+        deleteBtn.setAttribute("id", "radiator:" + device.RadiatorID);
+      }
+      aktionTd.appendChild(aktionInput);
+      let deviceTd = document.createElement("TD");
+      deviceTd.textContent = device.Name;
+      tr.appendChild(aktionTd);
+      tr.appendChild(deviceTd);
+      tr.appendChild(deleteTd);
+      trFragment.appendChild(tr);
+      actionTable.appendChild(trFragment);
+    }
+
+    function newSceneDeleteDeviceListener(e) {
+      /**TODO **/
+      let isLamp = false;
+      let isShutter = false;
+      let isRadiator = false;
+      let kind;
+      //Get clicked Device
+      let btnID = e.id;
+      let deviceData = e.id.split(":");
+      device = getDevice(deviceData[0], deviceData[1]);
+      if (deviceData[0] == "lamp") {
+        isLamp = true;
+        kind = "Lampe";
+      } else if (deviceData[0] == "shutter") {
+        isShutter = true;
+        kind = "Rollladen";
+      } else {
+        isRadiator = true;
+        kind = "Heizung";
+      }
+      //Remove old tr
+      document.getElementById(btnID).parentElement.parentElement.remove();
+      //Add to device Table
+      let trFragment = document.createDocumentFragment();
+      let tr = document.createElement("TR");
+      //Btn stuff
+      let btnTd = document.createElement("TD");
+      let addBtn = document.createElement("INPUT");
+      addBtn.setAttribute("type", "button");
+      addBtn.setAttribute("value", "Hinzufügen");
+      if (isLamp) {
+        addBtn.setAttribute("id", "lamp:" + device.LampID);
+      } else if (isShutter) {
+        addBtn.setAttribute("id", "shutter:" + device.ShutterID);
+      } else if (isRadiator) {
+        addBtn.setAttribute("id", "radiator:" + deviceData.RadiatorID);
+      }
+      addBtn.addEventListener("click", function(e) {
+        newSceneAddDeviceListener(e);
+      });
+      btnTd.appendChild(addBtn);
+      //Name stuff
+      let nameTd = document.createElement("TD");
+      nameTd.textContent = device.Name;
+      //Kind stuff
+      let kindTd = document.createElement("TD");
+      kindTd.textContent = kind;
+      //Append to tr and then to fragment
+      tr.appendChild(btnTd);
+      tr.appendChild(nameTd);
+      tr.appendChild(kindTd);
+      trFragment.appendChild(tr);
+      //Decide which table to use
+      if (
+        document.getElementById("newSceneDevicesLeft").children.length >=
+        document.getElementById("newSceneDevicesRight").children.length
+      ) {
+        document.getElementById("newSceneDevicesRight").appendChild(trFragment);
+      } else {
+        document.getElementById("newSceneDevicesLeft").appendChild(trFragment);
+      }
+
+      //e.parentElement.remove();
+    }
+
+    //----------------------------
+    //---Ajaxcalls other method---
+    //----------------------------
     function ajaxCallsMethod(method, path, data) {
       console.log("Send: " + data + " to " + path + " via " + method);
       return new Promise(function(resolve, reject) {
@@ -621,7 +708,91 @@ document.addEventListener(
         if (time == "time") {
           timepoint = document.getElementById("newScenePointInTime").value;
         }
+        let sunset = false;
+        let sunrise = false;
+        if (time == "sunrise") {
+          sunrise = true;
+        } else if (time == "sunset") {
+          sunset = true;
+        }
+        //Offsets
+        let posOffset = document.getElementById("posOffset").value;
+        let negOffset = document.getElementById("negOffset").value;
+        //Devices
+        let aktions = document.getElementById("newSceneAktions").children;
+        let inputLamps = [],
+          inputShutters = [],
+          inputRadiators = [];
+        [].forEach.call(aktions, function(aktion) {
+          if (aktion.tagName == "TR") {
+            let inputs = aktion.getElementsByTagName("input");
+            let id, value;
+            [].forEach.call(inputs, function(input) {
+              if (input.type != "button") {
+                id = input.id.split(":");
+                if (id[0] == "lamp") {
+                  let lamp = getDevice("lamp", id[1]);
+                  if (input.checked) {
+                    lamp.status = 1;
+                  } else {
+                    lamp.status = 0;
+                  }
+                  inputLamps.push(lamp);
+                } else if (id[0] == "shutter") {
+                  let shutter = getDevice("shutter", id[1]);
+                  shutter.status = parseInt(input.value);
+                  inputShutters.push(shutter);
+                } else if (id[0] == "radiator") {
+                  let radiator = getDevice("radiator", id[1]);
+                  radiator.status = parseInt(input.value);
+                  inputRadiators.push(radiator);
+                }
+                value = input.value;
+              }
+            });
+          }
+        });
+        console.log(inputLamps);
+        console.log(inputShutters);
+        console.log(inputRadiators);
+        let scene = {
+          name: name,
+          active: true,
+          time: timepoint,
+          sunset: sunset,
+          sunrise: sunrise,
+          posOffset: parseInt(posOffset),
+          negOffset: parseInt(negOffset),
+          lamps: inputLamps,
+          shutters: inputShutters,
+          radiators: inputRadiators
+        };
+        ajaxCallsMethod("POST", "/api/scene", JSON.stringify(scene)).then(
+          function(res) {
+            console.log(res);
+            hideModal("newScene");
+            getScene(sceneDOM);
+          },
+          function(err) {
+            console.log(err);
+          }
+        );
       });
+
+    //Delete User from Settings Modal
+    document
+      .getElementById("settingsDeleteUser")
+      .addEventListener("click", function(e) {
+        ajaxCallsMethod("DELETE", "/api/settings", "deleteUser").then(
+          function(res) {
+            console.log(res);
+          },
+          function(err) {
+            console.log(err);
+          }
+        );
+      });
+    //Change Room from roomModal
   },
   false
 );

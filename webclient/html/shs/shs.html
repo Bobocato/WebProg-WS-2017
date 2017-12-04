@@ -83,6 +83,12 @@
                 <br>
                 <input class="formElement" id="newScenePointInTime" type="text" placeholder="15:13">
             </div>
+            <br>
+            <span class="formElement">Positiver Offset:</span>
+            <input type="number" min="0" id="posOffset" placeholder="0">
+            <br>
+            <span class="formElement">Negativer Offset:</span>
+            <input type="number" min="0" id="negOffset" placeholder="0">
             <h3 class="modalHeading">Geräte</h3>
             <div class="tableContainer">
                 <table class="deviceTable formElement" id="newSceneDevicesLeft">
@@ -125,7 +131,7 @@
             <br>
             <span class="formElement">Achtung, dies kann nicht rückgängig gemacht werden!</span>
             <br>
-            <input class="formElement" type="button" name="deleteUser" value="löschen">
+            <input class="formElement" id="settingsDeleteUser" type="button" name="deleteUser" value="löschen">
         </div>
     </div>
     <!-- Show Data modals -->
