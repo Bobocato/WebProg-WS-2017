@@ -143,21 +143,27 @@
         <div class="formConatiner">
             <h3 class="modalHeading">Ändern des Namens:</h3>
             <br>
-            <input class="formElement" type="text" name="roomName">
+            <input class="formElement" id="changeRoomName" type="text" name="roomName">
             <h3 class="modalHeading">Entfernen von Geräten:</h3>
             <br>
             <div class="tableContainer">
-                <table class="deviceTable formElement">
+                <table class="actionTable formElement">
                     <tr>
                         <th>Gerät</th>
+                        <th>Art</th>
                         <th>Entfernen</th>
                     </tr>
                     <!-- JS will insert some options here -->
                 </table>
-                <table class="deviceTable formElement">
+            </div>
+            <h3 class="modalHeading">Hinzufügen von Geräten:</h3>
+            <br>
+            <div class="tableContainer">
+                <table class="actionTable formElement">
                     <tr>
                         <th>Gerät</th>
-                        <th>Entfernen</th>
+                        <th>Art</th>
+                        <th>Hinzufügen</th>
                     </tr>
                     <!-- JS will insert some options here -->
                 </table>
@@ -165,11 +171,11 @@
             <br>
             <span class="formElement">Raum löschen:</span>
             <br>
-            <input type="button" value="löschen" id="deleteRoom">
+            <input type="button" class="formElement" value="löschen" id="deleteRoom">
             <br>
             <span class="formElement">Änderungen speichern</span>
             <br>
-            <input type="button" value="Speichern" id="saveRoomSettings">
+            <input type="button" class="formElement" value="Speichern" id="saveRoomSettings">
         </div>
     </div>
     <div class="modal" id="sceneModal">

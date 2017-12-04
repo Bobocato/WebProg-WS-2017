@@ -231,6 +231,9 @@ document.addEventListener(
           //Append radiator to room
           roomDiv.appendChild(radiatorDiv);
         });
+        roomDiv.addEventListener("click", function(e) {
+          changeRoomEvent(e);
+        });
         //Append to fragment and then to DOM
         roomFragment.appendChild(roomDiv);
         roomsElement.appendChild(roomFragment);
@@ -452,6 +455,9 @@ document.addEventListener(
             .getElementById("newSceneDevicesRight")
             .appendChild(unevenFragment);
           break;
+        case "roomModal":
+          document.getElementById("roomModal").style.display = "block";
+          break;
       }
     }
 
@@ -596,6 +602,46 @@ document.addEventListener(
       }
 
       //e.parentElement.remove();
+    }
+
+    function changeRoomEvent(e) {
+      //The child divs should not call this listener
+      if (e.target.className == "room" || e.target.className == "roomTitle") {
+        //Get Room Data
+        let currentRoom;
+        let roomDevices;
+        let roomLamps = [];
+        let roomShutters = [];
+        let roomRadiators = [];
+        rooms.forEach(room => {
+          if (room.RoomID == e.target.id) {
+            currentRoom = room;
+          }
+        });
+        //Get devices of this room
+        lamps.forEach(lamp => {
+          if (lamp.RoomID == currentRoom.RoomID) {
+            roomLamps.push(lamp);
+          }
+        });
+        shutters.forEach(shutter => {
+          if (shutter.RoomID == currentRoom.RoomID) {
+            roomShutters.push(shutter);
+          }
+        });
+        radiators.forEach(radiator => {
+          if (radiator.RoomID == currentRoom.RoomID) {
+            roomRadiators.push(radiator);
+          }
+        });
+        console.log(currentRoom);
+        console.log(roomLamps);
+        console.log(roomShutters);
+        console.log(roomRadiators);
+        showModal("roomModal");
+        document.getElementById("roomName").textContent = currentRoom.Name;
+        document.getElementById("changeRoomName").value = currentRoom.Name;
+      }
     }
 
     //----------------------------
