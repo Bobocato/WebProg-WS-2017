@@ -5,7 +5,7 @@ var rooms, lamps, shutters, radiators, scenes;
 //Start page when DOM is loaded
 document.addEventListener(
   "DOMContentLoaded",
-  function() {
+  function () {
     getRoom(roomDOM);
     getScene(sceneDOM);
     //---------------------------------
@@ -37,14 +37,25 @@ document.addEventListener(
       return device;
     }
 
+    function clearTable(id) {
+      let tableChildren = document.getElementById(id).children;
+      while (tableChildren.length > 1) {
+        [].forEach.call(tableChildren, function (child) {
+          if (child.tagName != "TBODY") {
+            child.remove();
+          }
+        });
+      }
+    }
+
     //---------------------------------
     //----Ajax Calls with Callbacks----
     //---------------------------------
     function ajaxCallsGet(path) {
       console.log("Send: GET Request to " + path);
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         let xhr = new XMLHttpRequest();
-        xhr.addEventListener("load", function() {
+        xhr.addEventListener("load", function () {
           resolve(xhr);
         });
         xhr.open("GET", path, true);
@@ -56,38 +67,38 @@ document.addEventListener(
       //Start all Ajax calls and set promises
       Promise.all([
         ajaxCallsGet("/api/room").then(
-          function(res) {
+          function (res) {
             rooms = JSON.parse(res.responseText);
           },
-          function(err) {
+          function (err) {
             console.log(err);
           }
         ),
         ajaxCallsGet("/api/lamp").then(
-          function(res) {
+          function (res) {
             lamps = JSON.parse(res.responseText);
           },
-          function(err) {
+          function (err) {
             console.log(err);
           }
         ),
         ajaxCallsGet("/api/shutter").then(
-          function(res) {
+          function (res) {
             shutters = JSON.parse(res.responseText);
           },
-          function(err) {
+          function (err) {
             console.log(err);
           }
         ),
         ajaxCallsGet("/api/radiator").then(
-          function(res) {
+          function (res) {
             radiators = JSON.parse(res.responseText);
           },
-          function(err) {
+          function (err) {
             console.log(err);
           }
         )
-      ]).then(function() {
+      ]).then(function () {
         //All promises are fullfilled
         console.log("All Roomdata should be here");
         console.log(rooms);
@@ -101,14 +112,14 @@ document.addEventListener(
     function getScene(callback) {
       Promise.all([
         ajaxCallsGet("/api/scene").then(
-          function(res) {
+          function (res) {
             scenes = JSON.parse(res.responseText);
           },
-          function(err) {
+          function (err) {
             console.log(err);
           }
         )
-      ]).then(function() {
+      ]).then(function () {
         //All promises are fullfilled
         console.log(scenes);
         callback();
@@ -121,7 +132,7 @@ document.addEventListener(
       let roomsElement = document.getElementsByClassName("rooms")[0];
       //Check if ".rooms" is empty
       while (roomsElement.children.length != 0) {
-        [].forEach.call(roomsElement.children, function(room) {
+        [].forEach.call(roomsElement.children, function (room) {
           room.remove();
         });
       }
@@ -164,7 +175,7 @@ document.addEventListener(
             switchLabel.appendChild(switchSpan);
             lampDiv.appendChild(switchLabel);
             //Eventlistener
-            switchSpan.addEventListener("click", function() {
+            switchSpan.addEventListener("click", function () {
               //TODO write real update listener
               console.log(lamp.LampID);
             });
@@ -195,7 +206,7 @@ document.addEventListener(
             shutterInput.setAttribute("id", shutter.ShutterID);
             shutterDiv.appendChild(shutterInput);
             //Eventlistener
-            shutterInput.addEventListener("input", function(evt) {
+            shutterInput.addEventListener("input", function (evt) {
               //TODO write real update listener
               console.log(shutter.ShutterID + " and " + this.value);
             });
@@ -205,33 +216,35 @@ document.addEventListener(
         });
 
         radiators.forEach(radiator => {
-          //Outer Div
-          let radiatorDiv = document.createElement("DIV");
-          radiatorDiv.setAttribute("class", "radiator");
-          radiatorDiv.setAttribute("id", radiator.RadiatorID);
-          //Nametag
-          let radiatorName = document.createElement("H4");
-          radiatorName.setAttribute("class", "radiatorTitle");
-          radiatorName.textContent = radiator.Name;
-          radiatorDiv.appendChild(radiatorName);
-          //Input for setting radiatorstatus
-          let radiatorInput = document.createElement("INPUT");
-          radiatorInput.setAttribute("type", "number");
-          radiatorInput.setAttribute("value", radiator.Status);
-          radiatorInput.setAttribute("max", "0");
-          radiatorInput.setAttribute("min", "35");
-          radiatorInput.setAttribute("class", "radiatorInput");
-          radiatorInput.setAttribute("id", radiator.RadiatorID);
-          radiatorDiv.appendChild(radiatorInput);
-          //Eventlistener
-          radiatorInput.addEventListener("input", function(evt) {
-            //TODO write real update listener
-            console.log(radiator.radiatorID + " and " + this.value);
-          });
-          //Append radiator to room
-          roomDiv.appendChild(radiatorDiv);
+          if (radiator.RoomID == room.RoomID) {
+            //Outer Div
+            let radiatorDiv = document.createElement("DIV");
+            radiatorDiv.setAttribute("class", "radiator");
+            radiatorDiv.setAttribute("id", radiator.RadiatorID);
+            //Nametag
+            let radiatorName = document.createElement("H4");
+            radiatorName.setAttribute("class", "radiatorTitle");
+            radiatorName.textContent = radiator.Name;
+            radiatorDiv.appendChild(radiatorName);
+            //Input for setting radiatorstatus
+            let radiatorInput = document.createElement("INPUT");
+            radiatorInput.setAttribute("type", "number");
+            radiatorInput.setAttribute("value", radiator.Status);
+            radiatorInput.setAttribute("max", "0");
+            radiatorInput.setAttribute("min", "35");
+            radiatorInput.setAttribute("class", "radiatorInput");
+            radiatorInput.setAttribute("id", radiator.RadiatorID);
+            radiatorDiv.appendChild(radiatorInput);
+            //Eventlistener
+            radiatorInput.addEventListener("input", function (evt) {
+              //TODO write real update listener
+              console.log(radiator.radiatorID + " and " + this.value);
+            });
+            //Append radiator to room
+            roomDiv.appendChild(radiatorDiv);
+          }
         });
-        roomDiv.addEventListener("click", function(e) {
+        roomDiv.addEventListener("click", function (e) {
           changeRoomEvent(e);
         });
         //Append to fragment and then to DOM
@@ -244,7 +257,7 @@ document.addEventListener(
       let sceneElement = document.getElementsByClassName("scenes")[0];
       //Check if ".scenes" is empty
       if (sceneElement.children.length != 0) {
-        [].forEach.call(sceneElement.children, function(scene) {
+        [].forEach.call(sceneElement.children, function (scene) {
           scene.remove();
         });
       }
@@ -305,11 +318,11 @@ document.addEventListener(
         switchLabel.appendChild(switchSpan);
         sceneDiv.appendChild(switchLabel);
         //Eventlistener
-        switchSpan.addEventListener("click", function() {
+        switchSpan.addEventListener("click", function () {
           //TODO write real update listener
           console.log(scene.SceneID + " and " + switchInput.checked);
         });
-        sceneStart.addEventListener("click", function() {
+        sceneStart.addEventListener("click", function () {
           //TODO write real update listener
           console.log("Start: Scene " + scene.SceneID);
         });
@@ -356,7 +369,7 @@ document.addEventListener(
           //Hide and show Time Field when sunset or sunrise are choosen
           let timeSelect = document.getElementById("newSceneTime");
           let timeInput = document.getElementById("timeDiv");
-          timeSelect.addEventListener("change", function() {
+          timeSelect.addEventListener("change", function () {
             if (timeSelect.value == "time") {
               timeInput.style.display = "block";
             } else {
@@ -368,9 +381,7 @@ document.addEventListener(
           let evenFragment = document.createDocumentFragment();
           let unevenFragment = document.createDocumentFragment();
           for (
-            let i = 0;
-            i < lamps.length + shutters.length + radiators.length;
-            i++
+            let i = 0; i < lamps.length + shutters.length + radiators.length; i++
           ) {
             let tr = document.createElement("TR");
             let addTd = document.createElement("TD");
@@ -386,7 +397,7 @@ document.addEventListener(
                 addBtn.setAttribute(
                   "id",
                   "radiator:" +
-                    radiators[i - (lamps.length + shutters.length)].RadiatorID
+                  radiators[i - (lamps.length + shutters.length)].RadiatorID
                 );
                 kindTd.textContent = "Heizung";
                 deviceTd.textContent =
@@ -412,7 +423,7 @@ document.addEventListener(
                 addBtn.setAttribute(
                   "id",
                   "radiator:" +
-                    radiators[i - (lamps.length + shutters.length)].RadiatorID
+                  radiators[i - (lamps.length + shutters.length)].RadiatorID
                 );
                 kindTd.textContent = "Heizung";
                 deviceTd.textContent =
@@ -435,7 +446,7 @@ document.addEventListener(
             //--------------------------
             //--- Add Button listener---
             //--------------------------
-            addBtn.addEventListener("click", function(e) {
+            addBtn.addEventListener("click", function (e) {
               newSceneAddDeviceListener(e);
             });
             addTd.appendChild(addBtn);
@@ -481,9 +492,16 @@ document.addEventListener(
           break;
         case "newScene":
           document.getElementById("newSceneModal").style.display = "none";
+          clearTable("newSceneDevicesRight");
+          clearTable("newSceneDevicesLeft");
+          clearTable("newSceneAktions");
+          break;
+        case "changeRooom":
+          document.getElementById("roomModal").style.display = "none";
           break;
       }
     }
+
     function logout() {
       //TODO logout the user
     }
@@ -506,7 +524,7 @@ document.addEventListener(
       deleteBtn.setAttribute("type", "button");
       deleteBtn.setAttribute("value", "Entfernen");
 
-      deleteBtn.addEventListener("click", function(e) {
+      deleteBtn.addEventListener("click", function (e) {
         newSceneDeleteDeviceListener(e.target);
       });
 
@@ -576,7 +594,7 @@ document.addEventListener(
       } else if (isRadiator) {
         addBtn.setAttribute("id", "radiator:" + deviceData.RadiatorID);
       }
-      addBtn.addEventListener("click", function(e) {
+      addBtn.addEventListener("click", function (e) {
         newSceneAddDeviceListener(e);
       });
       btnTd.appendChild(addBtn);
@@ -609,10 +627,14 @@ document.addEventListener(
       if (e.target.className == "room" || e.target.className == "roomTitle") {
         //Get Room Data
         let currentRoom;
-        let roomDevices;
+        let roomDevices = [];
+        let otherDevices = [];
         let roomLamps = [];
         let roomShutters = [];
         let roomRadiators = [];
+        let otherLamps = [];
+        let otherShutters = [];
+        let otherRadiators = [];
         rooms.forEach(room => {
           if (room.RoomID == e.target.id) {
             currentRoom = room;
@@ -621,26 +643,139 @@ document.addEventListener(
         //Get devices of this room
         lamps.forEach(lamp => {
           if (lamp.RoomID == currentRoom.RoomID) {
+            roomDevices.push(lamp);
             roomLamps.push(lamp);
+          } else {
+            otherDevices.push(lamp);
+            otherLamps.push(lamp);
           }
         });
         shutters.forEach(shutter => {
           if (shutter.RoomID == currentRoom.RoomID) {
+            roomDevices.push(shutter);
             roomShutters.push(shutter);
+          } else {
+            otherDevices.push(shutter);
+            otherShutters.push(shutter);
           }
         });
         radiators.forEach(radiator => {
           if (radiator.RoomID == currentRoom.RoomID) {
+            roomDevices.push(radiator);
             roomRadiators.push(radiator);
+          } else {
+            otherDevices.push(radiator);
+            otherRadiators.push(radiator);
           }
         });
         console.log(currentRoom);
-        console.log(roomLamps);
-        console.log(roomShutters);
-        console.log(roomRadiators);
-        showModal("roomModal");
+        console.log(roomDevices);
+        console.log(otherDevices);
+        //Delete Devices Table
+        let deleteTableFragment = document.createDocumentFragment();
+        for (let i = 0; i < (roomLamps.length + roomShutters.length + roomRadiators.length); i++) {
+          let tr = document.createElement("TR");
+          let deleteTd = document.createElement("TD");
+          let deviceTd = document.createElement("TD");
+          let kindTd = document.createElement("TD");
+          let deleteBtn = document.createElement("INPUT");
+          deleteBtn.setAttribute("type", "button");
+          deleteBtn.setAttribute("value", "Entfernen");
+          if (i >= roomLamps.length + roomShutters.length) {
+            //Add radiators
+            deleteBtn.setAttribute(
+              "id",
+              "radiator:" +
+              roomRadiators[i - (roomLamps.length + roomShutters.length)]
+              .RadiatorID
+            );
+            kindTd.textContent = "Heizung";
+            deviceTd.textContent =
+              roomRadiators[i - (roomLamps.length + roomShutters.length)].Name;
+          } else if (i >= roomLamps.length) {
+            //Add Shutter
+            deleteBtn.setAttribute(
+              "id",
+              "shutter:" + roomShutters[i - roomLamps.length].ShutterID
+            );
+            kindTd.textContent = "Rollläden";
+            deviceTd.textContent = roomShutters[i - roomLamps.length].Name;
+          } else {
+            //Add lamps
+            deleteBtn.setAttribute("id", "lamp:" + roomLamps[i].LampID);
+            kindTd.textContent = "Lampe";
+            deviceTd.textContent = lamps[i].Name;
+          }
+          //--------------------------
+          //--- Add Button listener---
+          //--------------------------
+          deleteBtn.addEventListener("click", function (e) {
+            //TODO real Listener
+          });
+          deleteTd.appendChild(deleteBtn);
+          tr.appendChild(deleteTd);
+          tr.appendChild(deviceTd);
+          tr.appendChild(kindTd);
+          deleteTableFragment.appendChild(tr);
+        }
+        document
+          .getElementById("roomModalDeleteDevices")
+          .appendChild(deleteTableFragment);
+
+        //Add Devices Table
+        let addTableFragment = document.createDocumentFragment();
+        for (let i = 0; i < (otherLamps.length + otherRadiators.length + otherShutters.length); i++) {
+          let tr = document.createElement("TR");
+          let addTd = document.createElement("TD");
+          let deviceTd = document.createElement("TD");
+          let kindTd = document.createElement("TD");
+          let addBtn = document.createElement("INPUT");
+          addBtn.setAttribute("type", "button");
+          addBtn.setAttribute("value", "Hinzufügen");
+          if (i >= otherLamps.length + otherShutters.length) {
+            //Add radiators
+            addBtn.setAttribute(
+              "id",
+              "radiator:" +
+              otherRadiators[i - (otherLamps.length + otherShutters.length)]
+              .RadiatorID
+            );
+            kindTd.textContent = "Heizung";
+            deviceTd.textContent =
+              otherRadiators[i - (otherLamps.length + otherShutters.length)].Name;
+          } else if (i >= otherLamps.length) {
+            //Add Shutter
+            addBtn.setAttribute(
+              "id",
+              "shutter:" + otherShutters[i - otherLamps.length].ShutterID
+            );
+            kindTd.textContent = "Rollläden";
+            deviceTd.textContent = otherShutters[i - otherLamps.length].Name;
+          } else {
+            //Add lamps
+            addBtn.setAttribute("id", "lamp:" + otherLamps[i].LampID);
+            kindTd.textContent = "Lampe";
+            deviceTd.textContent = otherLamps[i].Name;
+          }
+          //--------------------------
+          //--- Add Button listener---
+          //--------------------------
+          addBtn.addEventListener("click", function (e) {
+            //TODO real Listener
+          });
+          addTd.appendChild(addBtn);
+          tr.appendChild(addTd);
+          tr.appendChild(deviceTd);
+          tr.appendChild(kindTd);
+          deleteTableFragment.appendChild(tr);
+        }
+        document
+          .getElementById("roomModalAddDevices")
+          .appendChild(deleteTableFragment);
+
         document.getElementById("roomName").textContent = currentRoom.Name;
         document.getElementById("changeRoomName").value = currentRoom.Name;
+        showModal("roomModal");
       }
     }
 
@@ -649,9 +784,9 @@ document.addEventListener(
     //----------------------------
     function ajaxCallsMethod(method, path, data) {
       console.log("Send: " + data + " to " + path + " via " + method);
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         let xhr = new XMLHttpRequest();
-        xhr.addEventListener("load", function() {
+        xhr.addEventListener("load", function () {
           resolve(xhr);
         });
         xhr.open(method, path, true);
@@ -662,36 +797,42 @@ document.addEventListener(
     //add Eventlistener to sidebar
     document
       .getElementsByClassName("settings")[0]
-      .addEventListener("click", function() {
+      .addEventListener("click", function () {
         showModal("settings");
       });
     document
       .getElementsByClassName("newDevice")[0]
-      .addEventListener("click", function() {
+      .addEventListener("click", function () {
         showModal("newDevice");
       });
     document
       .getElementsByClassName("newRoom")[0]
-      .addEventListener("click", function() {
+      .addEventListener("click", function () {
         showModal("newRoom");
       });
     document
       .getElementsByClassName("newScene")[0]
-      .addEventListener("click", function() {
+      .addEventListener("click", function () {
         showModal("newScene");
       });
     document
       .getElementsByClassName("logout")[0]
-      .addEventListener("click", function() {
+      .addEventListener("click", function () {
         logout();
       });
     //Eventlistener for the modals
     //Close Modals with the "X" in the top right
     let allX = document.getElementsByClassName("closeX");
-    [].forEach.call(allX, function(element) {
-      element.addEventListener("click", function() {
+    [].forEach.call(allX, function (element) {
+      element.addEventListener("click", function () {
         //Close Modal
         element.parentElement.style.display = "none";
+        //Clear tables 
+        clearTable("newSceneDevicesRight");
+        clearTable("newSceneDevicesLeft");
+        clearTable("newSceneAktions");
+        clearTable("roomModalDeleteDevices");
+        clearTable("roomModalAddDevices");
         //Unblur Page
         document.getElementsByClassName("container")[0].style.filter =
           "blur(0)";
@@ -702,143 +843,152 @@ document.addEventListener(
       });
     });
     //Create Room from Modal
-    document
-      .getElementById("newRoomCreate")
-      .addEventListener("click", function(e) {
-        let name = { Name: document.getElementById("newRoomName").value };
-        ajaxCallsMethod("POST", "/api/room", JSON.stringify(name)).then(
-          function(res) {
-            response = JSON.parse(res.responseText);
-            if (response) {
-              hideModal("newRoom");
-              getRoom(roomDOM);
-            } else {
-              //TODO Modal for Errors maybe?
-            }
-          },
-          function(err) {
-            console.log(err);
-          }
-        );
-      });
-    //Create Device from Modal
-    document
-      .getElementById("newDeviceCreate")
-      .addEventListener("click", function(e) {
-        //Get values
-        let kind = document.getElementById("newDeviceKind").value;
-        let room = parseInt(document.getElementById("newDeviceRoom").value);
-        let name = document.getElementById("newDeviceName").value;
-        let device = { Name: name, RoomID: room };
-        let url = "/api/" + kind;
-        ajaxCallsMethod("POST", url, JSON.stringify(device)).then(
-          function(res) {
-            console.log(res);
-            hideModal("newDevice");
+    document.getElementById("newRoomCreate").addEventListener("click", function (e) {
+      let name = {
+        Name: document.getElementById("newRoomName").value
+      };
+      ajaxCallsMethod("POST", "/api/room", JSON.stringify(name)).then(
+        function (res) {
+          response = JSON.parse(res.responseText);
+          if (response) {
+            hideModal("newRoom");
             getRoom(roomDOM);
-          },
-          function(err) {
-            console.log(err);
+          } else {
+            //TODO Modal for Errors maybe?
           }
-        );
-      });
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
+    });
+    //Create Device from Modal
+    document.getElementById("newDeviceCreate").addEventListener("click", function (e) {
+      //Get values
+      let kind = document.getElementById("newDeviceKind").value;
+      let room = parseInt(document.getElementById("newDeviceRoom").value);
+      let name = document.getElementById("newDeviceName").value;
+      let device = {
+        Name: name,
+        RoomID: room
+      };
+      let url = "/api/" + kind;
+      ajaxCallsMethod("POST", url, JSON.stringify(device)).then(
+        function (res) {
+          console.log(res);
+          hideModal("newDevice");
+          getRoom(roomDOM);
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
+    });
     //Create new Scene from Modal
-    document
-      .getElementById("newSceneCreate")
-      .addEventListener("click", function(e) {
-        //Get values
-        let name = document.getElementById("newSceneName").value;
-        //time
-        let time = document.getElementById("newSceneTime").value;
-        let timepoint;
-        if (time == "time") {
-          timepoint = document.getElementById("newScenePointInTime").value;
-        }
-        let sunset = false;
-        let sunrise = false;
-        if (time == "sunrise") {
-          sunrise = true;
-        } else if (time == "sunset") {
-          sunset = true;
-        }
-        //Offsets
-        let posOffset = document.getElementById("posOffset").value;
-        let negOffset = document.getElementById("negOffset").value;
-        //Devices
-        let aktions = document.getElementById("newSceneAktions").children;
-        let inputLamps = [],
-          inputShutters = [],
-          inputRadiators = [];
-        [].forEach.call(aktions, function(aktion) {
-          if (aktion.tagName == "TR") {
-            let inputs = aktion.getElementsByTagName("input");
-            let id, value;
-            [].forEach.call(inputs, function(input) {
-              if (input.type != "button") {
-                id = input.id.split(":");
-                if (id[0] == "lamp") {
-                  let lamp = getDevice("lamp", id[1]);
-                  if (input.checked) {
-                    lamp.status = 1;
-                  } else {
-                    lamp.status = 0;
-                  }
-                  inputLamps.push(lamp);
-                } else if (id[0] == "shutter") {
-                  let shutter = getDevice("shutter", id[1]);
-                  shutter.status = parseInt(input.value);
-                  inputShutters.push(shutter);
-                } else if (id[0] == "radiator") {
-                  let radiator = getDevice("radiator", id[1]);
-                  radiator.status = parseInt(input.value);
-                  inputRadiators.push(radiator);
+    document.getElementById("newSceneCreate").addEventListener("click", function (e) {
+      //Get values
+      let name = document.getElementById("newSceneName").value;
+      //time
+      let time = document.getElementById("newSceneTime").value;
+      let timepoint;
+      if (time == "time") {
+        timepoint = document.getElementById("newScenePointInTime").value;
+      }
+      let sunset = false;
+      let sunrise = false;
+      if (time == "sunrise") {
+        sunrise = true;
+      } else if (time == "sunset") {
+        sunset = true;
+      }
+      //Offsets
+      let posOffset = document.getElementById("posOffset").value;
+      let negOffset = document.getElementById("negOffset").value;
+      //Devices
+      let aktions = document.getElementById("newSceneAktions").children;
+      let inputLamps = [],
+        inputShutters = [],
+        inputRadiators = [];
+      [].forEach.call(aktions, function (aktion) {
+        if (aktion.tagName == "TR") {
+          let inputs = aktion.getElementsByTagName("input");
+          let id, value;
+          [].forEach.call(inputs, function (input) {
+            if (input.type != "button") {
+              id = input.id.split(":");
+              if (id[0] == "lamp") {
+                let lamp = getDevice("lamp", id[1]);
+                if (input.checked) {
+                  lamp.status = 1;
+                } else {
+                  lamp.status = 0;
                 }
-                value = input.value;
+                inputLamps.push(lamp);
+              } else if (id[0] == "shutter") {
+                let shutter = getDevice("shutter", id[1]);
+                shutter.status = parseInt(input.value);
+                inputShutters.push(shutter);
+              } else if (id[0] == "radiator") {
+                let radiator = getDevice("radiator", id[1]);
+                radiator.status = parseInt(input.value);
+                inputRadiators.push(radiator);
               }
-            });
-          }
-        });
-        console.log(inputLamps);
-        console.log(inputShutters);
-        console.log(inputRadiators);
-        let scene = {
-          name: name,
-          active: true,
-          time: timepoint,
-          sunset: sunset,
-          sunrise: sunrise,
-          posOffset: parseInt(posOffset),
-          negOffset: parseInt(negOffset),
-          lamps: inputLamps,
-          shutters: inputShutters,
-          radiators: inputRadiators
-        };
-        ajaxCallsMethod("POST", "/api/scene", JSON.stringify(scene)).then(
-          function(res) {
-            console.log(res);
-            hideModal("newScene");
-            getScene(sceneDOM);
-          },
-          function(err) {
-            console.log(err);
-          }
-        );
+              value = input.value;
+            }
+          });
+        }
       });
+      console.log(inputLamps);
+      console.log(inputShutters);
+      console.log(inputRadiators);
+      let scene = {
+        name: name,
+        active: true,
+        time: timepoint,
+        sunset: sunset,
+        sunrise: sunrise,
+        posOffset: parseInt(posOffset),
+        negOffset: parseInt(negOffset),
+        lamps: inputLamps,
+        shutters: inputShutters,
+        radiators: inputRadiators
+      };
+      ajaxCallsMethod("POST", "/api/scene", JSON.stringify(scene)).then(
+        function (res) {
+          console.log(res);
+          hideModal("newScene");
+          getScene(sceneDOM);
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
+    });
 
     //Delete User from Settings Modal
-    document
-      .getElementById("settingsDeleteUser")
-      .addEventListener("click", function(e) {
-        ajaxCallsMethod("DELETE", "/api/settings", "deleteUser").then(
-          function(res) {
-            console.log(res);
-          },
-          function(err) {
-            console.log(err);
-          }
-        );
-      });
+    document.getElementById("settingsDeleteUser").addEventListener("click", function (e) {
+      ajaxCallsMethod("DELETE", "/api/settings", "deleteUser").then(
+        function (res) {
+          console.log(res);
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
+    });
     //Change Room from roomModal
+    document.getElementById("saveRoomSettings").addEventListener("click", function (e) {
+      //Get Room Data
+      let name = document.getElementById("changeRoomName").value;
+      let deviceTable = document.getElementById("roomModalDeleteDevices");
+      let devices = [];
+      [].forEach.call(deviceTable.children, function (tr) {
+        if (tr.tagName == "TR") {
+          let deviceId = tr.children[0].id;
+
+        }
+      });
+    });
   },
   false
 );
