@@ -90,8 +90,19 @@ func Pushroom(room Room) bool {
 	session := connectDB()
 	defer session.Close()
 	roomcoll := session.DB("web_prog").C("rooms")
-	id, _ := roomcoll.Count()
-	id++
+	//When rooms are deleted, there will be a problem with ids beeing used multiple times
+	result := room
+	id := 0
+	uniqueID := false
+	for !uniqueID {
+		err := roomcoll.Find(bson.M{"roomid": id}).One(&result)
+		if err != nil {
+			uniqueID = true
+		} else {
+			id++
+			uniqueID = false
+		}
+	}
 	room.RoomID = id
 	err := roomcoll.Insert(room)
 	success := false
@@ -107,8 +118,19 @@ func Pushlamp(lamp Lamp) bool {
 	session := connectDB()
 	defer session.Close()
 	lampcoll := session.DB("web_prog").C("lamps")
-	id, _ := lampcoll.Count()
-	id++
+	//When lamps are deleted, there will be a problem with ids beeing used multiple times
+	result := lamp
+	id := 0
+	uniqueID := false
+	for !uniqueID {
+		err := lampcoll.Find(bson.M{"lampid": id}).One(&result)
+		if err != nil {
+			uniqueID = true
+		} else {
+			id++
+			uniqueID = false
+		}
+	}
 	lamp.LampID = id
 	err := lampcoll.Insert(lamp)
 	if err != nil {
@@ -122,8 +144,19 @@ func Pushshutter(shutter Shutter) bool {
 	session := connectDB()
 	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
-	id, _ := shuttercoll.Count()
-	id++
+	//When shutters are deleted, there will be a problem with ids beeing used multiple times
+	result := shutter
+	id := 0
+	uniqueID := false
+	for !uniqueID {
+		err := shuttercoll.Find(bson.M{"shutterid": id}).One(&result)
+		if err != nil {
+			uniqueID = true
+		} else {
+			id++
+			uniqueID = false
+		}
+	}
 	shutter.ShutterID = id
 	err := shuttercoll.Insert(shutter)
 	if err != nil {
@@ -137,8 +170,19 @@ func Pushradiator(radiator Radiator) bool {
 	session := connectDB()
 	defer session.Close()
 	radiatorcoll := session.DB("web_prog").C("radiators")
-	id, _ := radiatorcoll.Count()
-	id++
+	//When radiators are deleted, there will be a problem with ids beeing used multiple times
+	result := radiator
+	id := 0
+	uniqueID := false
+	for !uniqueID {
+		err := radiatorcoll.Find(bson.M{"radiatorid": id}).One(&result)
+		if err != nil {
+			uniqueID = true
+		} else {
+			id++
+			uniqueID = false
+		}
+	}
 	radiator.RadiatorID = id
 	err := radiatorcoll.Insert(radiator)
 	if err != nil {
@@ -152,8 +196,19 @@ func Pushscene(scene Scene) bool {
 	session := connectDB()
 	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
-	id, _ := scenecoll.Count()
-	id++
+	//When scenes are deleted, there will be a problem with ids beeing used multiple times
+	result := scene
+	id := 0
+	uniqueID := false
+	for !uniqueID {
+		err := scenecoll.Find(bson.M{"sceneid": id}).One(&result)
+		if err != nil {
+			uniqueID = true
+		} else {
+			id++
+			uniqueID = false
+		}
+	}
 	scene.SceneID = id
 	err := scenecoll.Insert(scene)
 	if err != nil {
@@ -165,6 +220,20 @@ func Pushscene(scene Scene) bool {
 //---------------------------------------------------
 //------Functions for removing database items--------
 //---------------------------------------------------
+
+//DeleteAllRoom will remove all items out of the DB with the given RoomID
+func DeleteAllRoom(roomID int) {
+	session := connectDB()
+	defer session.Close()
+	roomcoll := session.DB("web_prog").C("rooms")
+	roomcoll.RemoveAll(bson.M{"roomid": roomID})
+	lampcoll := session.DB("web_prog").C("lamps")
+	lampcoll.RemoveAll(bson.M{"roomid": roomID})
+	shuttercoll := session.DB("web_prog").C("shutters")
+	shuttercoll.RemoveAll(bson.M{"roomid": roomID})
+	radiatorcoll := session.DB("web_prog").C("radiators")
+	radiatorcoll.RemoveAll(bson.M{"roomid": roomID})
+}
 
 //Deleteroom removes a room with the given ID
 func Deleteroom(roomID int) {
@@ -216,6 +285,65 @@ func Deletescene(sceneID int) {
 	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scene")
 	err := scenecoll.Remove(bson.M{"sceneid": sceneID})
+	if err != nil {
+
+	}
+}
+
+//---------------------------------------------------
+//------Functions for updating database items--------
+//---------------------------------------------------
+
+//UpdateLamp changes the lamp in the Database to the new one
+func UpdateLamp(lamp Lamp) {
+	session := connectDB()
+	defer session.Close()
+	lampcoll := session.DB("web_prog").C("lamps")
+	err := lampcoll.Update(bson.M{"lampid": lamp.LampID}, lamp)
+	if err != nil {
+
+	}
+}
+
+//UpdateShutter changes the shutter in the Database to the new one
+func UpdateShutter(shutter Shutter) {
+	session := connectDB()
+	defer session.Close()
+	shuttercoll := session.DB("web_prog").C("shutters")
+	err := shuttercoll.Update(bson.M{"shutterid": shutter.ShutterID}, shutter)
+	if err != nil {
+
+	}
+}
+
+//UpdateRadiator changes the radiator in the Database to the new one
+func UpdateRadiator(radiator Radiator) {
+	session := connectDB()
+	defer session.Close()
+	radiatorcoll := session.DB("web_prog").C("radiators")
+	err := radiatorcoll.Update(bson.M{"radiatorid": radiator.RadiatorID}, radiator)
+	if err != nil {
+
+	}
+}
+
+//UpdateRoom changes the room in the Database to the new one
+func UpdateRoom(room Room) {
+	session := connectDB()
+	defer session.Close()
+	roomcoll := session.DB("web_prog").C("rooms")
+	err := roomcoll.Update(bson.M{"roomid": room.RoomID}, room)
+	if err != nil {
+
+	}
+}
+
+//UpdateScene changes the scene in the Database to the new one
+func UpdateScene(scene Scene) {
+	session := connectDB()
+	defer session.Close()
+	scenecoll := session.DB("web_prog").C("scenes")
+	err := scenecoll.Update(bson.M{"sceneId": scene.SceneID}, scene)
 	if err != nil {
 
 	}

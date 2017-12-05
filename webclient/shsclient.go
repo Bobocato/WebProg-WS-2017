@@ -14,6 +14,14 @@ type header struct {
 	Title string
 }
 
+type updateRoom struct {
+	Name      string
+	RoomId    int
+	Lamps     []database.Lamp
+	Shutters  []database.Shutter
+	Radiators []database.Radiator
+}
+
 //Create a global uservariable with the standart id of -1
 //TODO change this, every User will be logged in with this account variable is serverwide....
 /*var currentUser = database.User{
@@ -186,7 +194,47 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(response)
 
 	} else if r.Method == "DELETE" {
-
+		decoder := json.NewDecoder(r.Body)
+		var deleteRoom updateRoom
+		err := decoder.Decode(&deleteRoom)
+		fmt.Println(deleteRoom)
+		if err != nil {
+			panic(err)
+		}
+		database.DeleteAllRoom(deleteRoom.RoomId)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	} else if r.Method == "UPDATE" {
+		decoder := json.NewDecoder(r.Body)
+		var upRoom updateRoom
+		err := decoder.Decode(&upRoom)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		//Change Room Name
+		room := database.Room{
+			RoomID: upRoom.RoomId,
+			Name:   upRoom.Name,
+		}
+		database.DeleteAllRoom(room.RoomID)
+		database.Pushroom(room)
+		//Change Lamps
+		for _, lamp := range upRoom.Lamps {
+			database.Pushlamp(lamp)
+		}
+		//Change Shutter
+		for _, shutter := range upRoom.Shutters {
+			database.Pushshutter(shutter)
+		}
+		//Change Radiators
+		for _, radiator := range upRoom.Radiators {
+			database.Pushradiator(radiator)
+		}
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
