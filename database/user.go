@@ -55,8 +55,19 @@ func RegisterUser(username string, password string) (newUser User) {
 		fmt.Print("Create new User")
 		//No user uses the username => create new User
 		//get new id
-		id, _ := usercoll.Count()
-		id++
+		//When users are deleted, there will be a problem with ids beeing used multiple times
+		result := newUser
+		id := 0
+		uniqueID := false
+		for !uniqueID {
+			err := usercoll.Find(bson.M{"userid": id}).One(&result)
+			if err != nil {
+				uniqueID = true
+			} else {
+				id++
+				uniqueID = false
+			}
+		}
 		err = usercoll.Insert(
 			&User{id, username, password, 1, time.Now(), make([]int, 1)})
 
@@ -80,4 +91,13 @@ func RegisterUser(username string, password string) (newUser User) {
 		}
 	}
 	return newUser
+}
+
+//DeleteUser deletes a user from the DB
+func DeleteUser(cookieID int) {
+	session := connectDB()
+	defer session.Close()
+	user := CheckCookie(cookieID)
+	usercoll := session.DB("web_prog").C("users")
+	usercoll.Remove(bson.M{"userid": user.UserID})
 }
