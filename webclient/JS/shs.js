@@ -726,7 +726,7 @@ document.addEventListener(
           //--- Add Button listener---
           //--------------------------
           deleteBtn.addEventListener("click", function (e) {
-            //TODO real Listener
+            changeRoomDeleteDevice(e);
           });
           deleteTd.appendChild(deleteBtn);
           tr.appendChild(deleteTd);
@@ -777,23 +777,115 @@ document.addEventListener(
           //--- Add Button listener---
           //--------------------------
           addBtn.addEventListener("click", function (e) {
-            //TODO real Listener
+            changeRoomAddDevice(e);
           });
           addTd.appendChild(addBtn);
           tr.appendChild(addTd);
           tr.appendChild(deviceTd);
           tr.appendChild(kindTd);
-          deleteTableFragment.appendChild(tr);
+          addTableFragment.appendChild(tr);
         }
 
         document.getElementById("updateRoomId").setAttribute("value", currentRoom.RoomID);
-        document.getElementById("roomModalAddDevices").appendChild(deleteTableFragment);
+        document.getElementById("roomModalAddDevices").appendChild(addTableFragment);
         document.getElementById("roomName").textContent = currentRoom.Name;
         document.getElementById("changeRoomName").value = currentRoom.Name;
         showModal("roomModal");
       }
     }
 
+    function changeRoomAddDevice(e) {
+      let deleteTableFragment = document.createDocumentFragment();
+      //Get Device Info
+      let id = e.target.id.split(":");
+      let currentDevice = getDevice(id[0], id[1]);
+
+      let tr = document.createElement("TR");
+      let deleteTd = document.createElement("TD");
+      let deviceTd = document.createElement("TD");
+      let kindTd = document.createElement("TD");
+      let deleteBtn = document.createElement("INPUT");
+      deleteBtn.setAttribute("type", "button");
+      deleteBtn.setAttribute("value", "Entfernen");
+      if (id[0] == "radiator") {
+        //Add radiators
+        deleteBtn.setAttribute("id", "radiator:" + id[1]);
+        kindTd.textContent = "Heizung";
+        deviceTd.textContent = currentDevice.Name;
+      } else if (id[0] == "radiator") {
+        //Add Shutter
+        deleteBtn.setAttribute(
+          "id",
+          "shutter:" + id[1]);
+        kindTd.textContent = "Rollläden";
+        deviceTd.textContent = currentDevice.Name;
+      } else if (id[0] == "lamp") {
+        //Add lamps
+        deleteBtn.setAttribute("id", "lamp:" + id[1]);
+        kindTd.textContent = "Lampe";
+        deviceTd.textContent = currentDevice.Name;
+      }
+      //--------------------------
+      //--- Add Button listener---
+      //--------------------------
+      deleteBtn.addEventListener("click", function (e) {
+        changeRoomDeleteDevice(e);
+      });
+
+      deleteTd.appendChild(deleteBtn);
+      tr.appendChild(deleteTd);
+      tr.appendChild(deviceTd);
+      tr.appendChild(kindTd);
+      deleteTableFragment.appendChild(tr);
+      //Remove old Device
+      e.target.parentElement.parentElement.remove();
+      document.getElementById("roomModalDeleteDevices").appendChild(deleteTableFragment);
+    }
+
+    function changeRoomDeleteDevice(e) {
+      //Get Device Info
+      let id = e.target.id.split(":");
+      let currentDevice = getDevice(id[0], id[1]);
+
+      let addTableFragment = document.createDocumentFragment();
+      let tr = document.createElement("TR");
+      let addTd = document.createElement("TD");
+      let deviceTd = document.createElement("TD");
+      let kindTd = document.createElement("TD");
+      let addBtn = document.createElement("INPUT");
+      addBtn.setAttribute("type", "button");
+      addBtn.setAttribute("value", "Hinzufügen");
+      if (id[0] == "radiator") {
+        //Add radiators
+        addBtn.setAttribute("id", "radiator:" + id[1]);
+        kindTd.textContent = "Heizung";
+        deviceTd.textContent = currentDevice.Name;
+      } else if (id[0] == "shutter") {
+        //Add Shutter
+        addBtn.setAttribute("id", "shutter:" + id[1]);
+        kindTd.textContent = "Rollläden";
+        deviceTd.textContent = currentDevice.Name;
+      } else if (id[0] == "lamp") {
+        //Add lamps
+        addBtn.setAttribute("id", "lamp:" + id[1]);
+        kindTd.textContent = "Lampe";
+        deviceTd.textContent = currentDevice.Name;
+      }
+      //--------------------------
+      //--- Add Button listener---
+      //--------------------------
+      addBtn.addEventListener("click", function (e) {
+        changeRoomAddDevice(e);
+      });
+      addTd.appendChild(addBtn);
+      tr.appendChild(addTd);
+      tr.appendChild(deviceTd);
+      tr.appendChild(kindTd);
+      addTableFragment.appendChild(tr);
+      //Remove old Device
+      e.target.parentElement.parentElement.remove();
+      document.getElementById("roomModalAddDevices").appendChild(addTableFragment);
+    }
     //----------------------------
     //---Ajaxcalls other method---
     //----------------------------
