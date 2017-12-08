@@ -94,7 +94,7 @@
                 <table class="deviceTable formElement" id="newSceneDevicesLeft">
                     <tr>
                         <th>Hinzufügen</th>
-                        <th>Gerät</th>
+                        <th>Name</th>
                         <th>Art</th>
                     </tr>
                     <!-- JS will insert some options here -->
@@ -102,7 +102,7 @@
                 <table class="deviceTable formElement" id="newSceneDevicesRight">
                     <tr>
                         <th>Hinzufügen</th>
-                        <th>Gerät</th>
+                        <th>Name</th>
                         <th>Art</th>
                     </tr>
                     <!-- JS will insert some options here -->
@@ -113,7 +113,7 @@
                 <table class="actionTable formElement" id="newSceneAktions">
                     <tr>
                         <th>Aktion</th>
-                        <th>Gerät</th>
+                        <th>Name</th>
                         <th>Entfernen</th>
                     </tr>
                     <!-- JS will insert some options here -->
@@ -187,55 +187,60 @@
         <div class="formConatiner">
             <h3 class="modalHeading">Ändern des Namens:</h3>
             <br>
-            <input class="formElement" type="text" name="sceneName">
-            <h3 class="modalHeading">Hinzufügen von Geräten:</h3>
+            <input class="formElement" type="text" id="changeSceneName" name="sceneName">
+            <h3 class="modalHeading">Ändern des Zeitpunktes</h3>
+            <select class="formElement" id="changeSceneTime" name="kindDevice">
+                <option value="time">Zeitpunkt</option>
+                <option value="sunrise">Sonnenaufgang</option>
+                <option value="sunset">Sonnenuntergang</option>
+            </select>
             <br>
-            <div class="tableContainer">
-                <table class="deviceTable formElement">
-                    <tr>
-                        <th>Hinzufügen</th>
-                        <th>Gerät</th>
-                    </tr>
-                    <!-- JS will insert some options here -->
-                </table>
-                <table class="deviceTable formElement">
-                    <tr>
-                        <th>Hinzufügen</th>
-                        <th>Gerät</th>
-                    </tr>
-                    <!-- JS will insert some options here -->
-                </table>
+            <div id="changeSceneTimeDiv">
+                <span class="formElement">Zeit:</span>
+                <br>
+                <input class="formElement" id="changeScenePointInTime" type="text" placeholder="15:13">
             </div>
             <br>
+            <span class="formElement">Positiver Offset:</span>
+            <input type="number" min="0" id="changeScenePosOffset" placeholder="0">
+            <br>
+            <span class="formElement">Negativer Offset:</span>
+            <input type="number" min="0" id="changeSceneNegOffset" placeholder="0">
             <h3 class="modalHeading">Entfernen und ändern von Geräten:</h3>
             <br>
             <div class="tableContainer">
-                <table class="deviceTable formElement">
+                <table class="actionTable formElement" id="changeSceneDeleteDevices">
                     <tr>
-                        <th>Gerät</th>
                         <th>Zustand</th>
-                        <th>Entfernen</th>
-                    </tr>
-                    <!-- JS will insert some options here -->
-                </table>
-                <table class="deviceTable formElement">
-                    <tr>
-                        <th>Gerät</th>
-                        <th>Zustand</th>
+                        <th>Name</th>
+                        <th>Art</th>
                         <th>Entfernen</th>
                     </tr>
                     <!-- JS will insert some options here -->
                 </table>
             </div>
-
+            <h3 class="modalHeading">Hinzufügen von Geräten:</h3>
             <br>
-            <span class="formElement">Raum löschen:</span>
+            <div class="tableContainer">
+                <table class="actionTable formElement" id="changeSceneAddDevices">
+                    <tr>
+                        <th>Hinzufügen</th>
+                        <th>Name</th>
+                        <th>Art</th>
+                    </tr>
+                    <!-- JS will insert some options here -->
+                </table>
+            </div>
             <br>
-            <input type="button" class="formElement" value="löschen" id="deleteRoom">
+            <input type="hidden" id="sceneId">
+            <br>
+            <span class="formElement">Szene löschen:</span>
+            <br>
+            <input type="button" class="formElement" value="löschen" id="deleteScene">
             <br>
             <span class="formElement">Änderungen speichern</span>
             <br>
-            <input type="button" class="formElement" value="Speichern" id="saveRoomSettings">
+            <input type="button" class="formElement" id="saveSceneSettings" value="Speichern">
         </div>
     </div>
     <div class="modal" id="lampModal">

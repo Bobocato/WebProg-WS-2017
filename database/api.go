@@ -283,7 +283,7 @@ func Deleteradiator(radiatorID int) {
 func Deletescene(sceneID int) {
 	session := connectDB()
 	defer session.Close()
-	scenecoll := session.DB("web_prog").C("scene")
+	scenecoll := session.DB("web_prog").C("scenes")
 	err := scenecoll.Remove(bson.M{"sceneid": sceneID})
 	if err != nil {
 

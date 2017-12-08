@@ -37,6 +37,16 @@ document.addEventListener(
       return device;
     }
 
+    function getSingleScene(id) {
+      let currentScene;
+      scenes.forEach(scene => {
+        if (id == scene.SceneID) {
+          currentScene = scene;
+        }
+      });
+      return currentScene;
+    }
+
     function clearTable(id) {
       let tableChildren = document.getElementById(id).children;
       while (tableChildren.length > 1) {
@@ -268,7 +278,7 @@ document.addEventListener(
     function sceneDOM() {
       let sceneElement = document.getElementsByClassName("scenes")[0];
       //Check if ".scenes" is empty
-      if (sceneElement.children.length != 0) {
+      while (sceneElement.children.length != 0) {
         [].forEach.call(sceneElement.children, function (scene) {
           scene.remove();
         });
@@ -279,18 +289,30 @@ document.addEventListener(
         let sceneDiv = document.createElement("DIV");
         sceneDiv.setAttribute("class", "scene");
         sceneDiv.setAttribute("id", scene.SceneID);
+        //LeftDiv
+        let leftDiv = document.createElement("DIV");
+        leftDiv.setAttribute("class", "sceneLeft");
+        leftDiv.setAttribute("id", "sceneLeft:" + scene.SceneID);
+        //MiddleDiv
+        let middleDiv = document.createElement("DIV");
+        middleDiv.setAttribute("class", "sceneMiddle");
+        middleDiv.setAttribute("id", "sceneMiddle:" + scene.SceneID);
+        //RightDiv
+        let rightDiv = document.createElement("DIV");
+        rightDiv.setAttribute("class", "sceneRight");
+        rightDiv.setAttribute("id", "sceneRight:" + scene.SceneID);
         //startButton
         let sceneStart = document.createElement("INPUT");
         sceneStart.setAttribute("type", "button");
         sceneStart.setAttribute("class", "sceneStartBtn");
         sceneStart.setAttribute("id", scene.SceneID);
         sceneStart.setAttribute("value", "Starten");
-        sceneDiv.appendChild(sceneStart);
+        leftDiv.appendChild(sceneStart);
         //Name
         let sceneName = document.createElement("H4");
         sceneName.setAttribute("class", "sceneTitle");
         sceneName.textContent = scene.Name;
-        sceneDiv.appendChild(sceneName);
+        middleDiv.appendChild(sceneName);
         //Time/Sunset/Sunrise
         let sceneTime = document.createElement("H4");
         sceneTime.setAttribute("class", "sceneTime");
@@ -313,7 +335,7 @@ document.addEventListener(
             totaloffset +
             " min. ausgeführt";
         }
-        sceneDiv.appendChild(sceneTime);
+        middleDiv.appendChild(sceneTime);
         //Active or not
         //Toggle switch from https://www.w3schools.com/howto/howto_css_switch.asp
         let switchLabel = document.createElement("LABEL");
@@ -328,7 +350,7 @@ document.addEventListener(
         let switchSpan = document.createElement("SPAN");
         switchSpan.setAttribute("class", "slider round");
         switchLabel.appendChild(switchSpan);
-        sceneDiv.appendChild(switchLabel);
+        rightDiv.appendChild(switchLabel);
         //Eventlistener
         switchSpan.addEventListener("click", function () {
           //TODO write real update listener
@@ -338,6 +360,12 @@ document.addEventListener(
           //TODO write real update listener
           console.log("Start: Scene " + scene.SceneID);
         });
+        sceneDiv.addEventListener("click", function (e) {
+          changeSceneEvent(e);
+        });
+        sceneDiv.appendChild(leftDiv);
+        sceneDiv.appendChild(middleDiv);
+        sceneDiv.appendChild(rightDiv);
         //Append to Dom
         sceneFragment.appendChild(sceneDiv);
         sceneElement.appendChild(sceneFragment);
@@ -348,8 +376,7 @@ document.addEventListener(
     //----------------------------------
     function showModal(modalName) {
       //Blur Page
-      document.getElementsByClassName("container")[0].style.filter =
-        "blur(10px)";
+      document.getElementsByClassName("container")[0].style.filter = "blur(10px)";
       //Disable other Pagecontent
       document.getElementsByClassName("container")[0].classList.add("disabled");
       //TODO Show modals
@@ -392,9 +419,7 @@ document.addEventListener(
           let even = false;
           let evenFragment = document.createDocumentFragment();
           let unevenFragment = document.createDocumentFragment();
-          for (
-            let i = 0; i < lamps.length + shutters.length + radiators.length; i++
-          ) {
+          for (let i = 0; i < lamps.length + shutters.length + radiators.length; i++) {
             let tr = document.createElement("TR");
             let addTd = document.createElement("TD");
             let deviceTd = document.createElement("TD");
@@ -481,6 +506,10 @@ document.addEventListener(
         case "roomModal":
           document.getElementById("roomModal").style.display = "block";
           break;
+        case "sceneModal":
+          document.getElementById("sceneModal").style.display = "block";
+
+          break;
       }
     }
 
@@ -495,6 +524,8 @@ document.addEventListener(
       clearTable("newSceneAktions");
       clearTable("roomModalDeleteDevices");
       clearTable("roomModalAddDevices");
+      clearTable("changeSceneAddDevices");
+      clearTable("changeSceneDeleteDevices");
       //Hide modals
       switch (modalName) {
         case "settings":
@@ -508,12 +539,12 @@ document.addEventListener(
           break;
         case "newScene":
           document.getElementById("newSceneModal").style.display = "none";
-          clearTable("newSceneDevicesRight");
-          clearTable("newSceneDevicesLeft");
-          clearTable("newSceneAktions");
           break;
         case "updateRoom":
           document.getElementById("roomModal").style.display = "none";
+          break;
+        case "updateScene":
+          document.getElementById("sceneModal").style.display = "none";
           break;
       }
     }
@@ -524,6 +555,195 @@ document.addEventListener(
     //------------------------------------
     //---Eventlistener for modal inters---
     //------------------------------------
+
+    function changeSceneEvent(e) {
+      if (e.target.tagName == "DIV" || e.target.tagName == "H4") {
+        //Get Scene
+        let sceneId;
+        if (e.target.tagName == "H4") {
+          sceneId = e.target.parentElement.id.split(":")[1];
+        } else {
+          sceneId = e.target.id.split(":")[1];
+        }
+        let currentScene = getSingleScene(sceneId);
+        //Append Scene ID for later
+        document.getElementById("sceneId").value = currentScene.SceneID;
+        //Append Name
+        document.getElementById("sceneName").textContent = currentScene.Name;
+        document.getElementById("changeSceneName").value = currentScene.Name;
+        //Append Time
+        if (currentScene.Sunset == true) {
+          document.getElementById("timeDiv").style.display = "none";
+          document.getElementById("changeSceneTime").value = "sunset";
+        } else if (currentScene.Sunrise == true) {
+          document.getElementById("changeSceneTimeDiv").style.display = "none";
+          document.getElementById("changeSceneTime").value = "sunrise";
+        } else {
+          document.getElementById("changeSceneTime").value = "time";
+          document.getElementById("changeScenePointInTime").value = currentScene.Time;
+        }
+
+        document.getElementById("changeSceneTime").addEventListener("change", function (e) {
+          if (document.getElementById("changeSceneTime").value == "time") {
+            document.getElementById("changeSceneTimeDiv").style.display = "block";
+          } else {
+            document.getElementById("changeSceneTimeDiv").style.display = "none";
+          }
+        });
+        //Append Offset
+        document.getElementById("changeScenePosOffset").value = currentScene.Posoffset;
+        document.getElementById("changeSceneNegOffset").value = currentScene.Negoffset;
+        //Append deletable Devices
+        let deleteTableFragment = document.createDocumentFragment();
+        for (let i = 0; i < (currentScene.Lamps.length + currentScene.Shutters.length + currentScene.Radiators.length); i++) {
+          let tr = document.createElement("TR");
+          let statusTd = document.createElement("TD");
+          let deleteTd = document.createElement("TD");
+          let deviceTd = document.createElement("TD");
+          let kindTd = document.createElement("TD");
+          //DeleteBtn
+          let deleteBtn = document.createElement("INPUT");
+          deleteBtn.setAttribute("type", "button");
+          deleteBtn.setAttribute("value", "Entfernen");
+          //Status
+          let statusInput = document.createElement("INPUT");
+          if (i >= currentScene.Lamps.length + currentScene.Shutters.length) {
+            //Add radiators
+            deleteBtn.setAttribute("id", "radiator:" + currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].RadiatorID);
+            kindTd.textContent = "Heizung";
+            deviceTd.textContent = currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].Name;
+            statusInput.setAttribute("type", "number");
+            statusInput.setAttribute("min", 0);
+            statusInput.setAttribute("max", 35);
+            statusInput.setAttribute("value", currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].Status);
+            statusInput.setAttribute("id", "radiator:" + currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].RadiatorID);
+          } else if (i >= currentScene.Lamps.length) {
+            //Add Shutter
+            deleteBtn.setAttribute("id", "shutter:" + currentScene.Shutters[i - currentScene.Lamps.length].ShutterID);
+            kindTd.textContent = "Rollläden";
+            deviceTd.textContent = currentScene.Shutters[i - currentScene.Lamps.length].Name;
+            statusInput.setAttribute("type", "number");
+            statusInput.setAttribute("min", 0);
+            statusInput.setAttribute("max", 100);
+            statusInput.setAttribute("value", currentScene.Shutters[i - currentScene.Lamps.length].Status);
+            statusInput.setAttribute("id", "shutter:" + currentScene.Shutters[i - currentScene.Lamps.length].ShutterID);
+          } else {
+            //Add lamps
+            deleteBtn.setAttribute("id", "lamp:" + currentScene.Lamps[i].LampID);
+            kindTd.textContent = "Lampe";
+            deviceTd.textContent = lamps[i].Name;
+            statusInput.setAttribute("type", "checkbox");
+            if (currentScene.Lamps[i].Status == 1) {
+              statusInput.checked = true;
+            } else {
+              statusInput.checked = false;
+            }
+            statusInput.setAttribute("id", "lamp:" + currentScene.Lamps[i].LampID);
+          }
+          //--------------------------
+          //--- Add Button listener---
+          //--------------------------
+          deleteBtn.addEventListener("click", function (e) {
+            //TODO implement this SHIT
+            changeSceneDeleteDevice(e);
+          });
+          deleteTd.appendChild(deleteBtn);
+          statusTd.appendChild(statusInput);
+          tr.appendChild(statusTd);
+          tr.appendChild(deviceTd);
+          tr.appendChild(kindTd);
+          tr.appendChild(deleteTd);
+          deleteTableFragment.appendChild(tr);
+        }
+        document.getElementById("changeSceneDeleteDevices").appendChild(deleteTableFragment);
+        //TODO append addable Devices
+        //Get Devices 
+        let isDevice = false;
+        let otherLamps = [];
+        lamps.forEach(allLamp => {
+          currentScene.Lamps.forEach(sceneLamp => {
+            if (allLamp.LampID == sceneLamp.LampID) {
+              isDevice = true;
+            }
+          });
+          if (!isDevice) {
+            otherLamps.push(allLamp)
+          }
+          isDevice = false;
+        });
+        let otherShutters = [];
+        shutters.forEach(allShutter => {
+          currentScene.Shutters.forEach(sceneShutter => {
+            if (allShutter.ShutterID == sceneShutter.ShutterID) {
+              isDevice = true;
+            }
+          });
+          if (!isDevice) {
+            otherShutters.push(allShutter);
+          }
+          isDevice = false;
+        });
+        let otherRadiators = [];
+        radiators.forEach(allRadiator => {
+          currentScene.Radiators.forEach(sceneRadiator => {
+            if (allRadiator.RadiatorID == sceneRadiator.RadiatorID) {
+              isDevice = true;
+            }
+          });
+          if (!isDevice) {
+            otherRadiators.push(allRadiator);
+          }
+          isDevice = false;
+        });
+        //DOM scripting
+        let addTableFragment = document.createDocumentFragment();
+        for (let i = 0; i < (otherLamps.length + otherRadiators.length + otherShutters.length); i++) {
+          let tr = document.createElement("TR");
+          let addTd = document.createElement("TD");
+          let deviceTd = document.createElement("TD");
+          let kindTd = document.createElement("TD");
+          let addBtn = document.createElement("INPUT");
+          addBtn.setAttribute("type", "button");
+          addBtn.setAttribute("value", "Hinzufügen");
+          if (i >= otherLamps.length + otherShutters.length) {
+            //Add radiators
+            addBtn.setAttribute("id", "radiator:" + otherRadiators[i - (otherLamps.length + otherShutters.length)].RadiatorID);
+            kindTd.textContent = "Heizung";
+            deviceTd.textContent = otherRadiators[i - (otherLamps.length + otherShutters.length)].Name;
+          } else if (i >= otherLamps.length) {
+            //Add Shutter
+            addBtn.setAttribute("id", "shutter:" + otherShutters[i - otherLamps.length].ShutterID);
+            kindTd.textContent = "Rollläden";
+            deviceTd.textContent = otherShutters[i - otherLamps.length].Name;
+          } else {
+            //Add lamps
+            addBtn.setAttribute("id", "lamp:" + otherLamps[i].LampID);
+            kindTd.textContent = "Lampe";
+            deviceTd.textContent = otherLamps[i].Name;
+          }
+          //--------------------------
+          //--- Add Button listener---
+          //--------------------------
+          addBtn.addEventListener("click", function (e) {
+            //TODO actually implement this
+            changeSceneAddDevice(e);
+          });
+          addTd.appendChild(addBtn);
+          tr.appendChild(addTd);
+          tr.appendChild(deviceTd);
+          tr.appendChild(kindTd);
+          addTableFragment.appendChild(tr);
+        }
+        document.getElementById("changeSceneAddDevices").appendChild(addTableFragment);
+
+        showModal("sceneModal");
+      }
+    }
+
+    function changeSceneAddDevice(e) {}
+
+    function changeSceneDeleteDevice(e) {}
+
     function newSceneAddDeviceListener(e) {
       //Get device Data
       let device = e.target.id.split(":");
@@ -930,6 +1150,8 @@ document.addEventListener(
         clearTable("newSceneAktions");
         clearTable("roomModalDeleteDevices");
         clearTable("roomModalAddDevices");
+        clearTable("changeSceneAddDevices");
+        clearTable("changeSceneDeleteDevices");
         //Unblur Page
         document.getElementsByClassName("container")[0].style.filter =
           "blur(0)";
@@ -1161,7 +1383,63 @@ document.addEventListener(
         }
       );
     });
-
+    //Delete scene from Scenemodal
+    document.getElementById("deleteScene").addEventListener("click", function (e) {
+      let id = document.getElementById("sceneId").value;
+      let scene = {
+        SceneID: parseInt(id)
+      };
+      ajaxCallsMethod("DELETE", "/api/scene", JSON.stringify(scene)).then(
+        function (res) {
+          response = JSON.parse(res.responseText);
+          console.log(response);
+          if (response) {
+            hideModal("updateScene");
+            getScene(sceneDOM);
+          } else {
+            //TODO Modal for Errors maybe?
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
+    });
+    //Change scene from Scenemodal
+    document.getElementById("saveSceneSettings").addEventListener("click", function (e) { //Get Name 
+      //TODO all this!
+      let name = document.getElementById("changeSceneName").value;
+      //Get Devices (with Aktions)
+      let deviceTable = document.getElementById("changeSceneDeleteDevices");
+      let updateSceneLamps = [];
+      let updateSceneShutters = [];
+      let updateSceneRadiators = [];
+      [].forEach.call(deviceTable.children, function (tr) {
+        if (tr.tagName == "TR") {
+          let deviceId = tr.children[0].children[0].id.split(":");
+          let status = tr.children[0].children[0].value;
+          console.log("Status: " + status);
+          if (deviceId[0] == "lamp") {
+            let currentLamp = getDevice(deviceId[0], deviceId[1]);
+            //Hole er den Zustand
+            updateSceneLamps.push(currentLamp);
+          } else
+          if (deviceId[0] == "shutter") {
+            let currentShutter = getDevice(deviceId[0], deviceId[1]);
+            //Hole er den Zustand
+            updateSceneShutters.push(currentShutter);
+          } else if (deviceId[0] == "radiator") {
+            let currentRadiator = getDevice(deviceId[0], deviceId[1]);
+            //Hole den Zustand
+            updateSceneRadiators.push(currentRadiator);
+          }
+        }
+      });
+      //Get timestamp (with offset)
+      let updatedScene = {
+        Name: name,
+      };
+    });
   },
   false
 );
