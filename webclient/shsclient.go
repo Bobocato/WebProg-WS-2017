@@ -3,7 +3,6 @@ package webclient
 import (
 	"WebProg/database"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -12,6 +11,10 @@ import (
 
 type header struct {
 	Title string
+}
+
+type userData struct {
+	Data string
 }
 
 type updateRoom struct {
@@ -62,7 +65,11 @@ func InitWS() {
 //TODO Write update handlers
 func settingsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" {
-		//TODO Delete User
+		for _, cookie := range r.Cookies() {
+			cookieValue, _ := strconv.Atoi(cookie.Value)
+			database.DeleteUser(cookieValue)
+		}
+
 	}
 }
 
@@ -84,7 +91,6 @@ func lampHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		fmt.Println(lamp.Name)
 		success := database.Pushlamp(lamp)
 		response, _ := json.Marshal(success)
 		w.Header().Set("Content-Type", "application/json")
@@ -108,7 +114,6 @@ func shutterHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		fmt.Println(shutter.Name)
 		success := database.Pushshutter(shutter)
 		response, _ := json.Marshal(success)
 		w.Header().Set("Content-Type", "application/json")
@@ -132,7 +137,6 @@ func radiatorHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		fmt.Println(radiator.Name)
 		success := database.Pushradiator(radiator)
 		response, _ := json.Marshal(success)
 		w.Header().Set("Content-Type", "application/json")
@@ -157,7 +161,6 @@ func sceneHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		fmt.Println(scene.Name)
 		success := database.Pushscene(scene)
 		response, _ := json.Marshal(success)
 		w.Header().Set("Content-Type", "application/json")
@@ -175,8 +178,19 @@ func sceneHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		fmt.Println(scene.SceneID)
 		database.Deletescene(scene.SceneID)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	} else if r.Method == "UPDATE" {
+		decoder := json.NewDecoder(r.Body)
+		var scene database.Scene
+		err := decoder.Decode(&scene)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		database.UpdateScene(scene)
 		response, _ := json.Marshal(true)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
@@ -192,7 +206,6 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		fmt.Println(room.Name)
 		success := database.Pushroom(room)
 		response, _ := json.Marshal(success)
 		w.Header().Set("Content-Type", "application/json")
@@ -208,7 +221,6 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		var deleteRoom updateRoom
 		err := decoder.Decode(&deleteRoom)
-		fmt.Println(deleteRoom)
 		if err != nil {
 			panic(err)
 		}
@@ -275,9 +287,13 @@ func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 		header := header{
 			Title: "Your to:Huus",
 		}
+		data, _ := json.Marshal(user)
+		userData := userData{
+			Data: string(data),
+		}
 		t := template.Must(template.ParseFiles("../webclient/html/shs/header.html", "../webclient/html/shs/shs.html"))
 		t.ExecuteTemplate(w, "header", header)
-		t.ExecuteTemplate(w, "shs", nil)
+		t.ExecuteTemplate(w, "shs", userData)
 		//t.ExecuteTemplate(w, "ending", nil)
 	} else {
 		//There is no logged in User
@@ -340,8 +356,6 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		username := r.Form["username_register"][0]
 		password := r.Form["password_register"][0]
-		fmt.Print(username)
-		fmt.Println(password)
 		user := database.RegisterUser(username, password)
 		if user.UserID == -1 {
 			//User can't be registerd Name is used

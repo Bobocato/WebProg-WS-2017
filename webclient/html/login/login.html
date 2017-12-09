@@ -12,11 +12,11 @@
         <form id="login-form" method="POST">
             <label for="username_login">Nutzername:</label>
             <br/>
-            <input type="text" name="username_login" id="username_login" placeholder="Nutzername">
+            <input type="text" name="username_login" id="username_login" placeholder="Nutzername" required>
             <br/>
             <label for="password_login">Passwort:</label>
             <br/>
-            <input type="password" name="password_login" id="password_login" placeholder="Passwort">
+            <input type="password" name="password_login" id="password_login" pattern="[A-Za-z0-9]{3,}" placeholder="Passwort" required>
             <br/>
             <input type="submit" name="submit_login" id="submit_login" value="Anmelden">
         </form>

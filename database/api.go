@@ -1,6 +1,8 @@
 package database
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+)
 
 //---------------------------------------------------
 //----Functions for getting database collections-----
@@ -299,7 +301,8 @@ func UpdateLamp(lamp Lamp) {
 	session := connectDB()
 	defer session.Close()
 	lampcoll := session.DB("web_prog").C("lamps")
-	err := lampcoll.Update(bson.M{"lampid": lamp.LampID}, lamp)
+	err := lampcoll.Remove(bson.M{"lampid": lamp.LampID})
+	err = lampcoll.Insert(lamp)
 	if err != nil {
 
 	}
@@ -310,7 +313,8 @@ func UpdateShutter(shutter Shutter) {
 	session := connectDB()
 	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
-	err := shuttercoll.Update(bson.M{"shutterid": shutter.ShutterID}, shutter)
+	err := shuttercoll.Remove(bson.M{"shutterid": shutter.ShutterID})
+	err = shuttercoll.Insert(shutter)
 	if err != nil {
 
 	}
@@ -321,7 +325,8 @@ func UpdateRadiator(radiator Radiator) {
 	session := connectDB()
 	defer session.Close()
 	radiatorcoll := session.DB("web_prog").C("radiators")
-	err := radiatorcoll.Update(bson.M{"radiatorid": radiator.RadiatorID}, radiator)
+	err := radiatorcoll.Remove(bson.M{"radiatorid": radiator.RadiatorID})
+	err = radiatorcoll.Insert(radiator)
 	if err != nil {
 
 	}
@@ -332,7 +337,8 @@ func UpdateRoom(room Room) {
 	session := connectDB()
 	defer session.Close()
 	roomcoll := session.DB("web_prog").C("rooms")
-	err := roomcoll.Update(bson.M{"roomid": room.RoomID}, room)
+	err := roomcoll.Remove(bson.M{"roomid": room.RoomID})
+	err = roomcoll.Insert(room)
 	if err != nil {
 
 	}
@@ -343,8 +349,10 @@ func UpdateScene(scene Scene) {
 	session := connectDB()
 	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
-	err := scenecoll.Update(bson.M{"sceneId": scene.SceneID}, scene)
+	//Delete and reinsert (Update would not work)
+	err := scenecoll.Remove(bson.M{"sceneid": scene.SceneID})
+	err = scenecoll.Insert(scene)
 	if err != nil {
-
+		panic(err)
 	}
 }

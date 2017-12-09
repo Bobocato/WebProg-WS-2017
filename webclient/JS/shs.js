@@ -1,6 +1,6 @@
 //Global Scope
 //These variables can be used globally and will be used to save Ajax requests
-var rooms, lamps, shutters, radiators, scenes;
+var rooms, lamps, shutters, radiators, scenes, user;
 
 //Start page when DOM is loaded
 document.addEventListener(
@@ -8,6 +8,8 @@ document.addEventListener(
   function () {
     getRoom(roomDOM);
     getScene(sceneDOM);
+    user = JSON.parse(document.getElementById("userData").value);
+    console.log(user);
     //---------------------------------
     //---------Helper Functions--------
     //---------------------------------
@@ -283,93 +285,97 @@ document.addEventListener(
           scene.remove();
         });
       }
-      scenes.forEach(scene => {
-        let sceneFragment = document.createDocumentFragment();
-        //outer Div
-        let sceneDiv = document.createElement("DIV");
-        sceneDiv.setAttribute("class", "scene");
-        sceneDiv.setAttribute("id", scene.SceneID);
-        //LeftDiv
-        let leftDiv = document.createElement("DIV");
-        leftDiv.setAttribute("class", "sceneLeft");
-        leftDiv.setAttribute("id", "sceneLeft:" + scene.SceneID);
-        //MiddleDiv
-        let middleDiv = document.createElement("DIV");
-        middleDiv.setAttribute("class", "sceneMiddle");
-        middleDiv.setAttribute("id", "sceneMiddle:" + scene.SceneID);
-        //RightDiv
-        let rightDiv = document.createElement("DIV");
-        rightDiv.setAttribute("class", "sceneRight");
-        rightDiv.setAttribute("id", "sceneRight:" + scene.SceneID);
-        //startButton
-        let sceneStart = document.createElement("INPUT");
-        sceneStart.setAttribute("type", "button");
-        sceneStart.setAttribute("class", "sceneStartBtn");
-        sceneStart.setAttribute("id", scene.SceneID);
-        sceneStart.setAttribute("value", "Starten");
-        leftDiv.appendChild(sceneStart);
-        //Name
-        let sceneName = document.createElement("H4");
-        sceneName.setAttribute("class", "sceneTitle");
-        sceneName.textContent = scene.Name;
-        middleDiv.appendChild(sceneName);
-        //Time/Sunset/Sunrise
-        let sceneTime = document.createElement("H4");
-        sceneTime.setAttribute("class", "sceneTime");
-        let totaloffset = scene.Negoffset + scene.Posoffset;
-        if (scene.Sunrise) {
-          sceneTime.textContent =
-            "Wird zum Sonnenaufgang mit einem Offset von " +
-            totaloffset +
-            "min. ausgeführt";
-        } else if (scene.Sunset) {
-          sceneTime.textContent =
-            "Wird zum Sonnenuntergang mit einem Offset von " +
-            totaloffset +
-            " min. ausgeführt";
-        } else {
-          sceneTime.textContent =
-            "Wird um " +
-            scene.Time +
-            " mit einem Offset von " +
-            totaloffset +
-            " min. ausgeführt";
-        }
-        middleDiv.appendChild(sceneTime);
-        //Active or not
-        //Toggle switch from https://www.w3schools.com/howto/howto_css_switch.asp
-        let switchLabel = document.createElement("LABEL");
-        switchLabel.setAttribute("class", "switch");
-        let switchInput = document.createElement("INPUT");
-        switchInput.setAttribute("type", "checkbox");
-        switchInput.setAttribute("id", "Scene:" + scene.SceneID);
-        if (scene.Active) {
-          switchInput.setAttribute("checked", "checked");
-        }
-        switchLabel.appendChild(switchInput);
-        let switchSpan = document.createElement("SPAN");
-        switchSpan.setAttribute("class", "slider round");
-        switchLabel.appendChild(switchSpan);
-        rightDiv.appendChild(switchLabel);
-        //Eventlistener
-        switchSpan.addEventListener("click", function () {
-          //TODO write real update listener
-          console.log(scene.SceneID + " and " + switchInput.checked);
+      if (scenes != null) {
+        scenes.forEach(scene => {
+          if (scene.UserID == user.UserID) {
+            let sceneFragment = document.createDocumentFragment();
+            //outer Div
+            let sceneDiv = document.createElement("DIV");
+            sceneDiv.setAttribute("class", "scene");
+            sceneDiv.setAttribute("id", scene.SceneID);
+            //LeftDiv
+            let leftDiv = document.createElement("DIV");
+            leftDiv.setAttribute("class", "sceneLeft");
+            leftDiv.setAttribute("id", "sceneLeft:" + scene.SceneID);
+            //MiddleDiv
+            let middleDiv = document.createElement("DIV");
+            middleDiv.setAttribute("class", "sceneMiddle");
+            middleDiv.setAttribute("id", "sceneMiddle:" + scene.SceneID);
+            //RightDiv
+            let rightDiv = document.createElement("DIV");
+            rightDiv.setAttribute("class", "sceneRight");
+            rightDiv.setAttribute("id", "sceneRight:" + scene.SceneID);
+            //startButton
+            let sceneStart = document.createElement("INPUT");
+            sceneStart.setAttribute("type", "button");
+            sceneStart.setAttribute("class", "sceneStartBtn");
+            sceneStart.setAttribute("id", scene.SceneID);
+            sceneStart.setAttribute("value", "Starten");
+            leftDiv.appendChild(sceneStart);
+            //Name
+            let sceneName = document.createElement("H4");
+            sceneName.setAttribute("class", "sceneTitle");
+            sceneName.textContent = scene.Name;
+            middleDiv.appendChild(sceneName);
+            //Time/Sunset/Sunrise
+            let sceneTime = document.createElement("H4");
+            sceneTime.setAttribute("class", "sceneTime");
+            let totaloffset = scene.Negoffset + scene.Posoffset;
+            if (scene.Sunrise) {
+              sceneTime.textContent =
+                "Wird zum Sonnenaufgang mit einem Offset von " +
+                totaloffset +
+                "min. ausgeführt";
+            } else if (scene.Sunset) {
+              sceneTime.textContent =
+                "Wird zum Sonnenuntergang mit einem Offset von " +
+                totaloffset +
+                " min. ausgeführt";
+            } else {
+              sceneTime.textContent =
+                "Wird um " +
+                scene.Time +
+                " mit einem Offset von " +
+                totaloffset +
+                " min. ausgeführt";
+            }
+            middleDiv.appendChild(sceneTime);
+            //Active or not
+            //Toggle switch from https://www.w3schools.com/howto/howto_css_switch.asp
+            let switchLabel = document.createElement("LABEL");
+            switchLabel.setAttribute("class", "switch");
+            let switchInput = document.createElement("INPUT");
+            switchInput.setAttribute("type", "checkbox");
+            switchInput.setAttribute("id", "Scene:" + scene.SceneID);
+            if (scene.Active) {
+              switchInput.setAttribute("checked", "checked");
+            }
+            switchLabel.appendChild(switchInput);
+            let switchSpan = document.createElement("SPAN");
+            switchSpan.setAttribute("class", "slider round");
+            switchLabel.appendChild(switchSpan);
+            rightDiv.appendChild(switchLabel);
+            //Eventlistener
+            switchSpan.addEventListener("click", function () {
+              //TODO write real update listener
+              console.log(scene.SceneID + " and " + switchInput.checked);
+            });
+            sceneStart.addEventListener("click", function () {
+              //TODO write real update listener
+              console.log("Start: Scene " + scene.SceneID);
+            });
+            sceneDiv.addEventListener("click", function (e) {
+              changeSceneEvent(e);
+            });
+            sceneDiv.appendChild(leftDiv);
+            sceneDiv.appendChild(middleDiv);
+            sceneDiv.appendChild(rightDiv);
+            //Append to Dom
+            sceneFragment.appendChild(sceneDiv);
+            sceneElement.appendChild(sceneFragment);
+          }
         });
-        sceneStart.addEventListener("click", function () {
-          //TODO write real update listener
-          console.log("Start: Scene " + scene.SceneID);
-        });
-        sceneDiv.addEventListener("click", function (e) {
-          changeSceneEvent(e);
-        });
-        sceneDiv.appendChild(leftDiv);
-        sceneDiv.appendChild(middleDiv);
-        sceneDiv.appendChild(rightDiv);
-        //Append to Dom
-        sceneFragment.appendChild(sceneDiv);
-        sceneElement.appendChild(sceneFragment);
-      });
+      }
     }
     //----------------------------------
     //-----Show and Hide the Modals-----
@@ -467,10 +473,7 @@ document.addEventListener(
                   radiators[i - (lamps.length + shutters.length)].Name;
               } else if (i >= lamps.length) {
                 //Add Shutter
-                addBtn.setAttribute(
-                  "id",
-                  "shutter:" + shutters[i - lamps.length].ShutterID
-                );
+                addBtn.setAttribute("id", "shutter:" + shutters[i - lamps.length].ShutterID);
                 kindTd.textContent = "Rollläden";
                 deviceTd.textContent = shutters[i - lamps.length].Name;
               } else {
@@ -550,7 +553,16 @@ document.addEventListener(
     }
 
     function logout() {
-      //TODO logout the user
+      var cookies = document.cookie.split(";");
+
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = cookie.substr(0, eqPos);
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      }
+
+      window.location.replace("/login");
     }
     //------------------------------------
     //---Eventlistener for modal inters---
@@ -740,9 +752,100 @@ document.addEventListener(
       }
     }
 
-    function changeSceneAddDevice(e) {}
+    function changeSceneAddDevice(e) {
+      let deviceId = e.target.id.split(":");
+      let device = getDevice(deviceId[0], deviceId[1]);
+      let actionTable = document.getElementById("changeSceneDeleteDevices");
+      let tr = document.createElement("TR");
+      let aktionTd = document.createElement("TD");
+      let deleteTd = document.createElement("TD");
+      let kindTd = document.createElement("TD");
+      let deleteBtn = document.createElement("INPUT");
+      deleteBtn.setAttribute("type", "button");
+      deleteBtn.setAttribute("value", "Entfernen");
+      deleteBtn.addEventListener("click", function (e) {
+        changeSceneDeleteDevice(e);
+      });
+      let aktionInput = document.createElement("INPUT");
+      if (typeof device.LampID != "undefined") {
+        aktionInput.setAttribute("type", "checkbox");
+        aktionInput.checked = true;
+        aktionInput.setAttribute("id", "lamp:" + device.LampID);
+        deleteBtn.setAttribute("id", "lamp:" + device.LampID);
+        kindTd.textContent = "Lampe";
+      } else if (typeof device.ShutterID != "undefined") {
+        aktionInput.setAttribute("type", "number");
+        aktionInput.setAttribute("max", "100");
+        aktionInput.setAttribute("min", "0");
+        aktionInput.setAttribute("value", device.Status);
+        aktionInput.setAttribute("id", "shutter:" + device.ShutterID);
+        deleteBtn.setAttribute("id", "shutter:" + device.ShutterID);
+        kindTd.textContent = "Rollläden";
+      } else if (typeof device.RadiatorID != "undefined") {
+        aktionInput.setAttribute("type", "number");
+        aktionInput.setAttribute("max", "35");
+        aktionInput.setAttribute("min", "0");
+        aktionInput.setAttribute("value", device.Status);
+        aktionInput.setAttribute("id", "radiator:" + device.RadiatorID);
+        deleteBtn.setAttribute("id", "radiator:" + device.RadiatorID);
+        kindTd.textContent = "Heizung";
+      }
+      deleteTd.appendChild(deleteBtn);
+      aktionTd.appendChild(aktionInput);
+      let deviceTd = document.createElement("TD");
+      deviceTd.textContent = device.Name;
+      tr.appendChild(aktionTd);
+      tr.appendChild(deviceTd);
+      tr.appendChild(kindTd);
+      tr.appendChild(deleteTd);
+      let trFragment = document.createDocumentFragment();
+      trFragment.appendChild(tr);
+      actionTable.appendChild(trFragment);
 
-    function changeSceneDeleteDevice(e) {}
+      //Remove from old Table
+      e.target.parentElement.parentElement.remove();
+    }
+
+    function changeSceneDeleteDevice(e) {
+      let deviceId = e.target.id.split(":");
+      let device = getDevice(deviceId[0], deviceId[1]);
+      //Remove old tr
+      e.target.parentElement.parentElement.remove();
+      //Add to device Table
+      let trFragment = document.createDocumentFragment();
+      let tr = document.createElement("TR");
+      //Btn stuff
+      let btnTd = document.createElement("TD");
+      let addBtn = document.createElement("INPUT");
+      addBtn.setAttribute("type", "button");
+      addBtn.setAttribute("value", "Hinzufügen");
+      //Kind stuff
+      let kindTd = document.createElement("TD");
+      if (typeof device.LampID != "undefined") {
+        addBtn.setAttribute("id", "lamp:" + device.LampID);
+        kindTd.textContent = "Lampe";
+      } else if (typeof device.ShutterID != "undefined") {
+        addBtn.setAttribute("id", "shutter:" + device.ShutterID);
+        kindTd.textContent = "Rollläden";
+      } else if (typeof device.RadiatorID != "undefined") {
+        addBtn.setAttribute("id", "radiator:" + device.RadiatorID);
+        kindTd.textContent = "Heizung";
+      }
+      addBtn.addEventListener("click", function (e) {
+        changeSceneAddDevice(e);
+      });
+      btnTd.appendChild(addBtn);
+      //Name stuff
+      let nameTd = document.createElement("TD");
+      nameTd.textContent = device.Name;
+
+      //Append to tr and then to fragment
+      tr.appendChild(btnTd);
+      tr.appendChild(nameTd);
+      tr.appendChild(kindTd);
+      trFragment.appendChild(tr);
+      document.getElementById("changeSceneAddDevices").appendChild(trFragment);
+    }
 
     function newSceneAddDeviceListener(e) {
       //Get device Data
@@ -1259,6 +1362,7 @@ document.addEventListener(
       console.log(inputShutters);
       console.log(inputRadiators);
       let scene = {
+        userid: user.UserID,
         name: name,
         active: true,
         time: timepoint,
@@ -1285,7 +1389,16 @@ document.addEventListener(
     document.getElementById("settingsDeleteUser").addEventListener("click", function (e) {
       ajaxCallsMethod("DELETE", "/api/settings", "deleteUser").then(
         function (res) {
-          console.log(res);
+          var cookies = document.cookie.split(";");
+
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            var eqPos = cookie.indexOf("=");
+            var name = cookie.substr(0, eqPos);
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          }
+
+          window.location.replace("/register");
         },
         function (err) {
           console.log(err);
@@ -1406,7 +1519,11 @@ document.addEventListener(
     //Change scene from Scenemodal
     document.getElementById("saveSceneSettings").addEventListener("click", function (e) { //Get Name 
       //TODO all this!
+      let updatedScene = {};
+      let id = document.getElementById("sceneId").value;
+      updatedScene.sceneid = parseInt(id);
       let name = document.getElementById("changeSceneName").value;
+      updatedScene.name = name;
       //Get Devices (with Aktions)
       let deviceTable = document.getElementById("changeSceneDeleteDevices");
       let updateSceneLamps = [];
@@ -1416,27 +1533,56 @@ document.addEventListener(
         if (tr.tagName == "TR") {
           let deviceId = tr.children[0].children[0].id.split(":");
           let status = tr.children[0].children[0].value;
-          console.log("Status: " + status);
           if (deviceId[0] == "lamp") {
             let currentLamp = getDevice(deviceId[0], deviceId[1]);
-            //Hole er den Zustand
+            if (tr.children[0].children[0].checked) {
+              currentLamp.Status = 1;
+            } else {
+              currentLamp.Status = 0;
+            }
             updateSceneLamps.push(currentLamp);
           } else
           if (deviceId[0] == "shutter") {
             let currentShutter = getDevice(deviceId[0], deviceId[1]);
-            //Hole er den Zustand
+            currentShutter.Status = parseInt(tr.children[0].children[0].value);
             updateSceneShutters.push(currentShutter);
           } else if (deviceId[0] == "radiator") {
             let currentRadiator = getDevice(deviceId[0], deviceId[1]);
-            //Hole den Zustand
+            currentRadiator.Status = parseInt(tr.children[0].children[0].value);
             updateSceneRadiators.push(currentRadiator);
           }
         }
       });
+      updatedScene.lamps = updateSceneLamps;
+      updatedScene.shutters = updateSceneShutters;
+      updatedScene.radiators = updateSceneRadiators;
       //Get timestamp (with offset)
-      let updatedScene = {
-        Name: name,
-      };
+      let timeHelper = document.getElementById("changeSceneTime").value;
+      updatedScene.time = "";
+      updatedScene.sunrise = false;
+      updatedScene.sunset = false;
+      if (timeHelper == "time") {
+        updatedScene.time = document.getElementById("changeScenePointInTime").value;
+      } else if (timeHelper == "sunrise") {
+        updatedScene.sunrise = true;
+      } else if (timeHelper == "sunset") {
+        updatedScene.sunset = true;
+      }
+      updatedScene.posoffset = parseInt(document.getElementById("changeScenePosOffset").value);
+      updatedScene.negoffset = parseInt(document.getElementById("changeSceneNegOffset").value);
+      updatedScene.active = true;
+      console.log(updatedScene);
+      ajaxCallsMethod("UPDATE", "/api/scene", JSON.stringify(updatedScene)).then(
+        function (res) {
+          if (JSON.parse(res.responseText)) {
+            getScene(sceneDOM);
+            hideModal("updateScene");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
     });
   },
   false

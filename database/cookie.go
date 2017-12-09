@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -99,8 +98,6 @@ func CheckCookie(cookie int) (user User) {
 		Cookie:       make([]int, 0),
 	}
 	err := usercoll.Find(bson.M{"cookie": cookie}).One(&result)
-	fmt.Print("CheckCookie Result:")
-	fmt.Println(result)
 	if err != nil {
 		//do nothing
 	}
