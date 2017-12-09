@@ -667,7 +667,7 @@ document.addEventListener(
             }
           });
           if (!isDevice) {
-            otherLamps.push(allLamp)
+            otherLamps.push(allLamp);
           }
           isDevice = false;
         });
@@ -1032,11 +1032,9 @@ document.addEventListener(
         deleteBtn.setAttribute("id", "radiator:" + id[1]);
         kindTd.textContent = "Heizung";
         deviceTd.textContent = currentDevice.Name;
-      } else if (id[0] == "radiator") {
+      } else if (id[0] == "shutter") {
         //Add Shutter
-        deleteBtn.setAttribute(
-          "id",
-          "shutter:" + id[1]);
+        deleteBtn.setAttribute("id", "shutter:" + id[1]);
         kindTd.textContent = "Rollläden";
         deviceTd.textContent = currentDevice.Name;
       } else if (id[0] == "lamp") {
