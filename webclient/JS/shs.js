@@ -179,7 +179,13 @@ document.addEventListener(
               //Outer Div
               let lampDiv = document.createElement("DIV");
               lampDiv.setAttribute("class", "lamp");
-              lampDiv.setAttribute("id", lamp.LampID);
+              lampDiv.setAttribute("id", "lamp:" + lamp.LampID);
+              lampDiv.addEventListener("click", function (e) {
+                if (e.target.tagName == "DIV" || e.target.tagName == "H4") {
+                  console.log("SeemsGood");
+                  showModal("lampModal");
+                }
+              });
               //Nametag
               let lampName = document.createElement("H4");
               lampName.setAttribute("class", "lampTitle");
@@ -200,12 +206,24 @@ document.addEventListener(
               switchLabel.appendChild(switchSpan);
               lampDiv.appendChild(switchLabel);
               //Eventlistener
-              switchSpan.addEventListener("click", function () {
-                //TODO write real update listener
-                console.log(lamp.LampID);
+              switchSpan.addEventListener("click", function (e) {
+                //Update listener
+                let newLamp = getDevice("lamp", lamp.LampID);
+                if (e.target.parentElement.children[0].checked) {
+                  newLamp.Status = 0;
+                } else {
+                  newLamp.Status = 1;
+                }
+                ajaxCallsMethod("UPDATE", "/api/lamp", JSON.stringify(newLamp)).then(
+                  function (res) {
+                    //console.log(res);
+                  },
+                  function (err) {
+                    console.log(err);
+                  }
+                );
               });
               //Append lamps to RoomDiv
-              //outerLampDiv.appendChild(lampDiv);
               roomDiv.appendChild(lampDiv);
             }
           });
@@ -214,7 +232,7 @@ document.addEventListener(
               //Outer Div
               let shutterDiv = document.createElement("DIV");
               shutterDiv.setAttribute("class", "shutter");
-              shutterDiv.setAttribute("id", shutter.ShutterID);
+              shutterDiv.setAttribute("id", "shutter:" + shutter.ShutterID);
               //Nametag
               let shutterName = document.createElement("H4");
               shutterName.setAttribute("class", "shutterTitle");
@@ -231,8 +249,17 @@ document.addEventListener(
               shutterDiv.appendChild(shutterInput);
               //Eventlistener
               shutterInput.addEventListener("input", function (evt) {
-                //TODO write real update listener
-                console.log(shutter.ShutterID + " and " + this.value);
+                //Update listener
+                let newShutter = getDevice("shutter", shutter.ShutterID);
+                newShutter.Status = parseInt(evt.target.value);
+                ajaxCallsMethod("UPDATE", "/api/shutter", JSON.stringify(newShutter)).then(
+                  function (res) {
+                    //console.log(res);
+                  },
+                  function (err) {
+                    console.log(err);
+                  }
+                );
               });
               //Append Shutter to room
               roomDiv.appendChild(shutterDiv);
@@ -243,7 +270,7 @@ document.addEventListener(
               //Outer Div
               let radiatorDiv = document.createElement("DIV");
               radiatorDiv.setAttribute("class", "radiator");
-              radiatorDiv.setAttribute("id", radiator.RadiatorID);
+              radiatorDiv.setAttribute("id", "radiator:" + radiator.RadiatorID);
               //Nametag
               let radiatorName = document.createElement("H4");
               radiatorName.setAttribute("class", "radiatorTitle");
@@ -253,15 +280,24 @@ document.addEventListener(
               let radiatorInput = document.createElement("INPUT");
               radiatorInput.setAttribute("type", "number");
               radiatorInput.setAttribute("value", radiator.Status);
-              radiatorInput.setAttribute("max", "0");
-              radiatorInput.setAttribute("min", "35");
+              radiatorInput.setAttribute("min", "0");
+              radiatorInput.setAttribute("max", "35");
               radiatorInput.setAttribute("class", "radiatorInput");
               radiatorInput.setAttribute("id", radiator.RadiatorID);
               radiatorDiv.appendChild(radiatorInput);
               //Eventlistener
               radiatorInput.addEventListener("input", function (evt) {
-                //TODO write real update listener
-                console.log(radiator.radiatorID + " and " + this.value);
+                //Update listener
+                let newRadiator = getDevice("radiator", radiator.RadiatorID);
+                newRadiator.Status = parseInt(evt.target.value);
+                ajaxCallsMethod("UPDATE", "/api/radiator", JSON.stringify(newRadiator)).then(
+                  function (res) {
+                    //console.log(res);
+                  },
+                  function (err) {
+                    console.log(err);
+                  }
+                );
               });
               //Append radiator to room
               roomDiv.appendChild(radiatorDiv);
@@ -348,7 +384,9 @@ document.addEventListener(
             switchInput.setAttribute("type", "checkbox");
             switchInput.setAttribute("id", "Scene:" + scene.SceneID);
             if (scene.Active) {
-              switchInput.setAttribute("checked", "checked");
+              switchInput.checked = true;
+            } else {
+              switchInput.checked = false;
             }
             switchLabel.appendChild(switchInput);
             let switchSpan = document.createElement("SPAN");
@@ -511,7 +549,15 @@ document.addEventListener(
           break;
         case "sceneModal":
           document.getElementById("sceneModal").style.display = "block";
-
+          break;
+        case "lampModal":
+          document.getElementById("lampModal").style.display = "block";
+          break;
+        case "shutterModal":
+          document.getElementById("shutterModal").style.display = "block";
+          break;
+        case "radiatorModal":
+          document.getElementById("radiatorModal").style.display = "block";
           break;
       }
     }
@@ -1571,6 +1617,7 @@ document.addEventListener(
       updatedScene.posoffset = parseInt(document.getElementById("changeScenePosOffset").value);
       updatedScene.negoffset = parseInt(document.getElementById("changeSceneNegOffset").value);
       updatedScene.active = true;
+      updatedScene.userid = user.UserID;
       console.log(updatedScene);
       ajaxCallsMethod("UPDATE", "/api/scene", JSON.stringify(updatedScene)).then(
         function (res) {
@@ -1583,6 +1630,30 @@ document.addEventListener(
           console.log(err);
         }
       );
+    });
+    //Delete Lamp from Lampmodal
+    document.getElementById("deleteLampModal").addEventListener("click", function (e) {
+      //TODO
+    });
+    //Change Lamp from Lampmodal
+    document.getElementById("saveLampModal").addEventListener("click", function (e) {
+      //TODO
+    });
+    //Delete shutter from shuttermodal
+    document.getElementById("deleteShutterModal").addEventListener("click", function (e) {
+      //TODO
+    });
+    //Change shutter from shuttermodal
+    document.getElementById("saveShutterModal").addEventListener("click", function (e) {
+      //TODO
+    });
+    //Delete radiator from radiatormodal
+    document.getElementById("deleteShutterModal").addEventListener("click", function (e) {
+      //TODO
+    });
+    //Change radiator from radiatormodal
+    document.getElementById("saveShutterModal").addEventListener("click", function (e) {
+      //TODO
     });
   },
   false

@@ -101,7 +101,29 @@ func lampHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 	} else if r.Method == "DELETE" {
-
+		decoder := json.NewDecoder(r.Body)
+		var lamp database.Lamp
+		err := decoder.Decode(&lamp)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		database.Deletelamp(lamp.LampID)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	} else if r.Method == "UPDATE" {
+		decoder := json.NewDecoder(r.Body)
+		var lamp database.Lamp
+		err := decoder.Decode(&lamp)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		database.UpdateLamp(lamp)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
@@ -124,7 +146,29 @@ func shutterHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 	} else if r.Method == "DELETE" {
-
+		decoder := json.NewDecoder(r.Body)
+		var shutter database.Shutter
+		err := decoder.Decode(&shutter)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		database.Deletescene(shutter.ShutterID)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	} else if r.Method == "UPDATE" {
+		decoder := json.NewDecoder(r.Body)
+		var shutter database.Shutter
+		err := decoder.Decode(&shutter)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		database.UpdateShutter(shutter)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
@@ -148,7 +192,29 @@ func radiatorHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(response)
 
 	} else if r.Method == "DELETE" {
-
+		decoder := json.NewDecoder(r.Body)
+		var radiator database.Radiator
+		err := decoder.Decode(&radiator)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		database.Deleteradiator(radiator.RadiatorID)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	} else if r.Method == "UPDATE" {
+		decoder := json.NewDecoder(r.Body)
+		var radiator database.Radiator
+		err := decoder.Decode(&radiator)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		database.UpdateRadiator(radiator)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
