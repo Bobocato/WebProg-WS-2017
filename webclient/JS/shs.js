@@ -461,11 +461,36 @@ document.addEventListener(
             //Eventlistener
             switchSpan.addEventListener("click", function () {
               //TODO write real update listener
+              if (switchInput.checked) {
+                scene.Active = false;
+              } else {
+                scene.Active = true;
+              }
+              ajaxCallsMethod("UPDATE", "/api/scene", JSON.stringify(scene)).then(
+                function (res) {
+                  if (JSON.parse(res.responseText)) {
+                    console.log(res);
+                    //getRoom(roomDOM);
+                  }
+                },
+                function (err) {
+                  console.log(err);
+                }
+              );
               console.log(scene.SceneID + " and " + switchInput.checked);
             });
             sceneStart.addEventListener("click", function () {
               //TODO write real update listener
               console.log("Start: Scene " + scene.SceneID);
+              ajaxCallsMethod("PUT", "/api/scene", JSON.stringify(scene)).then(
+                function (res) {
+                  getRoom(roomDOM);
+                  console.log(res);
+                },
+                function (err) {
+                  console.log(err);
+                }
+              );
             });
             sceneDiv.addEventListener("click", function (e) {
               changeSceneEvent(e);

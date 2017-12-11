@@ -5,6 +5,24 @@ import (
 )
 
 //---------------------------------------------------
+//----------Functions for starting a scene-----------
+//---------------------------------------------------
+
+//Startscene processes one scene and returns true
+func Startscene(scene Scene) (success bool) {
+	for _, lamp := range scene.Lamps {
+		UpdateLamp(lamp)
+	}
+	for _, shutter := range scene.Shutters {
+		UpdateShutter(shutter)
+	}
+	for _, radiator := range scene.Radiators {
+		UpdateRadiator(radiator)
+	}
+	return true
+}
+
+//---------------------------------------------------
 //----Functions for getting database collections-----
 //---------------------------------------------------
 

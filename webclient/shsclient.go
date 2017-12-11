@@ -260,6 +260,18 @@ func sceneHandler(w http.ResponseWriter, r *http.Request) {
 		response, _ := json.Marshal(true)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
+	} else if r.Method == "PUT" {
+		decoder := json.NewDecoder(r.Body)
+		var scene database.Scene
+		err := decoder.Decode(&scene)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		success := database.Startscene(scene)
+		response, _ := json.Marshal(success)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
