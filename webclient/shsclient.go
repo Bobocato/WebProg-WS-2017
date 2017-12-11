@@ -25,17 +25,6 @@ type updateRoom struct {
 	Radiators []database.Radiator
 }
 
-//Create a global uservariable with the standart id of -1
-//TODO change this, every User will be logged in with this account variable is serverwide....
-/*var currentUser = database.User{
-	UserID:       -1,
-	Username:     "nil",
-	Password:     "nil",
-	HouseID:      -1,
-	Lastregister: time.Now(),
-	Cookie:       make([]int, 0),
-}*/
-
 //InitWS starts the Webservers for the home UI. This is called from main.go
 func InitWS() {
 	//Create a fileserver and uplaod the CSS and JS files. These will be loaded through the templates.
@@ -62,7 +51,6 @@ func InitWS() {
 //--------------------------------
 //----------Ajax Handler----------
 //--------------------------------
-//TODO Write update handlers
 func settingsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" {
 		for _, cookie := range r.Cookies() {
@@ -438,7 +426,6 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		if user.UserID == -1 {
 			//User can't be registerd Name is used
 			//Name already taken
-			//TODO make js and html for this! (register site error message)
 			http.Redirect(w, r, "/register?error=usernameTaken", 301)
 		} else {
 			//User was created and should be logged in

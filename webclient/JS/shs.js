@@ -13,7 +13,6 @@ document.addEventListener(
     //---------------------------------
     //---------Helper Functions--------
     //---------------------------------
-
     function getDevice(kind, id) {
       let device;
       //Get all Device Data
@@ -460,7 +459,6 @@ document.addEventListener(
             rightDiv.appendChild(switchLabel);
             //Eventlistener
             switchSpan.addEventListener("click", function () {
-              //TODO write real update listener
               if (switchInput.checked) {
                 scene.Active = false;
               } else {
@@ -480,7 +478,6 @@ document.addEventListener(
               console.log(scene.SceneID + " and " + switchInput.checked);
             });
             sceneStart.addEventListener("click", function () {
-              //TODO write real update listener
               console.log("Start: Scene " + scene.SceneID);
               ajaxCallsMethod("PUT", "/api/scene", JSON.stringify(scene)).then(
                 function (res) {
@@ -513,7 +510,6 @@ document.addEventListener(
       document.getElementsByClassName("container")[0].style.filter = "blur(10px)";
       //Disable other Pagecontent
       document.getElementsByClassName("container")[0].classList.add("disabled");
-      //TODO Show modals
       switch (modalName) {
         case "settings":
           document.getElementById("settingsModal").style.display = "block";
@@ -536,8 +532,6 @@ document.addEventListener(
           break;
         case "newScene":
           document.getElementById("newSceneModal").style.display = "block";
-          //TODO delete old data that could be there
-
           //I dont want to reload the Devices here to save bandwith, i will use the saved ones...
           //Hide and show Time Field when sunset or sunrise are choosen
           let timeSelect = document.getElementById("newSceneTime");
@@ -711,7 +705,6 @@ document.addEventListener(
     //------------------------------------
     //---Eventlistener for modal inters---
     //------------------------------------
-
     function changeSceneEvent(e) {
       if (e.target.tagName == "DIV" || e.target.tagName == "H4") {
         //Get Scene
@@ -800,7 +793,6 @@ document.addEventListener(
           //--- Add Button listener---
           //--------------------------
           deleteBtn.addEventListener("click", function (e) {
-            //TODO implement this SHIT
             changeSceneDeleteDevice(e);
           });
           deleteTd.appendChild(deleteBtn);
@@ -812,7 +804,6 @@ document.addEventListener(
           deleteTableFragment.appendChild(tr);
         }
         document.getElementById("changeSceneDeleteDevices").appendChild(deleteTableFragment);
-        //TODO append addable Devices
         //Get Devices 
         let isDevice = false;
         let otherLamps = [];
@@ -881,7 +872,6 @@ document.addEventListener(
           //--- Add Button listener---
           //--------------------------
           addBtn.addEventListener("click", function (e) {
-            //TODO actually implement this
             changeSceneAddDevice(e);
           });
           addTd.appendChild(addBtn);
@@ -1041,7 +1031,6 @@ document.addEventListener(
     }
 
     function newSceneDeleteDeviceListener(e) {
-      /**TODO **/
       let isLamp = false;
       let isShutter = false;
       let isRadiator = false;
@@ -1563,7 +1552,6 @@ document.addEventListener(
     });
     //Delete Room from roomModal
     document.getElementById("deleteRoom").addEventListener("click", function (e) {
-      //TODO Delete devices
       //New devices, every device can only be in one Room
       let deviceTable = document.getElementById("roomModalDeleteDevices");
       let deleteRoomLamps = [];
@@ -1673,8 +1661,8 @@ document.addEventListener(
       );
     });
     //Change scene from Scenemodal
-    document.getElementById("saveSceneSettings").addEventListener("click", function (e) { //Get Name 
-      //TODO all this!
+    document.getElementById("saveSceneSettings").addEventListener("click", function (e) {
+      //Get Name 
       let updatedScene = {};
       let id = document.getElementById("sceneId").value;
       updatedScene.sceneid = parseInt(id);
