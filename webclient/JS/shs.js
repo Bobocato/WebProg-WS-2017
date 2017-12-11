@@ -183,6 +183,23 @@ document.addEventListener(
               lampDiv.addEventListener("click", function (e) {
                 if (e.target.tagName == "DIV" || e.target.tagName == "H4") {
                   console.log("SeemsGood");
+                  //Get Device 
+                  let id;
+                  if (e.target.tagName == "H4") {
+                    id = e.target.parentElement.id.split(":");
+                  } else {
+                    id = e.target.id.split(":");
+                  }
+
+                  let lamp = getDevice(id[0], id[1]);
+                  document.getElementById("lampNameModal").textContent = lamp.Name;
+                  document.getElementById("lampNameInput").value = lamp.Name;
+                  if (lamp.Status) {
+                    document.getElementById("lampModalSwitch").checked = true;
+                  } else {
+                    document.getElementById("lampModalSwitch").checked = false;
+                  }
+                  document.getElementById("lampModalIDHolder").value = lamp.LampID;
                   showModal("lampModal");
                 }
               });
@@ -233,6 +250,24 @@ document.addEventListener(
               let shutterDiv = document.createElement("DIV");
               shutterDiv.setAttribute("class", "shutter");
               shutterDiv.setAttribute("id", "shutter:" + shutter.ShutterID);
+              shutterDiv.addEventListener("click", function (e) {
+                if (e.target.tagName == "DIV" || e.target.tagName == "H4") {
+                  console.log("SeemsGood");
+                  //Get Device 
+                  let id;
+                  if (e.target.tagName == "H4") {
+                    id = e.target.parentElement.id.split(":");
+                  } else {
+                    id = e.target.id.split(":");
+                  }
+                  let shutter = getDevice(id[0], id[1]);
+                  document.getElementById("shutterNameModal").textContent = shutter.Name;
+                  document.getElementById("shutterNameInput").value = shutter.Name;
+                  document.getElementById("shutterNumberInput").value = shutter.Status;
+                  document.getElementById("shutterModalIDHolder").value = shutter.ShutterID;
+                  showModal("shutterModal");
+                }
+              });
               //Nametag
               let shutterName = document.createElement("H4");
               shutterName.setAttribute("class", "shutterTitle");
@@ -251,7 +286,13 @@ document.addEventListener(
               shutterInput.addEventListener("input", function (evt) {
                 //Update listener
                 let newShutter = getDevice("shutter", shutter.ShutterID);
-                newShutter.Status = parseInt(evt.target.value);
+                if (parseInt(evt.target.value) > 100) {
+                  newShutter.Status = 100;
+                } else if (parseInt(evt.target.value) < 0) {
+                  newShutter.Status = 0
+                } else {
+                  newShutter.Status = parseInt(evt.target.value);
+                }
                 ajaxCallsMethod("UPDATE", "/api/shutter", JSON.stringify(newShutter)).then(
                   function (res) {
                     //console.log(res);
@@ -271,6 +312,24 @@ document.addEventListener(
               let radiatorDiv = document.createElement("DIV");
               radiatorDiv.setAttribute("class", "radiator");
               radiatorDiv.setAttribute("id", "radiator:" + radiator.RadiatorID);
+              radiatorDiv.addEventListener("click", function (e) {
+                if (e.target.tagName == "DIV" || e.target.tagName == "H4") {
+                  console.log("SeemsGood");
+                  //Get Device 
+                  let id;
+                  if (e.target.tagName == "H4") {
+                    id = e.target.parentElement.id.split(":");
+                  } else {
+                    id = e.target.id.split(":");
+                  }
+                  let radiator = getDevice(id[0], id[1]);
+                  document.getElementById("radiatorNameModal").textContent = radiator.Name;
+                  document.getElementById("radiatorNameInput").value = radiator.Name;
+                  document.getElementById("radiatorNumberInput").value = radiator.Status;
+                  document.getElementById("radiatorModalIDHolder").value = radiator.RadiatorID;
+                  showModal("radiatorModal");
+                }
+              });
               //Nametag
               let radiatorName = document.createElement("H4");
               radiatorName.setAttribute("class", "radiatorTitle");
@@ -289,7 +348,13 @@ document.addEventListener(
               radiatorInput.addEventListener("input", function (evt) {
                 //Update listener
                 let newRadiator = getDevice("radiator", radiator.RadiatorID);
-                newRadiator.Status = parseInt(evt.target.value);
+                if (parseInt(evt.target.value) > 35) {
+                  newRadiator.Status = 35;
+                } else if (parseInt(evt.target.value) < 0) {
+                  newRadiator.Status = 0;
+                } else {
+                  newRadiator.Status = parseInt(evt.target.value);
+                }
                 ajaxCallsMethod("UPDATE", "/api/radiator", JSON.stringify(newRadiator)).then(
                   function (res) {
                     //console.log(res);
@@ -595,6 +660,14 @@ document.addEventListener(
         case "updateScene":
           document.getElementById("sceneModal").style.display = "none";
           break;
+        case "lampModal":
+          document.getElementById("lampModal").style.display = "none";
+          break;
+        case "shutterModal":
+          document.getElementById("shutterModal").style.display = "none";
+          break;
+        case "radiatorModal":
+          document.getElementById("radiatorModal").style.display = "none";
       }
     }
 
@@ -1385,18 +1458,30 @@ document.addEventListener(
               if (id[0] == "lamp") {
                 let lamp = getDevice("lamp", id[1]);
                 if (input.checked) {
-                  lamp.status = 1;
-                } else {
                   lamp.status = 0;
+                } else {
+                  lamp.status = 1;
                 }
                 inputLamps.push(lamp);
               } else if (id[0] == "shutter") {
                 let shutter = getDevice("shutter", id[1]);
-                shutter.status = parseInt(input.value);
+                if (parseInt(input.value) > 100) {
+                  shutter.status = 100;
+                } else if (parseInt(input.value) < 0) {
+                  shutter.status = 0;
+                } else {
+                  shutter.status = parseInt(input.value);
+                }
                 inputShutters.push(shutter);
               } else if (id[0] == "radiator") {
                 let radiator = getDevice("radiator", id[1]);
-                radiator.status = parseInt(input.value);
+                if (parseInt(input.value) > 35) {
+                  radiator.status = 35;
+                } else if (parseInt(input.value) < 0) {
+                  radiator.status = 0;
+                } else {
+                  radiator.status = parseInt(input.value);
+                }
                 inputRadiators.push(radiator);
               }
               value = input.value;
@@ -1590,11 +1675,24 @@ document.addEventListener(
           } else
           if (deviceId[0] == "shutter") {
             let currentShutter = getDevice(deviceId[0], deviceId[1]);
-            currentShutter.Status = parseInt(tr.children[0].children[0].value);
+            if (parseInt(tr.children[0].children[0].value) > 100) {
+              currentShutter.Status = 100;
+            } else if (parseInt(tr.children[0].children[0].value) < 0) {
+              currentShutter.Status = 0;
+            } else {
+              currentShutter.Status = parseInt(tr.children[0].children[0].value);
+            }
             updateSceneShutters.push(currentShutter);
           } else if (deviceId[0] == "radiator") {
             let currentRadiator = getDevice(deviceId[0], deviceId[1]);
-            currentRadiator.Status = parseInt(tr.children[0].children[0].value);
+            if (parseInt(tr.children[0].children[0].value) > 35) {
+              currentRadiator.Status = 35;
+            } else if (parseInt(tr.children[0].children[0].value) < 0) {
+              currentRadiator.Status = 0;
+            } else {
+              currentRadiator.Status = parseInt(tr.children[0].children[0].value);
+            }
+
             updateSceneRadiators.push(currentRadiator);
           }
         }
@@ -1633,27 +1731,118 @@ document.addEventListener(
     });
     //Delete Lamp from Lampmodal
     document.getElementById("deleteLampModal").addEventListener("click", function (e) {
-      //TODO
+      let lamp = getDevice("lamp", document.getElementById("lampModalIDHolder").value);
+      ajaxCallsMethod("DELETE", "/api/lamp", JSON.stringify(lamp)).then(
+        function (res) {
+          if (JSON.parse(res.responseText)) {
+            getRoom(roomDOM);
+            hideModal("lampModal");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
     });
     //Change Lamp from Lampmodal
     document.getElementById("saveLampModal").addEventListener("click", function (e) {
-      //TODO
+      let lamp = getDevice("lamp", document.getElementById("lampModalIDHolder").value);
+      lamp.Name = document.getElementById("lampNameInput").value;
+      let status = document.getElementById("lampModalSwitch").checked;
+      if (status) {
+        lamp.Status = 1;
+      } else {
+        lamp.Status = 0;
+      }
+      ajaxCallsMethod("UPDATE", "/api/lamp", JSON.stringify(lamp)).then(
+        function (res) {
+          if (JSON.parse(res.responseText)) {
+            getRoom(roomDOM);
+            hideModal("lampModal");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
     });
     //Delete shutter from shuttermodal
     document.getElementById("deleteShutterModal").addEventListener("click", function (e) {
-      //TODO
+      let shutter = getDevice("shutter", document.getElementById("shutterModalIDHolder").value);
+      ajaxCallsMethod("DELETE", "/api/shutter", JSON.stringify(shutter)).then(
+        function (res) {
+          if (JSON.parse(res.responseText)) {
+            getRoom(roomDOM);
+            hideModal("shutterModal");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
     });
     //Change shutter from shuttermodal
     document.getElementById("saveShutterModal").addEventListener("click", function (e) {
-      //TODO
+      let shutter = getDevice("shutter", document.getElementById("shutterModalIDHolder").value);
+      shutter.Name = document.getElementById("shutterNameInput").value;
+      let status = document.getElementById("shutterNumberInput").value;
+      if (status > 100) {
+        shutter.Status = 100;
+      } else if (status < 0) {
+        shutter.Status = 0;
+      } else {
+        shutter.Status = parseInt(status);
+      }
+      ajaxCallsMethod("UPDATE", "/api/shutter", JSON.stringify(shutter)).then(
+        function (res) {
+          if (JSON.parse(res.responseText)) {
+            getRoom(roomDOM);
+            hideModal("shutterModal");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
     });
     //Delete radiator from radiatormodal
-    document.getElementById("deleteShutterModal").addEventListener("click", function (e) {
-      //TODO
+    document.getElementById("deleteRadiatorModal").addEventListener("click", function (e) {
+      let radiator = getDevice("radiator", document.getElementById("radiatorModalIDHolder").value);
+      ajaxCallsMethod("DELETE", "/api/radiator", JSON.stringify(radiator)).then(
+        function (res) {
+          if (JSON.parse(res.responseText)) {
+            getRoom(roomDOM);
+            hideModal("radiatorModal");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
     });
     //Change radiator from radiatormodal
-    document.getElementById("saveShutterModal").addEventListener("click", function (e) {
-      //TODO
+    document.getElementById("saveRadiatorModal").addEventListener("click", function (e) {
+      let radiator = getDevice("radiator", document.getElementById("radiatorModalIDHolder").value);
+      radiator.Name = document.getElementById("radiatorNameInput").value;
+      let status = document.getElementById("radiatorNumberInput").value;
+      if (status > 35) {
+        radiator.Status = 35;
+      } else if (status < 0) {
+        radiator.Status = 0;
+      } else {
+        radiator.Status = parseInt(status);
+      }
+      ajaxCallsMethod("UPDATE", "/api/radiator", JSON.stringify(radiator)).then(
+        function (res) {
+          if (JSON.parse(res.responseText)) {
+            getRoom(roomDOM);
+            hideModal("radiatorModal");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
     });
   },
   false

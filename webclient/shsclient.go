@@ -153,7 +153,7 @@ func shutterHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		database.Deletescene(shutter.ShutterID)
+		database.Deleteshutter(shutter.ShutterID)
 		response, _ := json.Marshal(true)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)

@@ -245,18 +245,19 @@
         </div>
     </div>
     <div class="modal" id="lampModal">
+        <input type="hidden" id="lampModalIDHolder">
         <span class="closeX">X</span>
-        <h2 class="modalHeading" id="lampName">
+        <h2 class="modalHeading" id="lampNameModal">
             <!-- JS will add a Roomname here -->
         </h2>
         <div class="formConatiner">
             <h3 class="modalHeading">Ändern des Namens:</h3>
             <br>
-            <input class="formElement" type="text" name="lampName">
+            <input class="formElement" type="text" id="lampNameInput" name="lampName">
             <h3 class="modalHeading">Ändern des Status:</h3>
             <br>
             <label class="switch formElement">
-                <input type="checkbox">
+                <input type="checkbox" id="lampModalSwitch">
                 <span class="slider"></span>
             </label>
             <h3 class="modalHeading">Entfernen der Lampe:</h3>
@@ -269,17 +270,18 @@
         </div>
     </div>
     <div class="modal" id="shutterModal">
+        <input type="hidden" id="shutterModalIDHolder">
         <span class="closeX">X</span>
-        <h2 class="modalHeading" id="shutterName">
+        <h2 class="modalHeading" id="shutterNameModal">
             <!-- JS will add a Shuttername here -->
         </h2>
         <div class="formConatiner">
             <h3 class="modalHeading">Ändern des Namens:</h3>
             <br>
-            <input class="formElement" type="text" name="shutterName">
+            <input class="formElement" type="text" id="shutterNameInput" name="shutterName">
             <h3 class="modalHeading">Ändern des Status:</h3>
             <br>
-            <input type="number" class="formElement" min="0" max="100">
+            <input type="number" class="formElement" id="shutterNumberInput" min="0" max="100">
             <h3 class="modalHeading">Entfernen der Rollläden:</h3>
             <br>
             <input type="button" class="formElement" value="entfernen" id="deleteShutterModal">
@@ -290,17 +292,18 @@
         </div>
     </div>
     <div class="modal" id="radiatorModal">
+        <input type="hidden" id="radiatorModalIDHolder">
         <span class="closeX">X</span>
-        <h2 class="modalHeading" id="radiatorName">
+        <h2 class="modalHeading" id="radiatorNameModal">
             <!-- JS will add a Radiatorname here -->
         </h2>
         <div class="formConatiner">
             <h3 class="modalHeading">Ändern des Namens:</h3>
             <br>
-            <input class="formElement" type="text" name="radiatorName">
+            <input class="formElement" type="text" id="radiatorNameInput" name="radiatorNameInput">
             <h3 class="modalHeading">Ändern des Status:</h3>
             <br>
-            <input type="number" class="formElement" min="0" max="35">
+            <input type="number" class="formElement" id="radiatorNumberInput" min="0" max="35">
             <h3 class="modalHeading">Entfernen der Heizung:</h3>
             <br>
             <input type="button" class="formElement" value="entfernen" id="deleteRadiatorModal">
