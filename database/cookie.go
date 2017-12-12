@@ -10,7 +10,6 @@ import (
 
 //CreateCookie creates a unique cookie and return it
 func CreateCookie() (key int) {
-	//TODO make random int check in DB if exists...
 	//Startup a pseudorandom generator and create the first key
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	//Connect to the DB
@@ -56,7 +55,6 @@ func SetCookie(username string, cookie int) {
 
 //DeleteCookieUser deletes all cookies a user has in the DB
 func DeleteCookieUser(username string) {
-	//TODO delete cookies for user
 	//Connect to the DB
 	session := connectDB()
 	defer session.Close()
@@ -71,7 +69,6 @@ func DeleteCookieUser(username string) {
 
 //DeleteCookieCookie deletes a specific cookie
 func DeleteCookieCookie(cookie int) {
-	//TODO delete specific cookie
 	session := connectDB()
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
@@ -85,7 +82,6 @@ func DeleteCookieCookie(cookie int) {
 
 //CheckCookie checks if the cookie is listed for a user and sends back the Userdata
 func CheckCookie(cookie int) (user User) {
-	//TODO check if cookie is valid and send user back
 	session := connectDB()
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
