@@ -744,7 +744,26 @@ document.addEventListener(
         document.getElementById("changeSceneNegOffset").value = currentScene.Negoffset;
         //Append deletable Devices
         let deleteTableFragment = document.createDocumentFragment();
-        for (let i = 0; i < (currentScene.Lamps.length + currentScene.Shutters.length + currentScene.Radiators.length); i++) {
+        //Test Length
+        let lampLength;
+        if(currentScene.Lamps.length == null){
+          lampLength = 0;
+        } else {
+          lampLength = currentScene.Lamps.length;
+        }
+        let shutterLength;
+        if(currentScene.Shutters.length == null){
+          shutterLength = 0;
+        } else {
+          shutterLength = currentScene.Shutters.length;
+        }
+        let radiatorLength;
+        if (currentScene.Radiators.length == null){
+          radiatorLength = 0;
+        } else {
+          radiatorLength = currentScene.Radiators.length;
+        }
+        for (let i = 0; i < (lampLength + shutterLength + radiatorLength); i++) {
           let tr = document.createElement("TR");
           let statusTd = document.createElement("TD");
           let deleteTd = document.createElement("TD");
@@ -756,26 +775,26 @@ document.addEventListener(
           deleteBtn.setAttribute("value", "Entfernen");
           //Status
           let statusInput = document.createElement("INPUT");
-          if (i >= currentScene.Lamps.length + currentScene.Shutters.length) {
+          if (i >= lampLength + shutterLength) {
             //Add radiators
-            deleteBtn.setAttribute("id", "radiator:" + currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].RadiatorID);
+            deleteBtn.setAttribute("id", "radiator:" + currentScene.Radiators[i - (lampLength + shutterLength)].RadiatorID);
             kindTd.textContent = "Heizung";
-            deviceTd.textContent = currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].Name;
+            deviceTd.textContent = currentScene.Radiators[i - (lampLength + shutterLength)].Name;
             statusInput.setAttribute("type", "number");
             statusInput.setAttribute("min", 0);
             statusInput.setAttribute("max", 35);
-            statusInput.setAttribute("value", currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].Status);
-            statusInput.setAttribute("id", "radiator:" + currentScene.Radiators[i - (currentScene.Lamps.length + currentScene.Shutters.length)].RadiatorID);
-          } else if (i >= currentScene.Lamps.length) {
+            statusInput.setAttribute("value", currentScene.Radiators[i - (lampLength + shutterLength)].Status);
+            statusInput.setAttribute("id", "radiator:" + currentScene.Radiators[i - (lampLength + shutterLength)].RadiatorID);
+          } else if (i >= lampLength) {
             //Add Shutter
-            deleteBtn.setAttribute("id", "shutter:" + currentScene.Shutters[i - currentScene.Lamps.length].ShutterID);
+            deleteBtn.setAttribute("id", "shutter:" + currentScene.Shutters[i - lampLength].ShutterID);
             kindTd.textContent = "Rollläden";
-            deviceTd.textContent = currentScene.Shutters[i - currentScene.Lamps.length].Name;
+            deviceTd.textContent = currentScene.Shutters[i - lampLength].Name;
             statusInput.setAttribute("type", "number");
             statusInput.setAttribute("min", 0);
             statusInput.setAttribute("max", 100);
-            statusInput.setAttribute("value", currentScene.Shutters[i - currentScene.Lamps.length].Status);
-            statusInput.setAttribute("id", "shutter:" + currentScene.Shutters[i - currentScene.Lamps.length].ShutterID);
+            statusInput.setAttribute("value", currentScene.Shutters[i - lampLength].Status);
+            statusInput.setAttribute("id", "shutter:" + currentScene.Shutters[i - lampLength].ShutterID);
           } else {
             //Add lamps
             deleteBtn.setAttribute("id", "lamp:" + currentScene.Lamps[i].LampID);
