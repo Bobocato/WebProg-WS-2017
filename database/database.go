@@ -73,13 +73,6 @@ type Scene struct {
 	Radiators []Radiator
 }
 
-//SimulatorControl struct for the DB
-type SimulatorControl struct {
-	CurrentDayTime string
-	FutureDayTime  string
-	Zoom           int
-}
-
 func connectDB() (session *mgo.Session) {
 	//connect to DB
 	session, err := mgo.Dial("localhost:27017")
@@ -112,7 +105,6 @@ func InitDB() {
 	shuttercoll := session.DB("web_prog").C("shutters")
 	radiatorcoll := session.DB("web_prog").C("radiators")
 	scenecoll := session.DB("web_prog").C("scenes")
-	simcoll := session.DB("web_prog").C("simulatorControl")
 
 	if len(collectionNames) == 0 {
 		//MongoDB will create the collections automaticly when used
@@ -125,7 +117,6 @@ func InitDB() {
 		err = shuttercoll.DropCollection()
 		err = radiatorcoll.DropCollection()
 		err = scenecoll.DropCollection()
-		err = simcoll.DropCollection()
 	}
 	//Load Test Data
 	//Userdata {userID, username, password, houseID, lastregister}
@@ -150,9 +141,7 @@ func InitDB() {
 	//Scenedata {sceneID, name, time, sunset, sunrise, posoffset, negoffset, lamps, shutters, entity}
 	err = scenecoll.Insert(
 		&Scene{1, 1, "eveningscene", true, "19:43", false, false, 0, 15, make([]Lamp, 1), make([]Shutter, 1), make([]Radiator, 1)})
-	//SimController Data {CurrentDayTime, FutureDayTime, Zoom}
-	err = simcoll.Insert(
-		&SimulatorControl{"18.11.2017_12:23", "18.11.2018_12:23", 400})
+
 
 	fmt.Println("Finished filling the DB")
 }

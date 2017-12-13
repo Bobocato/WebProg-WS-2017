@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"WebProg/database"
 	"html/template"
 	"net/http"
 )
@@ -28,6 +29,7 @@ func InitSim() {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	//Show simulator page
+	database.InitSimColl()
 	header := header{
 		Title: "Simulator to:Huus",
 	}
