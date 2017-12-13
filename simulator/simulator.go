@@ -2,6 +2,7 @@ package simulator
 
 import (
 	"WebProg/database"
+	"encoding/json"
 	"html/template"
 	"net/http"
 )
@@ -22,7 +23,7 @@ func InitSim() {
 	http.HandleFunc("/startstop", startStopHandler)
 	http.HandleFunc("/timeJump", timeJumpHandler)
 	http.HandleFunc("/zoom", zoomHandler)
-	http.HandleFunc("/simTime", simTime)
+	http.HandleFunc("/simcon", simcon)
 	//Start listening on port 8080
 	http.ListenAndServe(":9090", nil)
 }
@@ -40,24 +41,50 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func startStopHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
+		res := database.ToggleRunning()
+		response, _ := json.Marshal(res)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
 func timeJumpHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
+		decoder := json.NewDecoder(r.Body)
+		var simcon database.SimulatorControl
+		err := decoder.Decode(&simcon)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		res := database.ChangeFutureTime(simcon.FutureSimDayTime)
+		response, _ := json.Marshal(res)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
 func zoomHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-
+		decoder := json.NewDecoder(r.Body)
+		var simcon database.SimulatorControl
+		err := decoder.Decode(&simcon)
+		if err != nil {
+			panic(err)
+		}
+		defer r.Body.Close()
+		res := database.SetZoom(simcon.Zoom)
+		response, _ := json.Marshal(res)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 
-func simTime(w http.ResponseWriter, r *http.Request) {
+func simcon(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-
+		res := database.GetSimCon()
+		response, _ := json.Marshal(res)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }

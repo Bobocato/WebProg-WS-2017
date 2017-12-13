@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000);
 
     /* setInterval(function () {
-        ajaxCallsMethod("GET", "/simTime", "").then(
+        ajaxCallsMethod("GET", "/simcon", "").then(
             function (res) {
                 let time = JSON.parse(res.responseText);
                 let out = formatTime(time);
