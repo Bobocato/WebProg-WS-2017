@@ -10,14 +10,51 @@ import (
 
 //Startscene processes one scene and returns true
 func Startscene(scene Scene) (success bool) {
+	session := connectDB()
+	defer session.Close()
 	for _, lamp := range scene.Lamps {
-		UpdateLamp(lamp)
+		//Check if Lamp with RoomId exits
+		lampcoll := session.DB("web_prog").C("lamps")
+		var dbLamp Lamp
+		err := lampcoll.Find(bson.M{"lampid": lamp.LampID}).One(&dbLamp)
+		if err != nil {
+			//No Lamps
+		} else {
+			//there are lamps
+			if dbLamp.RoomID == lamp.RoomID {
+				UpdateLamp(lamp)
+			}
+		}
 	}
 	for _, shutter := range scene.Shutters {
-		UpdateShutter(shutter)
+		//Check if Shutter with RoomId exits
+		shuttercoll := session.DB("web_prog").C("shutters")
+		var dbShutter Shutter
+		err := shuttercoll.Find(bson.M{"ShutterID": shutter.ShutterID, "RoomID": shutter.RoomID}).One(&dbShutter)
+		if err != nil {
+			//No Shutter
+
+		} else {
+			//there are Shutter
+			if dbShutter.RoomID == shutter.RoomID {
+				UpdateShutter(shutter)
+			}
+		}
 	}
 	for _, radiator := range scene.Radiators {
-		UpdateRadiator(radiator)
+		//Check if radiator with RoomId exits
+		radiatorcoll := session.DB("web_prog").C("radiator")
+		var dbRadiator Radiator
+		err := radiatorcoll.Find(bson.M{"RadiatorID": radiator.RadiatorID, "RoomID": radiator.RoomID}).One(&dbRadiator)
+		if err != nil {
+			//No Radiators
+
+		} else {
+			//there are Radiators
+			if dbRadiator.RoomID == radiator.RoomID {
+				UpdateRadiator(radiator)
+			}
+		}
 	}
 	return true
 }
@@ -253,6 +290,10 @@ func DeleteAllRoom(roomID int) {
 	shuttercoll.RemoveAll(bson.M{"roomid": roomID})
 	radiatorcoll := session.DB("web_prog").C("radiators")
 	radiatorcoll.RemoveAll(bson.M{"roomid": roomID})
+	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll.RemoveAll(bson.M{"lamps.roomid": roomID})
+	scenecoll.RemoveAll(bson.M{"shutters.roomid": roomID})
+	scenecoll.RemoveAll(bson.M{"radiators.roomid": roomID})
 }
 
 //Deleteroom removes a room with the given ID

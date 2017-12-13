@@ -746,19 +746,19 @@ document.addEventListener(
         let deleteTableFragment = document.createDocumentFragment();
         //Test Length
         let lampLength;
-        if(currentScene.Lamps.length == null){
+        if (currentScene.Lamps.length == null) {
           lampLength = 0;
         } else {
           lampLength = currentScene.Lamps.length;
         }
         let shutterLength;
-        if(currentScene.Shutters.length == null){
+        if (currentScene.Shutters.length == null) {
           shutterLength = 0;
         } else {
           shutterLength = currentScene.Shutters.length;
         }
         let radiatorLength;
-        if (currentScene.Radiators.length == null){
+        if (currentScene.Radiators.length == null) {
           radiatorLength = 0;
         } else {
           radiatorLength = currentScene.Radiators.length;
@@ -1604,6 +1604,7 @@ document.addEventListener(
           if (JSON.parse(res.responseText) == true) {
             hideModal("updateRoom");
             getRoom(roomDOM);
+            getScene(sceneDOM);
           }
         },
         function (err) {
@@ -1626,11 +1627,17 @@ document.addEventListener(
         if (tr.tagName == "TR") {
           let deviceId = tr.children[0].children[0].id.split(":");
           if (deviceId[0] == "lamp") {
-            updateRoomLamps.push(getDevice(deviceId[0], deviceId[1]));
+            let updateLamp = getDevice(deviceId[0], deviceId[1]);
+            updateLamp.RoomID = parseInt(id);
+            updateRoomLamps.push(updateLamp);
           } else if (deviceId[0] == "shutter") {
-            updateRoomShutters.push(getDevice(deviceId[0], deviceId[1]));
+            let updateShutter = getDevice(deviceId[0], deviceId[1]);
+            updateShutter.RoomID = parseInt(id)
+            updateRoomShutters.push(updateShutter);
           } else if (deviceId[0] == "radiator") {
-            updateRoomRadiators.push(getDevice(deviceId[0], deviceId[1]));
+            let updateRadiator = getDevice(deviceId[0], deviceId[1]);
+            updateRadiator.RoomID = parseInt(id)
+            updateRoomRadiators.push(updateRadiator);
           }
         }
       });
@@ -1650,6 +1657,7 @@ document.addEventListener(
           if (JSON.parse(res.responseText) == true) {
             hideModal("updateRoom");
             getRoom(roomDOM);
+            getScene(sceneDOM);
           }
         },
         function (err) {
