@@ -57,7 +57,7 @@ func timeJumpHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer r.Body.Close()
-		res := database.ChangeFutureTime(simcon.FutureSimDayTime)
+		res := database.ChangeFutureTime(simcon.FutureSimDayTime, true)
 		response, _ := json.Marshal(res)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)

@@ -11,7 +11,7 @@ type SimulatorControl struct {
 	CurrentSimDayTime     int64
 	FutureSimDayTime      int64
 	FutureTimeDateChanged bool
-	Zoom                  int
+	Zoom                  int64
 	IsRunning             bool
 }
 
@@ -43,11 +43,11 @@ func GetSimCon() SimulatorControl {
 }
 
 //ChangeFutureTime sets the FutureTime
-func ChangeFutureTime(time int64) bool {
+func ChangeFutureTime(time int64, change bool) bool {
 	session := connectDB()
 	defer session.Close()
 	simcoll := session.DB("web_prog").C("simulatorControl")
-	err := simcoll.Update(nil, bson.M{"$set": bson.M{"futuretimedatechanged": true, "futuresimdaytime": time}})
+	err := simcoll.Update(nil, bson.M{"$set": bson.M{"futuretimedatechanged": change, "futuresimdaytime": time}})
 	if err != nil {
 		panic(err)
 	}
@@ -55,7 +55,7 @@ func ChangeFutureTime(time int64) bool {
 }
 
 //SetZoom sets the Zoom in the DB
-func SetZoom(zoom int) bool {
+func SetZoom(zoom int64) bool {
 	session := connectDB()
 	defer session.Close()
 	simcoll := session.DB("web_prog").C("simulatorControl")
@@ -76,4 +76,15 @@ func ToggleRunning() bool {
 	simcon.IsRunning = !simcon.IsRunning
 	_ = simcoll.Update(nil, bson.M{"$set": bson.M{"isrunning": simcon.IsRunning}})
 	return true
+}
+
+//SetSimTime sets the simulatortime
+func SetSimTime(time int64) {
+	session := connectDB()
+	defer session.Close()
+	simcoll := session.DB("web_prog").C("simulatorControl")
+	err := simcoll.Update(nil, bson.M{"$set": bson.M{"currentsimdaytime": time}})
+	if err != nil {
+		panic(err)
+	}
 }
