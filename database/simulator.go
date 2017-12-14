@@ -8,8 +8,8 @@ import (
 
 //SimulatorControl struct for the DB
 type SimulatorControl struct {
-	CurrentSimDayTime     time.Time
-	FutureSimDayTime      time.Time
+	CurrentSimDayTime     int64
+	FutureSimDayTime      int64
 	FutureTimeDateChanged bool
 	Zoom                  int
 	IsRunning             bool
@@ -21,8 +21,8 @@ func InitSimColl() {
 	defer session.Close()
 	simcoll := session.DB("web_prog").C("simulatorControl")
 	simCon := SimulatorControl{
-		CurrentSimDayTime:     time.Now(),
-		FutureSimDayTime:      time.Now(),
+		CurrentSimDayTime:     time.Now().Unix(),
+		FutureSimDayTime:      time.Now().Unix(),
 		FutureTimeDateChanged: false,
 		Zoom:      1,
 		IsRunning: true,
@@ -43,11 +43,11 @@ func GetSimCon() SimulatorControl {
 }
 
 //ChangeFutureTime sets the FutureTime
-func ChangeFutureTime(time time.Time) bool {
+func ChangeFutureTime(time int64) bool {
 	session := connectDB()
 	defer session.Close()
 	simcoll := session.DB("web_prog").C("simulatorControl")
-	err := simcoll.Update(nil, bson.M{"FutureTimeDataChanged": true, "FutureSimDayTime": time})
+	err := simcoll.Update(nil, bson.M{"$set": bson.M{"futuretimedatechanged": true, "futuresimdaytime": time}})
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +59,7 @@ func SetZoom(zoom int) bool {
 	session := connectDB()
 	defer session.Close()
 	simcoll := session.DB("web_prog").C("simulatorControl")
-	err := simcoll.Update(nil, bson.M{"Zoom": zoom})
+	err := simcoll.Update(nil, bson.M{"$set": bson.M{"zoom": zoom}})
 	if err != nil {
 		panic(err)
 	}
@@ -74,6 +74,6 @@ func ToggleRunning() bool {
 	simcon := SimulatorControl{}
 	_ = simcoll.Find(nil).One(&simcon)
 	simcon.IsRunning = !simcon.IsRunning
-	_ = simcoll.Update(nil, bson.M{"IsRunning": simcon.IsRunning})
+	_ = simcoll.Update(nil, bson.M{"$set": bson.M{"isrunning": simcon.IsRunning}})
 	return true
 }

@@ -1,7 +1,6 @@
 var simTime, running, zoom;
 
 document.addEventListener("DOMContentLoaded", function () {
-
     //Helper
     function ajaxCallsMethod(method, path, data) {
         console.log("Send: " + data + " to " + path + " via " + method);
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let sendTimeBtn = document.getElementById("sendTime");
     sendTimeBtn.addEventListener("click", function (e) {
         let datetime = {};
-        datetime.timeStamp = new Date(document.getElementById("timeTravelDate").value).valueOf();
+        datetime.FutureSimDayTime = new Date(document.getElementById("timeTravelDate").value).valueOf() / 1000;
         console.log(datetime);
         ajaxCallsMethod("POST", "/timeJump", JSON.stringify(datetime)).then(
             function (res) {
@@ -59,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let zoomRange = document.getElementById("timeZoom");
     zoomRange.addEventListener("change", function (e) {
         let zoom = {};
-        zoom.zoom = zoomRange.value;
+        zoom.zoom = parseInt(zoomRange.value);
         ajaxCallsMethod("POST", "/zoom", JSON.stringify(zoom)).then(
             function (res) {
                 console.log(res);
@@ -75,25 +74,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setInterval(function () {
         let time = new Date();
-        let out = formatTime(time);
+        let out = formatTime("Realzeit: ", time);
         document.getElementById("realTime").textContent = out;
     }, 1000);
 
-    /* setInterval(function () {
+    setInterval(function () {
         ajaxCallsMethod("GET", "/simcon", "").then(
             function (res) {
-                let time = JSON.parse(res.responseText);
-                let out = formatTime(time);
+                let data = JSON.parse(res.responseText);
+                let time = new Date(data.CurrentSimDayTime * 1000);
+                let out = formatTime("Simulatorzeit: ", time);
                 document.getElementById("simulatorTime").textContent = out;
             },
             function (err) {
 
             }
         );
-    }, 1000); */
+    }, 1000);
 
-    function formatTime(time) {
-        let out = "Realzeit: ";
+    function formatTime(kind, time) {
+        let out = kind;
         if (time.getHours() < 10) {
             out += "0" + time.getHours() + ":";
         } else {
