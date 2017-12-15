@@ -251,7 +251,6 @@ document.addEventListener(
               shutterDiv.setAttribute("id", "shutter:" + shutter.ShutterID);
               shutterDiv.addEventListener("click", function (e) {
                 if (e.target.tagName == "DIV" || e.target.tagName == "H4") {
-                  console.log("SeemsGood");
                   //Get Device 
                   let id;
                   if (e.target.tagName == "H4") {
@@ -294,7 +293,7 @@ document.addEventListener(
                 }
                 ajaxCallsMethod("UPDATE", "/api/shutter", JSON.stringify(newShutter)).then(
                   function (res) {
-                    //console.log(res);
+                    //console.log(res);                
                   },
                   function (err) {
                     console.log(err);
@@ -518,6 +517,12 @@ document.addEventListener(
           document.getElementById("newDeviceModal").style.display = "block";
           //I dont want to reload the Rooms here to save bandwith, i will use the saved ones...
           let roomSelect = document.getElementById("newDeviceRoom");
+          let selectChildren = roomSelect.children;
+          while (selectChildren.length != 0) {
+            roomSelect.firstChild.remove();
+            console.log("Removed");
+          }
+
           let selectRoomsFragment = document.createDocumentFragment();
           rooms.forEach(room => {
             let option = document.createElement("option");
@@ -536,6 +541,11 @@ document.addEventListener(
           //Hide and show Time Field when sunset or sunrise are choosen
           let timeSelect = document.getElementById("newSceneTime");
           let timeInput = document.getElementById("timeDiv");
+          if (timeSelect.value == "time") {
+            timeInput.style.display = "block";
+          } else {
+            timeInput.style.display = "none";
+          }
           timeSelect.addEventListener("change", function () {
             if (timeSelect.value == "time") {
               timeInput.style.display = "block";
@@ -803,7 +813,9 @@ document.addEventListener(
             statusInput.setAttribute("type", "checkbox");
             if (currentScene.Lamps[i].Status == 1) {
               statusInput.checked = true;
+              console.log("HI");
             } else {
+              console.log("IH");
               statusInput.checked = false;
             }
             statusInput.setAttribute("id", "lamp:" + currentScene.Lamps[i].LampID);
@@ -1491,9 +1503,9 @@ document.addEventListener(
               if (id[0] == "lamp") {
                 let lamp = getDevice("lamp", id[1]);
                 if (input.checked) {
-                  lamp.status = 0;
-                } else {
                   lamp.status = 1;
+                } else {
+                  lamp.status = 0;
                 }
                 inputLamps.push(lamp);
               } else if (id[0] == "shutter") {
@@ -1776,6 +1788,7 @@ document.addEventListener(
         function (res) {
           if (JSON.parse(res.responseText)) {
             getRoom(roomDOM);
+            getScene(sceneDOM);
             hideModal("lampModal");
           }
         },
@@ -1798,6 +1811,7 @@ document.addEventListener(
         function (res) {
           if (JSON.parse(res.responseText)) {
             getRoom(roomDOM);
+            getScene(sceneDOM);
             hideModal("lampModal");
           }
         },
@@ -1813,6 +1827,7 @@ document.addEventListener(
         function (res) {
           if (JSON.parse(res.responseText)) {
             getRoom(roomDOM);
+            getScene(sceneDOM);
             hideModal("shutterModal");
           }
         },
@@ -1837,6 +1852,7 @@ document.addEventListener(
         function (res) {
           if (JSON.parse(res.responseText)) {
             getRoom(roomDOM);
+            getScene(sceneDOM);
             hideModal("shutterModal");
           }
         },
@@ -1852,6 +1868,7 @@ document.addEventListener(
         function (res) {
           if (JSON.parse(res.responseText)) {
             getRoom(roomDOM);
+            getScene(sceneDOM);
             hideModal("radiatorModal");
           }
         },
@@ -1876,6 +1893,7 @@ document.addEventListener(
         function (res) {
           if (JSON.parse(res.responseText)) {
             getRoom(roomDOM);
+            getScene(sceneDOM);
             hideModal("radiatorModal");
           }
         },

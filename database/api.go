@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -30,10 +32,10 @@ func Startscene(scene Scene) (success bool) {
 		//Check if Shutter with RoomId exits
 		shuttercoll := session.DB("web_prog").C("shutters")
 		var dbShutter Shutter
-		err := shuttercoll.Find(bson.M{"ShutterID": shutter.ShutterID, "RoomID": shutter.RoomID}).One(&dbShutter)
+		err := shuttercoll.Find(bson.M{"shutterid": shutter.ShutterID, "roomid": shutter.RoomID}).One(&dbShutter)
 		if err != nil {
 			//No Shutter
-
+			//panic(err)
 		} else {
 			//there are Shutter
 			if dbShutter.RoomID == shutter.RoomID {
@@ -43,12 +45,12 @@ func Startscene(scene Scene) (success bool) {
 	}
 	for _, radiator := range scene.Radiators {
 		//Check if radiator with RoomId exits
-		radiatorcoll := session.DB("web_prog").C("radiator")
+		radiatorcoll := session.DB("web_prog").C("radiators")
 		var dbRadiator Radiator
-		err := radiatorcoll.Find(bson.M{"RadiatorID": radiator.RadiatorID, "RoomID": radiator.RoomID}).One(&dbRadiator)
+		err := radiatorcoll.Find(bson.M{"radiatorid": radiator.RadiatorID, "roomid": radiator.RoomID}).One(&dbRadiator)
 		if err != nil {
 			//No Radiators
-
+			panic(err)
 		} else {
 			//there are Radiators
 			if dbRadiator.RoomID == radiator.RoomID {
@@ -254,6 +256,7 @@ func Pushscene(scene Scene) bool {
 	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
 	//When scenes are deleted, there will be a problem with ids beeing used multiple times
+	fmt.Println(scene)
 	result := scene
 	id := 0
 	uniqueID := false
@@ -316,6 +319,21 @@ func Deletelamp(lampID int) {
 	if err != nil {
 
 	}
+	//scenecoll := session.DB("web_prog").C("scenes")
+	//scenecoll.RemoveAll(bson.M{"lamps.lampid": lampID})
+	scenes := Getsences()
+	scenecoll := session.DB("web_prog").C("scenes")
+	for _, scene := range scenes {
+		for _, sceneLamp := range scene.Lamps {
+			if sceneLamp.LampID == lampID {
+				//TODO
+				err := scenecoll.Update(bson.M{"sceneid": scene.SceneID, "lamps.lampid": sceneLamp.LampID}, bson.M{"$pull": bson.M{"lamps.$": nil}})
+				if err != nil {
+					panic(err)
+				}
+			}
+		}
+	}
 }
 
 //Deleteshutter removes a shutter with the given ID
@@ -327,6 +345,8 @@ func Deleteshutter(shutterID int) {
 	if err != nil {
 
 	}
+	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll.RemoveAll(bson.M{"shutters.shutterid": shutterID})
 }
 
 //Deleteradiator removes a radiator with the given ID
@@ -338,6 +358,8 @@ func Deleteradiator(radiatorID int) {
 	if err != nil {
 
 	}
+	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll.RemoveAll(bson.M{"radiators.radiatorid": radiatorID})
 }
 
 //Deletescene removes a scene with the given ID
@@ -360,10 +382,20 @@ func UpdateLamp(lamp Lamp) {
 	session := connectDB()
 	defer session.Close()
 	lampcoll := session.DB("web_prog").C("lamps")
-	err := lampcoll.Remove(bson.M{"lampid": lamp.LampID})
-	err = lampcoll.Insert(lamp)
+	err := lampcoll.Update(bson.M{"lampid": lamp.LampID}, bson.M{"$set": bson.M{"name": lamp.Name, "status": lamp.Status, "roomid": lamp.RoomID}})
+	//err := lampcoll.Remove(bson.M{"lampid": lamp.LampID})
+	//err = lampcoll.Insert(lamp)
 	if err != nil {
 
+	}
+	scenes := Getsences()
+	scenecoll := session.DB("web_prog").C("scenes")
+	for _, scene := range scenes {
+		for _, sceneLamp := range scene.Lamps {
+			if sceneLamp.LampID == lamp.LampID {
+				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "lamps.lampid": sceneLamp.LampID}, bson.M{"$set": bson.M{"lamps.$.name": lamp.Name}})
+			}
+		}
 	}
 }
 
@@ -372,10 +404,20 @@ func UpdateShutter(shutter Shutter) {
 	session := connectDB()
 	defer session.Close()
 	shuttercoll := session.DB("web_prog").C("shutters")
-	err := shuttercoll.Remove(bson.M{"shutterid": shutter.ShutterID})
-	err = shuttercoll.Insert(shutter)
+	err := shuttercoll.Update(bson.M{"shutterid": shutter.ShutterID}, bson.M{"$set": bson.M{"name": shutter.Name, "status": shutter.Status, "roomid": shutter.RoomID}})
+	//err := shuttercoll.Remove(bson.M{"shutterid": shutter.ShutterID})
+	//err = shuttercoll.Insert(shutter)
 	if err != nil {
-
+		panic(err)
+	}
+	scenes := Getsences()
+	scenecoll := session.DB("web_prog").C("scenes")
+	for _, scene := range scenes {
+		for _, sceneShutter := range scene.Shutters {
+			if sceneShutter.ShutterID == shutter.ShutterID {
+				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "shutters.shutterid": sceneShutter.ShutterID}, bson.M{"$set": bson.M{"shutters.$.name": shutter.Name}})
+			}
+		}
 	}
 }
 
@@ -384,10 +426,19 @@ func UpdateRadiator(radiator Radiator) {
 	session := connectDB()
 	defer session.Close()
 	radiatorcoll := session.DB("web_prog").C("radiators")
-	err := radiatorcoll.Remove(bson.M{"radiatorid": radiator.RadiatorID})
-	err = radiatorcoll.Insert(radiator)
+	err := radiatorcoll.Update(bson.M{"radiatorid": radiator.RadiatorID}, bson.M{"$set": bson.M{"name": radiator.Name, "status": radiator.Status, "roomid": radiator.RoomID}})
+	//err := radiatorcoll.Remove(bson.M{"radiatorid": radiator.RadiatorID})
+	//err = radiatorcoll.Insert(radiator)
 	if err != nil {
-
+	}
+	scenes := Getsences()
+	scenecoll := session.DB("web_prog").C("scenes")
+	for _, scene := range scenes {
+		for _, sceneRadiator := range scene.Radiators {
+			if sceneRadiator.RadiatorID == radiator.RadiatorID {
+				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "radiators.radiatorid": sceneRadiator.RadiatorID}, bson.M{"$set": bson.M{"radiators.$.name": radiator.Name}})
+			}
+		}
 	}
 }
 
@@ -396,8 +447,9 @@ func UpdateRoom(room Room) {
 	session := connectDB()
 	defer session.Close()
 	roomcoll := session.DB("web_prog").C("rooms")
-	err := roomcoll.Remove(bson.M{"roomid": room.RoomID})
-	err = roomcoll.Insert(room)
+	err := roomcoll.Update(bson.M{"roomid": room.RoomID}, bson.M{"$set": bson.M{"name": room.Name}})
+	//err := roomcoll.Remove(bson.M{"roomid": room.RoomID})
+	//err = roomcoll.Insert(room)
 	if err != nil {
 
 	}
@@ -409,8 +461,9 @@ func UpdateScene(scene Scene) {
 	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
 	//Delete and reinsert (Update would not work)
-	err := scenecoll.Remove(bson.M{"sceneid": scene.SceneID})
-	err = scenecoll.Insert(scene)
+	err := scenecoll.Update(bson.M{"sceneid": scene.SceneID}, bson.M{"$set": bson.M{"name": scene.Name, "active": scene.Active, "time": scene.Time, "sunset": scene.Sunset, "sunrise": scene.Sunrise, "posoffset": scene.Posoffset, "negoffset": scene.Negoffset, "lamps": scene.Lamps, "shutters": scene.Shutters, "radiators": scene.Radiators}})
+	//err := scenecoll.Remove(bson.M{"sceneid": scene.SceneID})
+	//err = scenecoll.Insert(scene)
 	if err != nil {
 		panic(err)
 	}
