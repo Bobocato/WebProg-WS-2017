@@ -50,7 +50,7 @@ func Startscene(scene Scene) (success bool) {
 		err := radiatorcoll.Find(bson.M{"radiatorid": radiator.RadiatorID, "roomid": radiator.RoomID}).One(&dbRadiator)
 		if err != nil {
 			//No Radiators
-			panic(err)
+			//panic(err)
 		} else {
 			//there are Radiators
 			if dbRadiator.RoomID == radiator.RoomID {
@@ -126,17 +126,27 @@ func Getradiators() []Radiator {
 }
 
 //Getsences gives an slice of all shutter back to the requesting person
-func Getsences() []Scene {
+func Getsences(user User) []Scene {
 	session := connectDB()
 	defer session.Close()
 	scenecoll := session.DB("web_prog").C("scenes")
 	var scene []Scene
-	err := scenecoll.Find(nil).All(&scene)
-	if err != nil {
-		//No scene
+	if user.UserID == -1 {
+		err := scenecoll.Find(nil).All(&scene)
+		if err != nil {
+			//No scene
+		} else {
+			//there are scene
+		}
 	} else {
-		//there are scene
+		err := scenecoll.Find(bson.M{"userid": user.UserID}).All(&scene)
+		if err != nil {
+			//No scene
+		} else {
+			//there are scene
+		}
 	}
+
 	return scene
 }
 
@@ -321,13 +331,17 @@ func Deletelamp(lampID int) {
 	}
 	//scenecoll := session.DB("web_prog").C("scenes")
 	//scenecoll.RemoveAll(bson.M{"lamps.lampid": lampID})
-	scenes := Getsences()
+	user := User{
+		UserID: -1,
+	}
+	scenes := Getsences(user)
 	scenecoll := session.DB("web_prog").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneLamp := range scene.Lamps {
 			if sceneLamp.LampID == lampID {
-				//TODO
-				err := scenecoll.Update(bson.M{"sceneid": scene.SceneID}, bson.M{"$pull": bson.M{"lamps.lampid": lampID}})
+				query := bson.M{"sceneid": scene.SceneID}
+				updater := bson.M{"$pull": bson.M{"lamps": bson.M{"lampid": lampID}}}
+				err := scenecoll.Update(query, updater)
 				if err != nil {
 					panic(err)
 				}
@@ -345,8 +359,25 @@ func Deleteshutter(shutterID int) {
 	if err != nil {
 
 	}
+	//scenecoll := session.DB("web_prog").C("scenes")
+	//scenecoll.RemoveAll(bson.M{"shutters.shutterid": shutterID})
+	user := User{
+		UserID: -1,
+	}
+	scenes := Getsences(user)
 	scenecoll := session.DB("web_prog").C("scenes")
-	scenecoll.RemoveAll(bson.M{"shutters.shutterid": shutterID})
+	for _, scene := range scenes {
+		for _, sceneShutter := range scene.Shutters {
+			if sceneShutter.ShutterID == shutterID {
+				query := bson.M{"sceneid": scene.SceneID}
+				updater := bson.M{"$pull": bson.M{"shutters": bson.M{"shutterid": shutterID}}}
+				err := scenecoll.Update(query, updater)
+				if err != nil {
+					panic(err)
+				}
+			}
+		}
+	}
 }
 
 //Deleteradiator removes a radiator with the given ID
@@ -358,8 +389,25 @@ func Deleteradiator(radiatorID int) {
 	if err != nil {
 
 	}
+	//scenecoll := session.DB("web_prog").C("scenes")
+	//scenecoll.RemoveAll(bson.M{"radiators.radiatorid": radiatorID})
+	user := User{
+		UserID: -1,
+	}
+	scenes := Getsences(user)
 	scenecoll := session.DB("web_prog").C("scenes")
-	scenecoll.RemoveAll(bson.M{"radiators.radiatorid": radiatorID})
+	for _, scene := range scenes {
+		for _, sceneRadiator := range scene.Radiators {
+			if sceneRadiator.RadiatorID == radiatorID {
+				query := bson.M{"sceneid": scene.SceneID}
+				updater := bson.M{"$pull": bson.M{"radiators": bson.M{"radiatorid": radiatorID}}}
+				err := scenecoll.Update(query, updater)
+				if err != nil {
+					panic(err)
+				}
+			}
+		}
+	}
 }
 
 //Deletescene removes a scene with the given ID
@@ -388,7 +436,10 @@ func UpdateLamp(lamp Lamp) {
 	if err != nil {
 
 	}
-	scenes := Getsences()
+	user := User{
+		UserID: -1,
+	}
+	scenes := Getsences(user)
 	scenecoll := session.DB("web_prog").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneLamp := range scene.Lamps {
@@ -410,7 +461,10 @@ func UpdateShutter(shutter Shutter) {
 	if err != nil {
 		panic(err)
 	}
-	scenes := Getsences()
+	user := User{
+		UserID: -1,
+	}
+	scenes := Getsences(user)
 	scenecoll := session.DB("web_prog").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneShutter := range scene.Shutters {
@@ -431,7 +485,10 @@ func UpdateRadiator(radiator Radiator) {
 	//err = radiatorcoll.Insert(radiator)
 	if err != nil {
 	}
-	scenes := Getsences()
+	user := User{
+		UserID: -1,
+	}
+	scenes := Getsences(user)
 	scenecoll := session.DB("web_prog").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneRadiator := range scene.Radiators {

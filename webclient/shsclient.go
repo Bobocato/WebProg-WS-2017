@@ -220,7 +220,8 @@ func sceneHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 	} else if r.Method == "GET" {
-		scenes := database.Getsences()
+		user := cookieLogin(r)
+		scenes := database.Getsences(user)
 		response, _ := json.Marshal(scenes)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
