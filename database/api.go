@@ -327,7 +327,7 @@ func Deletelamp(lampID int) {
 		for _, sceneLamp := range scene.Lamps {
 			if sceneLamp.LampID == lampID {
 				//TODO
-				err := scenecoll.Update(bson.M{"sceneid": scene.SceneID, "lamps.lampid": sceneLamp.LampID}, bson.M{"$pull": bson.M{"lamps.$": nil}})
+				err := scenecoll.Update(bson.M{"sceneid": scene.SceneID}, bson.M{"$pull": bson.M{"lamps.lampid": lampID}})
 				if err != nil {
 					panic(err)
 				}

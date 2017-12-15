@@ -287,7 +287,7 @@ document.addEventListener(
                 if (parseInt(evt.target.value) > 100) {
                   newShutter.Status = 100;
                 } else if (parseInt(evt.target.value) < 0) {
-                  newShutter.Status = 0
+                  newShutter.Status = 0;
                 } else {
                   newShutter.Status = parseInt(evt.target.value);
                 }
@@ -1644,11 +1644,11 @@ document.addEventListener(
             updateRoomLamps.push(updateLamp);
           } else if (deviceId[0] == "shutter") {
             let updateShutter = getDevice(deviceId[0], deviceId[1]);
-            updateShutter.RoomID = parseInt(id)
+            updateShutter.RoomID = parseInt(id);
             updateRoomShutters.push(updateShutter);
           } else if (deviceId[0] == "radiator") {
             let updateRadiator = getDevice(deviceId[0], deviceId[1]);
-            updateRadiator.RoomID = parseInt(id)
+            updateRadiator.RoomID = parseInt(id);
             updateRoomRadiators.push(updateRadiator);
           }
         }
