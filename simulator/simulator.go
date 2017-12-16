@@ -37,6 +37,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.ParseFiles("../simulator/html/header.html", "../simulator/html/sim.html"))
 	t.ExecuteTemplate(w, "header", header)
 	t.ExecuteTemplate(w, "simulator", nil)
+	StartTicker()
 }
 
 func startStopHandler(w http.ResponseWriter, r *http.Request) {

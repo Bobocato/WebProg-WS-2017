@@ -11,6 +11,8 @@ type SimulatorControl struct {
 	CurrentSimDayTime     int64
 	FutureSimDayTime      int64
 	FutureTimeDateChanged bool
+	SunsetTimestamp       int64
+	SunriseTimestamp      int64
 	Zoom                  int64
 	IsRunning             bool
 }
@@ -84,6 +86,17 @@ func SetSimTime(time int64) {
 	defer session.Close()
 	simcoll := session.DB("web_prog").C("simulatorControl")
 	err := simcoll.Update(nil, bson.M{"$set": bson.M{"currentsimdaytime": time}})
+	if err != nil {
+		panic(err)
+	}
+}
+
+//SetSunTimes sets sunset and sunrise
+func SetSunTimes(sunset int64, sunrise int64) {
+	session := connectDB()
+	defer session.Close()
+	simcoll := session.DB("web_prog").C("simulatorControl")
+	err := simcoll.Update(nil, bson.M{"$set": bson.M{"sunsettimestamp": sunset, "sunrisetimestamp": sunrise}})
 	if err != nil {
 		panic(err)
 	}
