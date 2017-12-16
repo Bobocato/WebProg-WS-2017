@@ -2,6 +2,7 @@ package simulator
 
 import (
 	"WebProg/database"
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -19,6 +20,17 @@ var outerTick = 1000
 var innerTime = time.Now().Unix()
 var zoomFactor int64 = 1
 
+type sceneOffset struct {
+	sceneID int
+	offset  int
+}
+
+var user = database.User{
+	UserID: -1,
+}
+
+var offsets []sceneOffset
+
 func simFunc() {
 
 	for _ = range ticker.C {
@@ -35,7 +47,7 @@ func simFunc() {
 				futYear, futMonth, futDay := time.Unix(innerTime, 0).Date()
 				futureDayBeg := time.Date(futYear, futMonth, futDay, 0, 0, 0, 0, time.Unix(innerTime, 0).Location()).Unix()
 				//Set all scenes status from 00:00 o Clock
-				scenes := database.Getsences()
+				scenes := database.Getsences(user)
 				for _, scene := range scenes {
 					database.Startscene(scene)
 				}
@@ -57,7 +69,20 @@ func simFunc() {
 			currentDayBeg := time.Date(year, month, day, 0, 0, 0, 0, time.Unix(innerTime, 0).Location()).Unix()
 			//Check if a scene has to be set
 			//Get Scenes
-			scenes := database.Getsences()
+			scenes := database.Getsences(user)
+			//Check is offsets have to be calculated
+			if innerTime < currentDayBeg+zoomFactor {
+				for _, scene := range scenes {
+					fmt.Println("Calculate offsets")
+					//Use pos or neg offset
+					offsets[len(offsets)].sceneID = scene.SceneID
+					if rand.Intn(1) == 0 {
+						offsets[len(offsets)].offset = rand.Intn(scene.Posoffset)
+					} else {
+						offsets[len(offsets)].offset = rand.Intn(scene.Negoffset)
+					}
+				}
+			}
 			for _, scene := range scenes {
 				//TODO add sunset and sunrise feature
 				//TODO add Pos and Neg Offset
@@ -112,6 +137,18 @@ func simFunc() {
 //StartTicker starts the simulation
 func StartTicker() {
 	ticker = time.NewTicker(time.Millisecond * time.Duration(outerTick))
+	//Get Scenes
+	scenes := database.Getsences(user)
+	for _, scene := range scenes {
+		fmt.Println("Calculate offsets")
+		//Use pos or neg offset
+		offsets[len(offsets)].sceneID = scene.SceneID
+		if rand.Intn(1) == 0 {
+			offsets[len(offsets)].offset = rand.Intn(scene.Posoffset)
+		} else {
+			offsets[len(offsets)].offset = rand.Intn(scene.Negoffset)
+		}
+	}
 
 	go simFunc()
 
