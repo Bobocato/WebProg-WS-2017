@@ -467,7 +467,7 @@ func UpdateLamp(lamp Lamp) {
 	for _, scene := range scenes {
 		for _, sceneLamp := range scene.Lamps {
 			if sceneLamp.LampID == lamp.LampID {
-				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "lamps.lampid": sceneLamp.LampID}, bson.M{"$set": bson.M{"lamps.$.name": lamp.Name}})
+				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "lamps.lampid": sceneLamp.LampID}, bson.M{"$set": bson.M{"lamps.$.name": lamp.Name, "lamps.$.roomid": lamp.RoomID}})
 			}
 		}
 	}
@@ -493,7 +493,7 @@ func UpdateShutter(shutter Shutter) {
 	for _, scene := range scenes {
 		for _, sceneShutter := range scene.Shutters {
 			if sceneShutter.ShutterID == shutter.ShutterID {
-				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "shutters.shutterid": sceneShutter.ShutterID}, bson.M{"$set": bson.M{"shutters.$.name": shutter.Name}})
+				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "shutters.shutterid": sceneShutter.ShutterID}, bson.M{"$set": bson.M{"shutters.$.name": shutter.Name, "shutter.$.roomid": shutter.RoomID}})
 			}
 		}
 	}
@@ -518,7 +518,7 @@ func UpdateRadiator(radiator Radiator) {
 	for _, scene := range scenes {
 		for _, sceneRadiator := range scene.Radiators {
 			if sceneRadiator.RadiatorID == radiator.RadiatorID {
-				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "radiators.radiatorid": sceneRadiator.RadiatorID}, bson.M{"$set": bson.M{"radiators.$.name": radiator.Name}})
+				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "radiators.radiatorid": sceneRadiator.RadiatorID}, bson.M{"$set": bson.M{"radiators.$.name": radiator.Name, "radiators.$.roomid": radiator.RoomID}})
 			}
 		}
 	}

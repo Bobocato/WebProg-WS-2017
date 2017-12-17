@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     let getXml = document.getElementById("getXMLDB");
     let postXml = document.getElementById("postXMLDB");
+
     let startStopBtn = document.getElementById("startStopBtn");
     startStopBtn.addEventListener("click", function (e) {
         let startStopObj = {};

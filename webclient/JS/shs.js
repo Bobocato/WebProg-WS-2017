@@ -63,7 +63,7 @@ document.addEventListener(
     //----Ajax Calls with Callbacks----
     //---------------------------------
     function ajaxCallsGet(path) {
-      console.log("Send: GET Request to " + path);
+      //console.log("Send: GET Request to " + path);
       return new Promise(function (resolve, reject) {
         let xhr = new XMLHttpRequest();
         xhr.addEventListener("load", function () {
@@ -522,6 +522,8 @@ document.addEventListener(
             roomSelect.firstChild.remove();
             console.log("Removed");
           }
+          document.getElementById("newDeviceName").value = "";
+          document.getElementById("newDeviceKind").value = "lamp";
 
           let selectRoomsFragment = document.createDocumentFragment();
           rooms.forEach(room => {
@@ -1207,7 +1209,7 @@ document.addEventListener(
             //Add lamps
             deleteBtn.setAttribute("id", "lamp:" + roomLamps[i].LampID);
             kindTd.textContent = "Lampe";
-            deviceTd.textContent = lamps[i].Name;
+            deviceTd.textContent = roomLamps[i].Name;
           }
           //--------------------------
           //--- Add Button listener---

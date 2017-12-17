@@ -177,7 +177,7 @@ func XMLtoDB(db DBXML) {
 	for _, room := range db.Rooms {
 		roomcoll.Insert(room)
 	}
-	for _, lamp := range db.Rooms {
+	for _, lamp := range db.Lamps {
 		lampcoll.Insert(lamp)
 	}
 	for _, shutter := range db.Shutters {

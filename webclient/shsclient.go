@@ -329,18 +329,21 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 			RoomID: upRoom.RoomId,
 			Name:   upRoom.Name,
 		}
-		database.DeleteAllRoom(room.RoomID)
+		database.DeleteAllRoom(upRoom.RoomId)
 		database.Pushroom(room)
 		//Change Lamps
 		for _, lamp := range upRoom.Lamps {
+			database.Deletelamp(lamp.LampID)
 			database.Pushlamp(lamp)
 		}
 		//Change Shutter
 		for _, shutter := range upRoom.Shutters {
+			database.Deleteshutter(shutter.ShutterID)
 			database.Pushshutter(shutter)
 		}
 		//Change Radiators
 		for _, radiator := range upRoom.Radiators {
+			database.Deleteradiator(radiator.RadiatorID)
 			database.Pushradiator(radiator)
 		}
 		response, _ := json.Marshal(true)
