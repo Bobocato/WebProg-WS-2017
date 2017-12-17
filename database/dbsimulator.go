@@ -1,6 +1,9 @@
 package database
 
 import (
+	"encoding/xml"
+	"io"
+	"os"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -19,14 +22,13 @@ type SimulatorControl struct {
 
 //DBXML struct
 type DBXML struct {
-	Users     []User             `xml:"users"`
-	Houses    []House            `xml:"houses"`
-	Rooms     []Room             `xml:"rooms"`
-	Scenes    []Scene            `xml:"scenes"`
-	Lamps     []Lamp             `xml:"lamps"`
-	Radiators []Radiator         `xml:"radiators"`
-	Shutters  []Shutter          `xml:"shutters"`
-	Simulator []SimulatorControl `xml:"simulator"`
+	Users     []User           `xml:"users"`
+	Rooms     []Room           `xml:"rooms"`
+	Scenes    []Scene          `xml:"scenes"`
+	Lamps     []Lamp           `xml:"lamps"`
+	Radiators []Radiator       `xml:"radiators"`
+	Shutters  []Shutter        `xml:"shutters"`
+	Simulator SimulatorControl `xml:"simulator"`
 }
 
 //InitSimColl removes old simcollections and pastes a new "empty" one
@@ -46,7 +48,7 @@ func InitSimColl() {
 	simcoll.Insert(simCon)
 }
 
-//GetSimCon returns the current time of the simulation
+//GetSimCon returns the current db entry for the simulation
 func GetSimCon() SimulatorControl {
 	session := connectDB()
 	defer session.Close()
@@ -115,15 +117,78 @@ func SetSunTimes(sunset int64, sunrise int64) {
 }
 
 //DBinXML returns a link to the xml db file
-func DBinXML(link string) {
+func DBinXML() (link string) {
+	session := connectDB()
+	defer session.Close()
+
+	file, _ := os.Create("../simulator/XML/db.xml")
+	xmlWriter := io.Writer(file)
+	tempUser := User{
+		UserID: -1,
+	}
+	xmldb := DBXML{
+		Users:     getUser(),
+		Rooms:     Getrooms(),
+		Scenes:    Getsences(tempUser),
+		Lamps:     Getlamps(),
+		Radiators: Getradiators(),
+		Shutters:  Getshutter(),
+		Simulator: GetSimCon(),
+	}
+	enc := xml.NewEncoder(xmlWriter)
+	enc.Indent("  ", "    ")
+	_, err := xmlWriter.Write([]byte(xml.Header))
+	//err := enc.Encode(xml.Header)
+	err = enc.Encode(xmldb)
+	//xmldb = []byte(xml.Header + string(xmldb))
+	if err != nil {
+		panic(err)
+	}
+
+	return "http://localhost:9090/XML/db.xml"
+
+}
+
+//XMLtoDB overrides the DB with a DBXML struct
+func XMLtoDB(db DBXML) {
 	session := connectDB()
 	defer session.Close()
 	usercoll := session.DB("web_prog").C("users")
-	housecoll := session.DB("web_prog").C("houses")
 	roomcoll := session.DB("web_prog").C("rooms")
 	lampcoll := session.DB("web_prog").C("lamps")
 	shuttercoll := session.DB("web_prog").C("shutters")
 	radiatorcoll := session.DB("web_prog").C("radiators")
 	scenecoll := session.DB("web_prog").C("scenes")
+	simcoll := session.DB("web_prog").C("simulatorControl")
+
+	//Drop the collections before loading the new Data
+	_ = usercoll.DropCollection()
+	_ = roomcoll.DropCollection()
+	_ = lampcoll.DropCollection()
+	_ = shuttercoll.DropCollection()
+	_ = radiatorcoll.DropCollection()
+	_ = scenecoll.DropCollection()
+	_ = simcoll.DropCollection()
+
+	//Post the Data in the collectioon
+	for _, user := range db.Users {
+		usercoll.Insert(user)
+	}
+	for _, room := range db.Rooms {
+		roomcoll.Insert(room)
+	}
+	for _, lamp := range db.Rooms {
+		lampcoll.Insert(lamp)
+	}
+	for _, shutter := range db.Shutters {
+		shuttercoll.Insert(shutter)
+	}
+	for _, radiator := range db.Radiators {
+		radiatorcoll.Insert(radiator)
+	}
+	for _, scene := range db.Scenes {
+		scenecoll.Insert(scene)
+	}
+	simcoll.Insert(db.Simulator)
 
 }

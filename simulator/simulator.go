@@ -3,12 +3,17 @@ package simulator
 import (
 	"WebProg/database"
 	"encoding/json"
+	"encoding/xml"
 	"html/template"
 	"net/http"
 )
 
 type header struct {
 	Title string
+}
+
+type link struct {
+	Address string
 }
 
 //InitSim initializes the simulater UI
@@ -32,9 +37,24 @@ func InitSim() {
 
 func databasexml(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
+		//Send link to db
+		link := link{
+			Address: database.DBinXML(),
+		}
+		response, _ := json.Marshal(link)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 
 	} else if r.Method == "POST" {
-
+		var dbData database.DBXML
+		xmldecoder := xml.NewDecoder(r.Body)
+		xmldecoder.Decode(&dbData)
+		defer r.Body.Close()
+		//fmt.Println(dbData)
+		database.XMLtoDB(dbData)
+		response, _ := json.Marshal(true)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
 	}
 }
 

@@ -21,12 +21,6 @@ type User struct {
 	Cookie       []int
 }
 
-//House struct for the DB
-type House struct {
-	HouseID int
-	Name    string
-}
-
 //Room struct for the DB in a real world this would have a houseID
 type Room struct {
 	RoomID int
@@ -99,7 +93,6 @@ func InitDB() {
 		//chill
 	}
 	usercoll := session.DB("web_prog").C("users")
-	housecoll := session.DB("web_prog").C("houses")
 	roomcoll := session.DB("web_prog").C("rooms")
 	lampcoll := session.DB("web_prog").C("lamps")
 	shuttercoll := session.DB("web_prog").C("shutters")
@@ -111,7 +104,6 @@ func InitDB() {
 	} else {
 		//Drop the collections before instanting them
 		err = usercoll.DropCollection()
-		err = housecoll.DropCollection()
 		err = roomcoll.DropCollection()
 		err = lampcoll.DropCollection()
 		err = shuttercoll.DropCollection()
@@ -123,9 +115,6 @@ func InitDB() {
 	err = usercoll.Insert(
 		&User{1, "jesse", "password", 1, time.Now(), make([]int, 1)},
 		&User{2, "test", "test", 1, time.Now(), make([]int, 1)})
-	//Housedata {houseID, name}
-	err = housecoll.Insert(
-		&House{1, "myHouse"})
 	//Roomdata {roomID, name}
 	err = roomcoll.Insert(
 		&Room{1, "bedroom"})
@@ -141,7 +130,6 @@ func InitDB() {
 	//Scenedata {sceneID, name, time, sunset, sunrise, posoffset, negoffset, lamps, shutters, entity}
 	err = scenecoll.Insert(
 		&Scene{1, 1, "eveningscene", true, "19:43", false, false, 0, 15, make([]Lamp, 1), make([]Shutter, 1), make([]Radiator, 1)})
-
 
 	fmt.Println("Finished filling the DB")
 }

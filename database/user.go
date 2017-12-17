@@ -101,3 +101,11 @@ func DeleteUser(cookieID int) {
 	usercoll := session.DB("web_prog").C("users")
 	usercoll.Remove(bson.M{"userid": user.UserID})
 }
+
+func getUser() (users []User) {
+	session := connectDB()
+	defer session.Close()
+	usercoll := session.DB("web_prog").C("users")
+	usercoll.Find(nil).All(&users)
+	return users
+}

@@ -18,16 +18,21 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
+    let getXml = document.getElementById("getXMLDB");
+    let postXml = document.getElementById("postXMLDB");
     let startStopBtn = document.getElementById("startStopBtn");
     startStopBtn.addEventListener("click", function (e) {
         let startStopObj = {};
         if (startStopBtn.value == "Stoppen") {
             startStopBtn.value = "Starten";
+            getXml.disabled = false;
+            postXml.disabled = false;
             startStopObj.kind = "stop";
         } else {
             startStopBtn.value = "Stoppen";
             startStopObj.kind = "start";
+            getXml.disabled = true;
+            postXml.disabled = true;
         }
 
         ajaxCallsMethod("POST", "/startstop", JSON.stringify(startStopObj)).then(
@@ -38,6 +43,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log(err);
             }
         );
+    });
+
+    getXml.addEventListener("click", function (e) {
+        ajaxCallsMethod("GET", "/xmldb", "").then(
+            function (res) {
+                let url = JSON.parse(res.responseText).Address;
+                window.open(url);
+            },
+            function (err) {
+                console.log(err);
+            }
+        );
+    });
+
+    postXml.addEventListener("change", function (e) {
+        let file = postXml.files[0];
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (event) {
+            ajaxCallsMethod("POST", "/xmldb", event.target.result);
+            postXml.value = "";
+        };
     });
 
     let sendTimeBtn = document.getElementById("sendTime");
