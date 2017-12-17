@@ -26,11 +26,13 @@ document.addEventListener("DOMContentLoaded", function () {
         let startStopObj = {};
         if (startStopBtn.value == "Stoppen") {
             startStopBtn.value = "Starten";
+            startStopBtn.disabled = true;
             getXml.disabled = false;
             postXml.disabled = false;
             startStopObj.kind = "stop";
         } else {
             startStopBtn.value = "Stoppen";
+            startStopBtn.disabled = true;
             startStopObj.kind = "start";
             getXml.disabled = true;
             postXml.disabled = true;
@@ -39,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
         ajaxCallsMethod("POST", "/startstop", JSON.stringify(startStopObj)).then(
             function (res) {
                 console.log(res);
+                startStopBtn.disabled = false;
+
             },
             function (err) {
                 console.log(err);
