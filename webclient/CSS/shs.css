@@ -58,16 +58,6 @@ body {
   height: 15%;
 }
 
-
-/**
-.deleteRoom {
-  float: right;
-  position: relative;
-  top: 0;
-  right: 0;
-}
-**/
-
 .lamp {
   width: 33%;
   height: 33%;
@@ -148,7 +138,7 @@ body {
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: space-between;
-  word-break: break-all;
+  word-break: initial;
 }
 
 .sceneLeft {
@@ -188,7 +178,6 @@ body {
   margin: 0;
   margin-bottom: 2%;
   width: 75%;
-  word-break: break-all;
 }
 
 @media screen and (min-width: 1350px) {
@@ -387,4 +376,90 @@ input:checked+.slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
+}
+
+
+/** Responsiveness **/
+
+@media screen and (max-width: 680px) {
+  h2 {
+    font-size: 1em;
+  }
+  p {
+    font-size: 0.75em;
+    margin: 0;
+  }
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  .room {
+    width: 90%;
+  }
+  .rooms {
+    width: 100%;
+    height: 50%;
+  }
+  .lamp {
+    height: 65%;
+  }
+  .shutter {
+    height: 65%;
+  }
+  .radiator {
+    height: 65%;
+  }
+  .sidebar {
+    width: 100%;
+    height: 20%;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .simulatorData {
+    width: 33.333%;
+    height: 50%;
+  }
+  .newRoom {
+    width: 33.333%;
+    height: 50%;
+  }
+  .newDevice {
+    width: 33.333%;
+    height: 50%;
+  }
+  .newScene {
+    width: 33.333%;
+    height: 50%;
+  }
+  .settings {
+    width: 33.333%;
+    height: 50%;
+  }
+  .logout {
+    width: 33.333%;
+    height: 50%;
+  }
+  .scenes {
+    width: 100%;
+    height: 30%;
+  }
+  .scene {
+    height: 60%;
+  }
+  .sceneLeft {
+    width: 20%;
+  }
+  .sceneMiddle {
+    width: 60%;
+  }
+  .sceneTime {
+    margin: 0;
+    width: 100%;
+  }
+  .sceneRight {
+    width: 20%;
+  }
 }

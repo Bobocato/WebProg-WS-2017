@@ -1920,7 +1920,7 @@ document.addEventListener(
       );
     }, 5000);
 
-
+    //Update the time on the side!
     setInterval(function () {
       ajaxCallsGet("/api/sim").then(
         function (res) {

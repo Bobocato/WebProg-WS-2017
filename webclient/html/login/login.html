@@ -1,36 +1,27 @@
 {{define "login"}}
-<div class="col-3">
-</div>
-<div class="col-6">
+
+<div class="outerDiv">
     <h1>Wilkommen auf to:huus</h1>
-</div>
-<div class="col-3"></div>
-<div class="col-4"></div>
-
-<div class="col-4" id="container">
-    <div class="login">
-        <form id="login-form" method="POST">
-            <label for="username_login">Nutzername:</label>
-            <br/>
-            <input type="text" name="username_login" id="username_login" placeholder="Nutzername" required>
-            <br/>
-            <label for="password_login">Passwort:</label>
-            <br/>
-            <input type="password" name="password_login" id="password_login" pattern="[A-Za-z0-9]{3,}" placeholder="Passwort" required>
-            <br/>
-            <input type="submit" name="submit_login" id="submit_login" value="Anmelden">
-        </form>
-        <a href="/register">Noch nicht registriert? Kilck hier!</a>
+    <div class="container">
+        <div class="login">
+            <br>
+            <form id="login-form" method="POST">
+                <label for="username_login">Nutzername:</label>
+                <br/>
+                <input type="text" name="username_login" id="username_login" placeholder="Nutzername" required>
+                <br/>
+                <label for="password_login">Passwort:</label>
+                <br/>
+                <input type="password" name="password_login" id="password_login" pattern="[A-Za-z0-9]{3,}" placeholder="Passwort" required>
+                <br/>
+                <input type="submit" name="submit_login" id="submit_login" value="Anmelden">
+            </form>
+            <a href="/register">Noch nicht registriert? Kilck hier!</a>
+            <br>
+            <br>
+        </div>
     </div>
-
-</div>
-<div class="col-4"></div>
-
-<div class="col-3">
-</div>
-<div class="col-6">
-    <h1 id="wronguser">Es gibt keinen User mit diesen Anmeldedaten</h1>
+    <h1 id="wronguser">Es gibt keinen User mit diesen Anmeldedaten!</h1>
     <h1 id="nouser">Bitte logge dich zuerst ein!</h1>
 </div>
-<div class="col-3"></div>
 {{end}}
