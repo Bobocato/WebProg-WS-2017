@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"time"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -58,6 +59,7 @@ func Startscene(scene Scene) (success bool) {
 			}
 		}
 	}
+	UpdateTime()
 	return true
 }
 
@@ -150,6 +152,16 @@ func Getsences(user User) []Scene {
 	return scene
 }
 
+//Gettimestamp returns the timestamp that is storde in the db
+func Gettimestamp() DatabaseChanged {
+	session := connectDB()
+	defer session.Close()
+	timecoll := session.DB("web_prog").C("timestamp")
+	var time DatabaseChanged
+	timecoll.Find(nil).One(&time)
+	return time
+}
+
 //-----------------------------------------------------
 //----Functions for inserting database collections-----
 //-----------------------------------------------------
@@ -174,6 +186,7 @@ func Pushroom(room Room) bool {
 	}
 	room.RoomID = id
 	err := roomcoll.Insert(room)
+	UpdateTime()
 	success := false
 	if err != nil {
 	} else {
@@ -202,6 +215,7 @@ func Pushlamp(lamp Lamp) bool {
 	}
 	lamp.LampID = id
 	err := lampcoll.Insert(lamp)
+	UpdateTime()
 	if err != nil {
 		return false
 	}
@@ -228,6 +242,7 @@ func Pushshutter(shutter Shutter) bool {
 	}
 	shutter.ShutterID = id
 	err := shuttercoll.Insert(shutter)
+	UpdateTime()
 	if err != nil {
 		return false
 	}
@@ -254,6 +269,7 @@ func Pushradiator(radiator Radiator) bool {
 	}
 	radiator.RadiatorID = id
 	err := radiatorcoll.Insert(radiator)
+	UpdateTime()
 	if err != nil {
 		return false
 	}
@@ -281,9 +297,11 @@ func Pushscene(scene Scene) bool {
 	}
 	scene.SceneID = id
 	err := scenecoll.Insert(scene)
+	UpdateTime()
 	if err != nil {
 		return false
 	}
+
 	return true
 }
 
@@ -307,6 +325,7 @@ func DeleteAllRoom(roomID int) {
 	scenecoll.RemoveAll(bson.M{"lamps.roomid": roomID})
 	scenecoll.RemoveAll(bson.M{"shutters.roomid": roomID})
 	scenecoll.RemoveAll(bson.M{"radiators.roomid": roomID})
+	UpdateTime()
 }
 
 //Deleteroom removes a room with the given ID
@@ -318,6 +337,7 @@ func Deleteroom(roomID int) {
 	if err != nil {
 
 	}
+	UpdateTime()
 }
 
 //Deletelamp removes a lamp with the given ID
@@ -348,6 +368,7 @@ func Deletelamp(lampID int) {
 			}
 		}
 	}
+	UpdateTime()
 }
 
 //Deleteshutter removes a shutter with the given ID
@@ -378,6 +399,7 @@ func Deleteshutter(shutterID int) {
 			}
 		}
 	}
+	UpdateTime()
 }
 
 //Deleteradiator removes a radiator with the given ID
@@ -408,6 +430,7 @@ func Deleteradiator(radiatorID int) {
 			}
 		}
 	}
+	UpdateTime()
 }
 
 //Deletescene removes a scene with the given ID
@@ -417,8 +440,8 @@ func Deletescene(sceneID int) {
 	scenecoll := session.DB("web_prog").C("scenes")
 	err := scenecoll.Remove(bson.M{"sceneid": sceneID})
 	if err != nil {
-
 	}
+	UpdateTime()
 }
 
 //---------------------------------------------------
@@ -448,6 +471,7 @@ func UpdateLamp(lamp Lamp) {
 			}
 		}
 	}
+	UpdateTime()
 }
 
 //UpdateShutter changes the shutter in the Database to the new one
@@ -473,6 +497,7 @@ func UpdateShutter(shutter Shutter) {
 			}
 		}
 	}
+	UpdateTime()
 }
 
 //UpdateRadiator changes the radiator in the Database to the new one
@@ -497,6 +522,7 @@ func UpdateRadiator(radiator Radiator) {
 			}
 		}
 	}
+	UpdateTime()
 }
 
 //UpdateRoom changes the room in the Database to the new one
@@ -508,8 +534,8 @@ func UpdateRoom(room Room) {
 	//err := roomcoll.Remove(bson.M{"roomid": room.RoomID})
 	//err = roomcoll.Insert(room)
 	if err != nil {
-
 	}
+	UpdateTime()
 }
 
 //UpdateScene changes the scene in the Database to the new one
@@ -524,4 +550,14 @@ func UpdateScene(scene Scene) {
 	if err != nil {
 		panic(err)
 	}
+	UpdateTime()
+}
+
+//UpdateTime sets the time in the db to a new one
+func UpdateTime() {
+	session := connectDB()
+	defer session.Close()
+	timestamp := time.Now().Unix()
+	timecoll := session.DB("web_prog").C("timestamp")
+	timecoll.Upsert(nil, bson.M{"$set": bson.M{"timestamp": timestamp}})
 }

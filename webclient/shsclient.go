@@ -45,6 +45,7 @@ func InitWS() {
 	http.HandleFunc("/api/room", roomHandler)
 	http.HandleFunc("/api/settings", settingsHandler)
 	http.HandleFunc("/api/sim", simHandler)
+	http.HandleFunc("/api/time", timeHandler)
 	//Start listening on port 8080
 	http.ListenAndServe(":8080", nil)
 }
@@ -52,6 +53,15 @@ func InitWS() {
 //--------------------------------
 //----------Ajax Handler----------
 //--------------------------------
+
+func timeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		res := database.Gettimestamp()
+		response, _ := json.Marshal(res)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	}
+}
 
 func simHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {

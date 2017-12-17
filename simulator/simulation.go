@@ -115,7 +115,6 @@ func simFunc() {
 							}
 						}
 					})
-					fmt.Println(scenes)
 					//Start all scenes once, to get the status after one full day
 					for _, scene := range scenes {
 						if scene.Active {
@@ -124,19 +123,14 @@ func simFunc() {
 					}
 
 					for _, scene := range scenes {
-						fmt.Println(scene)
 						//Set all scenes till the choosen point in time
 						if scene.Active {
 							if scene.Sunrise {
 								if innerTime > sunrise {
-									fmt.Println(sunrise)
-									fmt.Println(innerTime)
-									fmt.Println("Sunrise after time")
 									database.Startscene(scene)
 								}
 							} else if scene.Sunset {
 								if innerTime > sunset {
-									fmt.Println("Sunset after time")
 									database.Startscene(scene)
 								}
 							} else {
@@ -151,7 +145,6 @@ func simFunc() {
 								setTimeInt[1] = setTimeInt[1] * 60
 								sceneTimeInSec := setTimeInt[0] + setTimeInt[1] + futureDayBeg
 								if sceneTimeInSec < innerTime {
-									fmt.Println("Time after time")
 									database.Startscene(scene)
 								}
 							}

@@ -1,6 +1,6 @@
 //Global Scope
 //These variables can be used globally and will be used to save Ajax requests
-var rooms, lamps, shutters, radiators, scenes, user;
+var rooms, lamps, shutters, radiators, scenes, user, jsTimestamp;
 
 //Start page when DOM is loaded
 document.addEventListener(
@@ -1905,8 +1905,20 @@ document.addEventListener(
 
     //Update the room/devices with a set rythm, a websocket would be better!
     setInterval(function () {
-      getRoom(roomDOM);
-    }, 10000);
+      ajaxCallsGet("/api/time").then(
+        function (res) {
+
+          let time = JSON.parse(res.responseText).Timestamp
+          if (time != jsTimestamp) {
+            jsTimestamp = time;
+            getRoom(roomDOM);
+          }
+        },
+        function (err) {
+
+        }
+      );
+    }, 5000);
 
 
     setInterval(function () {

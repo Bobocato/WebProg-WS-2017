@@ -67,6 +67,11 @@ type Scene struct {
 	Radiators []Radiator
 }
 
+//DatabaseChanged storing a timestamp for db changes
+type DatabaseChanged struct {
+	Timestamp int64
+}
+
 func connectDB() (session *mgo.Session) {
 	//connect to DB
 	session, err := mgo.Dial("localhost:27017")
