@@ -35,6 +35,8 @@ var user = database.User{
 }
 
 var offsets []sceneOffset
+var h, m, s = time.Now().Clock()
+var checkSecond = h + m + s
 
 var ortTzoneDat sunrisesunset.Parameters
 var sunset int64
@@ -43,110 +45,188 @@ var sunrise int64
 func simFunc() {
 
 	for _ = range ticker.C {
-		simCon := database.GetSimCon()
-		if simCon.IsRunning {
-			//Set zoomFaktor
-			zoomFactor = simCon.Zoom
-			//Set Timestamp to new Value
-			innerTime += zoomFactor
-			//Get current Day at 00:00 o Clock for Reference!
-			year, month, day := time.Unix(innerTime, 0).Date()
-			currentDayBeg := time.Date(year, month, day, 0, 0, 0, 0, time.Unix(innerTime, 0).Location()).Unix()
-			//Check if futuretime was set
-			if simCon.FutureTimeDateChanged {
-				fmt.Println("TO THE FUTURE")
-				innerTime = simCon.FutureSimDayTime
+		h, m, s = time.Now().Clock()
+		if checkSecond != h+m+s {
+			checkSecond = h + m + s
+			simCon := database.GetSimCon()
+			if simCon.IsRunning {
+				//Set zoomFaktor
+				zoomFactor = simCon.Zoom
+				//Set Timestamp to new Value
+				innerTime += zoomFactor
 				//Get current Day at 00:00 o Clock for Reference!
-				futYear, futMonth, futDay := time.Unix(innerTime, 0).Date()
-				futureDayBeg := time.Date(futYear, futMonth, futDay, 0, 0, 0, 0, time.Unix(innerTime, 0).Location()).Unix()
+				year, month, day := time.Unix(innerTime, 0).Date()
+				currentDayBeg := time.Date(year, month, day, 0, 0, 0, 0, time.Unix(innerTime, 0).Location()).Unix()
+				//Check if futuretime was set
+				if simCon.FutureTimeDateChanged {
+					fmt.Println("TO THE FUTURE")
+					innerTime = simCon.FutureSimDayTime
+					//Get current Day at 00:00 o Clock for Reference!
+					futYear, futMonth, futDay := time.Unix(innerTime, 0).Date()
+					futureDayBeg := time.Date(futYear, futMonth, futDay, 0, 0, 0, 0, time.Unix(innerTime, 0).Location()).Unix()
+					//Get Scenes
+					scenes := database.Getsences(user)
+					//Get suntimes
+					ortTzoneDat.Date = time.Unix(innerTime, 0)
+					sr, ss, _ := ortTzoneDat.GetSunriseSunset()
+					sunrise = time.Date(futYear, futMonth, futDay, sr.Hour(), sr.Minute(), sr.Second(), 0, time.Unix(innerTime, 0).Location()).Unix()
+					sunset = time.Date(futYear, futMonth, futDay, ss.Hour(), ss.Minute(), ss.Second(), 0, time.Unix(innerTime, 0).Location()).Unix()
+					//Sort over time !!!NOT WORKING!!! there needs sunset and sunrise need to be looked at
+					sort.Slice(scenes, func(i, j int) bool {
+						if scenes[i].Sunrise {
+							if scenes[j].Sunrise {
+								return true
+							} else if scenes[j].Sunset {
+								return false
+							} else {
+								temp := time.Unix(sunrise, 0).Hour()
+								tempTimeStr := strings.Split(scenes[j].Time, ":")
+								tempTime, _ := strconv.ParseInt(tempTimeStr[0], 10, 64)
+								return int64(temp) < tempTime
+							}
+						} else if scenes[i].Sunset {
+							if scenes[j].Sunrise {
+								return false
+							} else if scenes[j].Sunset {
+								return true
+							} else {
+								temp := time.Unix(sunset, 0).Hour()
+								tempTimeStr := strings.Split(scenes[j].Time, ":")
+								tempTime, _ := strconv.ParseInt(tempTimeStr[0], 10, 64)
+								return int64(temp) < tempTime
+							}
+						} else {
+							if scenes[j].Sunrise {
+								temp := time.Unix(sunrise, 0).Hour()
+								tempTimeStr := strings.Split(scenes[j].Time, ":")
+								tempTime, _ := strconv.ParseInt(tempTimeStr[0], 10, 64)
+								return tempTime < int64(temp)
+							} else if scenes[j].Sunset {
+								temp := time.Unix(sunset, 0).Hour()
+								tempTimeStr := strings.Split(scenes[j].Time, ":")
+								tempTime, _ := strconv.ParseInt(tempTimeStr[0], 10, 64)
+								return tempTime < int64(temp)
+							} else {
+								tempTimeStr0 := strings.Split(scenes[i].Time, ":")
+								tempTime0, _ := strconv.ParseInt(tempTimeStr0[0], 10, 64)
+								tempTimeStr := strings.Split(scenes[j].Time, ":")
+								tempTime, _ := strconv.ParseInt(tempTimeStr[0], 10, 64)
+								return tempTime < tempTime0
+							}
+						}
+					})
+					fmt.Println(scenes)
+					//Start all scenes once, to get the status after one full day
+					for _, scene := range scenes {
+						if scene.Active {
+							database.Startscene(scene)
+						}
+					}
+
+					for _, scene := range scenes {
+						fmt.Println(scene)
+						//Set all scenes till the choosen point in time
+						if scene.Active {
+							if scene.Sunrise {
+								if innerTime > sunrise {
+									fmt.Println(sunrise)
+									fmt.Println(innerTime)
+									fmt.Println("Sunrise after time")
+									database.Startscene(scene)
+								}
+							} else if scene.Sunset {
+								if innerTime > sunset {
+									fmt.Println("Sunset after time")
+									database.Startscene(scene)
+								}
+							} else {
+								//Get time in seconds
+								setTimeStr := strings.Split(scene.Time, ":")
+								time1, _ := strconv.ParseInt(setTimeStr[0], 10, 64)
+								time2, _ := strconv.ParseInt(setTimeStr[1], 10, 64)
+								var setTimeInt = []int64{}
+								setTimeInt = append(setTimeInt, time1)
+								setTimeInt = append(setTimeInt, time2)
+								setTimeInt[0] = setTimeInt[0] * 60 * 60
+								setTimeInt[1] = setTimeInt[1] * 60
+								sceneTimeInSec := setTimeInt[0] + setTimeInt[1] + futureDayBeg
+								if sceneTimeInSec < innerTime {
+									fmt.Println("Time after time")
+									database.Startscene(scene)
+								}
+							}
+						}
+					}
+					//Set FutureTimeDateChanged to false
+					database.ChangeFutureTime(innerTime, false)
+				}
+				//Check if a scene has to be set
 				//Get Scenes
 				scenes := database.Getsences(user)
-				//Sort over time
-				sort.Slice(scenes, func(i, j int) bool {
-					return scenes[i].Time < scenes[j].Time
-				})
-				//Start all scenes once, to get the status afetr onw full day
+				//Check is offsets have to be calculated
+				//Check if a new Day has begon
+				if innerTime < currentDayBeg+zoomFactor {
+					fmt.Println("New Day")
+					//Offsets
+					offsets = offsets[:0]
+					calculateOffsets(scenes)
+					//Sunset and sunrise
+					fmt.Println("Calculate Suntimes")
+					ortTzoneDat.Date = time.Unix(innerTime, 0)
+					sr, ss, _ := ortTzoneDat.GetSunriseSunset()
+					sunrise = time.Date(year, month, day, sr.Hour(), sr.Minute(), sr.Second(), 0, time.Unix(innerTime, 0).Location()).Unix()
+					sunset = time.Date(year, month, day, ss.Hour(), ss.Minute(), ss.Second(), 0, time.Unix(innerTime, 0).Location()).Unix()
+				}
+				//Start scenes when there time has come
 				for _, scene := range scenes {
-					database.Startscene(scene)
-				}
-				//Set all scenes to the choosen point in time
-				hour, min, _ := time.Unix(simCon.FutureSimDayTime, 0).Clock()
-				timeInSeconds := (hour * 60 * 60) + (min * 60)
-				sceneTimeInSeconds := int64(timeInSeconds)
-				for _, scene := range scenes {
-					if innerTime > futureDayBeg+sceneTimeInSeconds {
-						database.Startscene(scene)
+					if scene.Active {
+						var currentOffset sceneOffset
+						for _, ele := range offsets {
+							if ele.sceneID == scene.SceneID {
+								currentOffset = ele
+								break
+							}
+						}
+						//TODO add sunset and sunrise feature
+						if scene.Sunrise {
+							if int64(math.Abs(float64(innerTime-sunrise+int64(currentOffset.offset)))) <= zoomFactor {
+								fmt.Println("SunriseScene started")
+								database.Startscene(scene)
+							}
+						} else if scene.Sunset {
+							if int64(math.Abs(float64(innerTime-sunset+int64(currentOffset.offset)))) <= zoomFactor {
+								fmt.Println("SunsetScene started")
+								database.Startscene(scene)
+							}
+						} else {
+							//Get time in seconds
+							setTimeStr := strings.Split(scene.Time, ":")
+							time1, _ := strconv.ParseInt(setTimeStr[0], 10, 64)
+							time2, _ := strconv.ParseInt(setTimeStr[1], 10, 64)
+							var setTimeInt = []int64{}
+							setTimeInt = append(setTimeInt, time1)
+							setTimeInt = append(setTimeInt, time2)
+							setTimeInt[0] = setTimeInt[0] * 60 * 60
+							setTimeInt[1] = setTimeInt[1] * 60
+							sceneTimeInSec := setTimeInt[0] + setTimeInt[1] + int64(currentOffset.offset)
+							//Check if scene schould be executed
+							if int64(math.Abs(float64(innerTime-(currentDayBeg+sceneTimeInSec)))) <= zoomFactor {
+								fmt.Println("TimeScene started")
+								database.Startscene(scene)
+							}
+						}
 					}
 				}
-				//Set FutureTimeDateChanged to false
-				database.ChangeFutureTime(innerTime, false)
+				database.SetSimTime(innerTime)
+				database.SetSunTimes(sunset, sunrise)
 			}
-			//Check if a scene has to be set
-			//Get Scenes
-			scenes := database.Getsences(user)
-			//Check is offsets have to be calculated
-			//Check if a new Day has begon
-			if innerTime < currentDayBeg+zoomFactor {
-				fmt.Println("New Day")
-				//Offsets
-				offsets = offsets[:0]
-				calculateOffsets(scenes)
-				//Sunset and sunrise
-				sr, ss, _ := ortTzoneDat.GetSunriseSunset()
-				sunrise = sr.Unix()
-				sunset = ss.Unix()
-			}
-			//Start scenes when there time has come
-			for _, scene := range scenes {
-				var currentOffset sceneOffset
-				for _, ele := range offsets {
-					if ele.sceneID == scene.SceneID {
-						currentOffset = ele
-						break
-					}
-				}
-				//TODO add sunset and sunrise feature
-				if scene.Sunrise {
-					if innerTime-sunrise <= zoomFactor {
-						fmt.Println("Scene started")
-						database.Startscene(scene)
-					}
-				} else if scene.Sunset {
-					if innerTime-sunset <= zoomFactor {
-						fmt.Println("Scene started")
-						database.Startscene(scene)
-					}
-				} else {
-					//Get time in seconds
-					setTimeStr := strings.Split(scene.Time, ":")
-					time1, _ := strconv.ParseInt(setTimeStr[0], 10, 64)
-					time2, _ := strconv.ParseInt(setTimeStr[1], 10, 64)
-					var setTimeInt = []int64{}
-					setTimeInt = append(setTimeInt, time1)
-					setTimeInt = append(setTimeInt, time2)
-					setTimeInt[0] = setTimeInt[0] * 60 * 60
-					setTimeInt[1] = setTimeInt[1] * 60
-					sceneTimeInSec := setTimeInt[0] + setTimeInt[1] + int64(currentOffset.offset)
-					//Check if scene schould be executed
-					if int64(math.Abs(float64(innerTime-(currentDayBeg+sceneTimeInSec)))) <= zoomFactor {
-						fmt.Print("InnerTime: ")
-						fmt.Println(innerTime)
-						fmt.Print("SceneTime: ")
-						fmt.Println(currentDayBeg + sceneTimeInSec)
-						fmt.Println("Scene started")
-						database.Startscene(scene)
-					}
-				}
-			}
-			database.SetSimTime(innerTime)
-			database.SetSunTimes(sunset, sunrise)
 		}
 	}
 }
 
 //StartTicker starts the simulation
 func StartTicker() {
-	ticker = time.NewTicker(time.Millisecond * time.Duration(outerTick))
+	ticker = time.NewTicker(time.Duration(outerTick) * time.Millisecond)
 	//Get Scenes
 	scenes := database.Getsences(user)
 	//Offsets
@@ -163,8 +243,9 @@ func StartTicker() {
 	}
 	//Sunset and sunrise
 	sr, ss, _ := ortTzoneDat.GetSunriseSunset()
-	sunrise = sr.Unix()
-	sunset = ss.Unix()
+	year, month, day := time.Unix(innerTime, 0).Date()
+	sunrise = time.Date(year, month, day, sr.Hour(), sr.Minute(), sr.Second(), 0, time.Unix(innerTime, 0).Location()).Unix()
+	sunset = time.Date(year, month, day, ss.Hour(), ss.Minute(), ss.Second(), 0, time.Unix(innerTime, 0).Location()).Unix()
 	go simFunc()
 
 }
@@ -178,9 +259,13 @@ func calculateOffsets(scenes []database.Scene) {
 				sceneID: scene.SceneID,
 			}
 			if rand.Intn(1) == 0 {
-				currentSceneOffset.offset = rand.Intn(scene.Posoffset)
+				if scene.Posoffset != 0 {
+					currentSceneOffset.offset = rand.Intn(scene.Posoffset)
+				}
 			} else {
-				currentSceneOffset.offset = rand.Intn(scene.Negoffset) * (-1)
+				if scene.Negoffset != 0 {
+					currentSceneOffset.offset = rand.Intn(scene.Negoffset) * (-1)
+				}
 			}
 			offsets = append(offsets, currentSceneOffset)
 		}

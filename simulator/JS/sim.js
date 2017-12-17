@@ -110,7 +110,9 @@ document.addEventListener("DOMContentLoaded", function () {
             out += time.getDate() + ".";
         }
         if (time.getMonth() < 10) {
-            out += "0" + time.getMonth() + 1 + ".";
+            out += "0";
+            out += time.getMonth() + 1;
+            out += ".";
         } else {
             out += time.getMonth() + 1 + ".";
         }

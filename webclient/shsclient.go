@@ -44,6 +44,7 @@ func InitWS() {
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/room", roomHandler)
 	http.HandleFunc("/api/settings", settingsHandler)
+	http.HandleFunc("/api/sim", simHandler)
 	//Start listening on port 8080
 	http.ListenAndServe(":8080", nil)
 }
@@ -51,6 +52,16 @@ func InitWS() {
 //--------------------------------
 //----------Ajax Handler----------
 //--------------------------------
+
+func simHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		res := database.GetSimCon()
+		response, _ := json.Marshal(res)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+	}
+}
+
 func settingsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" {
 		for _, cookie := range r.Cookies() {

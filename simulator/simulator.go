@@ -16,6 +16,7 @@ func InitSim() {
 	//Create a fileserver and uplaod the CSS and JS files. These will be loaded through the templates.
 	http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../simulator/CSS"))))
 	http.Handle("/JS/", http.StripPrefix("/JS/", http.FileServer(http.Dir("../simulator/JS"))))
+	http.Handle("/XML/", http.StripPrefix("/XML/", http.FileServer(http.Dir("../simulator/XML"))))
 	//http.Handle("/ICON/", http.StripPrefix("/ICON/", http.FileServer(http.Dir("../simulator/ICON"))))
 	//Hanlde diffrent pages.
 	http.HandleFunc("/", handler)
@@ -24,8 +25,17 @@ func InitSim() {
 	http.HandleFunc("/timeJump", timeJumpHandler)
 	http.HandleFunc("/zoom", zoomHandler)
 	http.HandleFunc("/simcon", simcon)
+	http.HandleFunc("/xmldb", databasexml)
 	//Start listening on port 8080
 	http.ListenAndServe(":9090", nil)
+}
+
+func databasexml(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+
+	} else if r.Method == "POST" {
+
+	}
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

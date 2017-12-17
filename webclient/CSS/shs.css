@@ -217,32 +217,32 @@ body {
 
 .simulatorData {
   width: 100%;
-  height: 12%;
+  height: 20%;
   background-color: #ff83f9;
 }
 
 .settings {
   width: 100%;
-  height: 20%;
+  height: 18%;
   background-color: pink;
 }
 
 .newDevice {
   width: 100%;
-  height: 20%;
+  height: 18%;
   background-color: lightpink;
 }
 
 .newRoom {
   width: 100%;
-  height: 20%;
+  height: 18%;
   background-color: plum;
   text-align: center;
 }
 
 .newScene {
   width: 100%;
-  height: 20%;
+  height: 18%;
   background-color: lightcoral;
 }
 

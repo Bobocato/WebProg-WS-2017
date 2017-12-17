@@ -17,6 +17,18 @@ type SimulatorControl struct {
 	IsRunning             bool
 }
 
+//DBXML struct
+type DBXML struct {
+	Users     []User             `xml:"users"`
+	Houses    []House            `xml:"houses"`
+	Rooms     []Room             `xml:"rooms"`
+	Scenes    []Scene            `xml:"scenes"`
+	Lamps     []Lamp             `xml:"lamps"`
+	Radiators []Radiator         `xml:"radiators"`
+	Shutters  []Shutter          `xml:"shutters"`
+	Simulator []SimulatorControl `xml:"simulator"`
+}
+
 //InitSimColl removes old simcollections and pastes a new "empty" one
 func InitSimColl() {
 	session := connectDB()
@@ -100,4 +112,18 @@ func SetSunTimes(sunset int64, sunrise int64) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+//DBinXML returns a link to the xml db file
+func DBinXML(link string) {
+	session := connectDB()
+	defer session.Close()
+	usercoll := session.DB("web_prog").C("users")
+	housecoll := session.DB("web_prog").C("houses")
+	roomcoll := session.DB("web_prog").C("rooms")
+	lampcoll := session.DB("web_prog").C("lamps")
+	shuttercoll := session.DB("web_prog").C("shutters")
+	radiatorcoll := session.DB("web_prog").C("radiators")
+	scenecoll := session.DB("web_prog").C("scenes")
+
 }

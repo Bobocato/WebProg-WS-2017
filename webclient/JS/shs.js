@@ -1902,6 +1902,77 @@ document.addEventListener(
         }
       );
     });
+
+    //Update the room/devices with a set rythm, a websocket would be better!
+    setInterval(function () {
+      getRoom(roomDOM);
+    }, 10000);
+
+
+    setInterval(function () {
+      ajaxCallsGet("/api/sim").then(
+        function (res) {
+          let data = JSON.parse(res.responseText);
+          let time = new Date(data.CurrentSimDayTime * 1000);
+          let sunsetTime = new Date(data.SunsetTimestamp * 1000);
+          let sunriseTime = new Date(data.SunriseTimestamp * 1000);
+          timeOut = formatTime(time);
+          sunriseOut = formatSunTime("Aufgang: ", sunriseTime);
+          sunsetOut = formatSunTime("Untergang: ", sunsetTime);
+          document.getElementById("simDateTime").textContent = timeOut;
+          document.getElementById("simSunrise").textContent = sunriseOut;
+          document.getElementById("simSunset").textContent = sunsetOut;
+        },
+        function (err) {
+
+        }
+      );
+    }, 1000);
+
+    function formatTime(time) {
+      let out = "";
+      if (time.getHours() < 10) {
+        out += "0" + time.getHours() + ":";
+      } else {
+        out += time.getHours() + ":";
+      }
+      if (time.getMinutes() < 10) {
+        out += "0" + time.getMinutes() + " Uhr am ";
+      } else {
+        out += time.getMinutes() + " Uhr am ";
+      }
+      if (time.getDate() < 10) {
+        out += "0" + time.getDate() + ".";
+      } else {
+        out += time.getDate() + ".";
+      }
+      if (time.getMonth() < 10) {
+        out += "0";
+        out += time.getMonth() + 1;
+        out += ".";
+      } else {
+        out += time.getMonth() + 1 + ".";
+      }
+      out += time.getFullYear() + "";
+      return out;
+    }
+
+    function formatSunTime(kind, time) {
+      let out = kind;
+      if (time.getHours() < 10) {
+        out += "0" + time.getHours() + ":";
+      } else {
+        out += time.getHours() + ":";
+      }
+      if (time.getMinutes() < 10) {
+        out += "0" + time.getMinutes() + " Uhr";
+      } else {
+        out += time.getMinutes() + " Uhr";
+      }
+      return out;
+    }
+
+
   },
   false
 );
