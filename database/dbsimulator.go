@@ -35,7 +35,7 @@ type DBXML struct {
 func InitSimColl() {
 	session := connectDB()
 	defer session.Close()
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 	simCon := SimulatorControl{
 		CurrentSimDayTime:     time.Now().Unix(),
 		FutureSimDayTime:      time.Now().Unix(),
@@ -52,7 +52,7 @@ func InitSimColl() {
 func GetSimCon() SimulatorControl {
 	session := connectDB()
 	defer session.Close()
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 	simcon := SimulatorControl{}
 	_ = simcoll.Find(nil).One(&simcon)
 	return simcon
@@ -62,7 +62,7 @@ func GetSimCon() SimulatorControl {
 func ChangeFutureTime(time int64, change bool) bool {
 	session := connectDB()
 	defer session.Close()
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 	err := simcoll.Update(nil, bson.M{"$set": bson.M{"futuretimedatechanged": change, "futuresimdaytime": time}})
 	if err != nil {
 		panic(err)
@@ -74,7 +74,7 @@ func ChangeFutureTime(time int64, change bool) bool {
 func SetZoom(zoom int64) bool {
 	session := connectDB()
 	defer session.Close()
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 	err := simcoll.Update(nil, bson.M{"$set": bson.M{"zoom": zoom}})
 	if err != nil {
 		panic(err)
@@ -86,7 +86,7 @@ func SetZoom(zoom int64) bool {
 func ToggleRunning() bool {
 	session := connectDB()
 	defer session.Close()
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 	simcon := SimulatorControl{}
 	_ = simcoll.Find(nil).One(&simcon)
 	simcon.IsRunning = !simcon.IsRunning
@@ -98,7 +98,7 @@ func ToggleRunning() bool {
 func SetSimTime(time int64) {
 	session := connectDB()
 	defer session.Close()
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 	err := simcoll.Update(nil, bson.M{"$set": bson.M{"currentsimdaytime": time}})
 	if err != nil {
 		panic(err)
@@ -109,7 +109,7 @@ func SetSimTime(time int64) {
 func SetSunTimes(sunset int64, sunrise int64) {
 	session := connectDB()
 	defer session.Close()
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 	err := simcoll.Update(nil, bson.M{"$set": bson.M{"sunsettimestamp": sunset, "sunrisetimestamp": sunrise}})
 	if err != nil {
 		panic(err)
@@ -153,13 +153,13 @@ func DBinXML() (link string) {
 func XMLtoDB(db DBXML) {
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
-	roomcoll := session.DB("web_prog").C("rooms")
-	lampcoll := session.DB("web_prog").C("lamps")
-	shuttercoll := session.DB("web_prog").C("shutters")
-	radiatorcoll := session.DB("web_prog").C("radiators")
-	scenecoll := session.DB("web_prog").C("scenes")
-	simcoll := session.DB("web_prog").C("simulatorControl")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
+	roomcoll := session.DB("HA17DB_jesse_arff_590245").C("rooms")
+	lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
+	shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
+	radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
+	simcoll := session.DB("HA17DB_jesse_arff_590245").C("simulatorControl")
 
 	//Drop the collections before loading the new Data
 	_ = usercoll.DropCollection()

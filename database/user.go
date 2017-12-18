@@ -12,7 +12,7 @@ func LoginUser(username string, password string) (user User) {
 	//connect to DB
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	user = User{
 		UserID:       -1,
 		Username:     "nil",
@@ -41,7 +41,7 @@ func RegisterUser(username string, password string) (newUser User) {
 	//connect to DB
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	newUser = User{
 		UserID:       -1,
 		Username:     "nil",
@@ -98,14 +98,14 @@ func DeleteUser(cookieID int) {
 	session := connectDB()
 	defer session.Close()
 	user := CheckCookie(cookieID)
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	usercoll.Remove(bson.M{"userid": user.UserID})
 }
 
 func getUser() (users []User) {
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	usercoll.Find(nil).All(&users)
 	return users
 }

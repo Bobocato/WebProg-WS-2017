@@ -74,7 +74,7 @@ type DatabaseChanged struct {
 
 func connectDB() (session *mgo.Session) {
 	//connect to DB
-	session, err := mgo.Dial("localhost:27017")
+	session, err := mgo.Dial("localhost:4242")
 	if err != nil {
 		//defer will be called but function will be stopped
 		panic(err)
@@ -92,17 +92,17 @@ func InitDB() {
 	//connect to DB
 	session := connectDB()
 	//Check if DB is empty
-	maindb := session.DB("web_prog")
+	maindb := session.DB("HA17DB_jesse_arff_590245")
 	collectionNames, err := maindb.CollectionNames()
 	if err != nil {
 		//chill
 	}
-	usercoll := session.DB("web_prog").C("users")
-	roomcoll := session.DB("web_prog").C("rooms")
-	lampcoll := session.DB("web_prog").C("lamps")
-	shuttercoll := session.DB("web_prog").C("shutters")
-	radiatorcoll := session.DB("web_prog").C("radiators")
-	scenecoll := session.DB("web_prog").C("scenes")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
+	roomcoll := session.DB("HA17DB_jesse_arff_590245").C("rooms")
+	lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
+	shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
+	radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 
 	if len(collectionNames) == 0 {
 		//MongoDB will create the collections automaticly when used

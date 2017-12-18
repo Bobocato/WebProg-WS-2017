@@ -15,7 +15,7 @@ func CreateCookie() (key int) {
 	//Connect to the DB
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	result := User{}
 	//Loop until unused int is found
 	uniqueCookie := false
@@ -39,7 +39,7 @@ func SetCookie(username string, cookie int) {
 	//Connect to the DB
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	colQuerier := bson.M{"username": username}
 	//Get the current cookies
 	Result := User{}
@@ -58,7 +58,7 @@ func DeleteCookieUser(username string) {
 	//Connect to the DB
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	colQuerier := bson.M{"username": username}
 	change := bson.M{"$set": bson.M{"cookie": make([]int, 0)}}
 	err := usercoll.Update(colQuerier, change)
@@ -71,7 +71,7 @@ func DeleteCookieUser(username string) {
 func DeleteCookieCookie(cookie int) {
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	colQuerier := bson.M{"cookie": cookie}
 	change := bson.M{"$set": bson.M{"cookie": make([]int, 0)}}
 	err := usercoll.Update(colQuerier, change)
@@ -84,7 +84,7 @@ func DeleteCookieCookie(cookie int) {
 func CheckCookie(cookie int) (user User) {
 	session := connectDB()
 	defer session.Close()
-	usercoll := session.DB("web_prog").C("users")
+	usercoll := session.DB("HA17DB_jesse_arff_590245").C("users")
 	result := User{
 		UserID:       -1,
 		Username:     "nil",

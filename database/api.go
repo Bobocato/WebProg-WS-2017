@@ -17,7 +17,7 @@ func Startscene(scene Scene) (success bool) {
 	defer session.Close()
 	for _, lamp := range scene.Lamps {
 		//Check if Lamp with RoomId exits
-		lampcoll := session.DB("web_prog").C("lamps")
+		lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
 		var dbLamp Lamp
 		err := lampcoll.Find(bson.M{"lampid": lamp.LampID}).One(&dbLamp)
 		if err != nil {
@@ -31,7 +31,7 @@ func Startscene(scene Scene) (success bool) {
 	}
 	for _, shutter := range scene.Shutters {
 		//Check if Shutter with RoomId exits
-		shuttercoll := session.DB("web_prog").C("shutters")
+		shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
 		var dbShutter Shutter
 		err := shuttercoll.Find(bson.M{"shutterid": shutter.ShutterID, "roomid": shutter.RoomID}).One(&dbShutter)
 		if err != nil {
@@ -46,7 +46,7 @@ func Startscene(scene Scene) (success bool) {
 	}
 	for _, radiator := range scene.Radiators {
 		//Check if radiator with RoomId exits
-		radiatorcoll := session.DB("web_prog").C("radiators")
+		radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
 		var dbRadiator Radiator
 		err := radiatorcoll.Find(bson.M{"radiatorid": radiator.RadiatorID, "roomid": radiator.RoomID}).One(&dbRadiator)
 		if err != nil {
@@ -71,7 +71,7 @@ func Startscene(scene Scene) (success bool) {
 func Getrooms() []Room {
 	session := connectDB()
 	defer session.Close()
-	roomcoll := session.DB("web_prog").C("rooms")
+	roomcoll := session.DB("HA17DB_jesse_arff_590245").C("rooms")
 	var rooms []Room
 	err := roomcoll.Find(nil).All(&rooms)
 	if err != nil {
@@ -86,7 +86,7 @@ func Getrooms() []Room {
 func Getlamps() []Lamp {
 	session := connectDB()
 	defer session.Close()
-	lampcoll := session.DB("web_prog").C("lamps")
+	lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
 	var lamps []Lamp
 	err := lampcoll.Find(nil).All(&lamps)
 	if err != nil {
@@ -101,7 +101,7 @@ func Getlamps() []Lamp {
 func Getshutter() []Shutter {
 	session := connectDB()
 	defer session.Close()
-	shuttercoll := session.DB("web_prog").C("shutters")
+	shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
 	var shutter []Shutter
 	err := shuttercoll.Find(nil).All(&shutter)
 	if err != nil {
@@ -116,7 +116,7 @@ func Getshutter() []Shutter {
 func Getradiators() []Radiator {
 	session := connectDB()
 	defer session.Close()
-	radiatorcoll := session.DB("web_prog").C("radiators")
+	radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
 	var radiators []Radiator
 	err := radiatorcoll.Find(nil).All(&radiators)
 	if err != nil {
@@ -131,7 +131,7 @@ func Getradiators() []Radiator {
 func Getsences(user User) []Scene {
 	session := connectDB()
 	defer session.Close()
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	var scene []Scene
 	if user.UserID == -1 {
 		err := scenecoll.Find(nil).All(&scene)
@@ -156,7 +156,7 @@ func Getsences(user User) []Scene {
 func Gettimestamp() DatabaseChanged {
 	session := connectDB()
 	defer session.Close()
-	timecoll := session.DB("web_prog").C("timestamp")
+	timecoll := session.DB("HA17DB_jesse_arff_590245").C("timestamp")
 	var time DatabaseChanged
 	timecoll.Find(nil).One(&time)
 	return time
@@ -170,7 +170,7 @@ func Gettimestamp() DatabaseChanged {
 func Pushroom(room Room) bool {
 	session := connectDB()
 	defer session.Close()
-	roomcoll := session.DB("web_prog").C("rooms")
+	roomcoll := session.DB("HA17DB_jesse_arff_590245").C("rooms")
 	//When rooms are deleted, there will be a problem with ids beeing used multiple times
 	result := room
 	id := 0
@@ -199,7 +199,7 @@ func Pushroom(room Room) bool {
 func Pushlamp(lamp Lamp) bool {
 	session := connectDB()
 	defer session.Close()
-	lampcoll := session.DB("web_prog").C("lamps")
+	lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
 	//When lamps are deleted, there will be a problem with ids beeing used multiple times
 	result := lamp
 	id := 0
@@ -226,7 +226,7 @@ func Pushlamp(lamp Lamp) bool {
 func Pushshutter(shutter Shutter) bool {
 	session := connectDB()
 	defer session.Close()
-	shuttercoll := session.DB("web_prog").C("shutters")
+	shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
 	//When shutters are deleted, there will be a problem with ids beeing used multiple times
 	result := shutter
 	id := 0
@@ -253,7 +253,7 @@ func Pushshutter(shutter Shutter) bool {
 func Pushradiator(radiator Radiator) bool {
 	session := connectDB()
 	defer session.Close()
-	radiatorcoll := session.DB("web_prog").C("radiators")
+	radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
 	//When radiators are deleted, there will be a problem with ids beeing used multiple times
 	result := radiator
 	id := 0
@@ -280,7 +280,7 @@ func Pushradiator(radiator Radiator) bool {
 func Pushscene(scene Scene) bool {
 	session := connectDB()
 	defer session.Close()
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	//When scenes are deleted, there will be a problem with ids beeing used multiple times
 	fmt.Println(scene)
 	result := scene
@@ -313,15 +313,15 @@ func Pushscene(scene Scene) bool {
 func DeleteAllRoom(roomID int) {
 	session := connectDB()
 	defer session.Close()
-	roomcoll := session.DB("web_prog").C("rooms")
+	roomcoll := session.DB("HA17DB_jesse_arff_590245").C("rooms")
 	roomcoll.RemoveAll(bson.M{"roomid": roomID})
-	lampcoll := session.DB("web_prog").C("lamps")
+	lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
 	lampcoll.RemoveAll(bson.M{"roomid": roomID})
-	shuttercoll := session.DB("web_prog").C("shutters")
+	shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
 	shuttercoll.RemoveAll(bson.M{"roomid": roomID})
-	radiatorcoll := session.DB("web_prog").C("radiators")
+	radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
 	radiatorcoll.RemoveAll(bson.M{"roomid": roomID})
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	scenecoll.RemoveAll(bson.M{"lamps.roomid": roomID})
 	scenecoll.RemoveAll(bson.M{"shutters.roomid": roomID})
 	scenecoll.RemoveAll(bson.M{"radiators.roomid": roomID})
@@ -332,7 +332,7 @@ func DeleteAllRoom(roomID int) {
 func Deleteroom(roomID int) {
 	session := connectDB()
 	defer session.Close()
-	roomcoll := session.DB("web_prog").C("rooms")
+	roomcoll := session.DB("HA17DB_jesse_arff_590245").C("rooms")
 	err := roomcoll.Remove(bson.M{"roomid": roomID})
 	if err != nil {
 
@@ -344,18 +344,18 @@ func Deleteroom(roomID int) {
 func Deletelamp(lampID int) {
 	session := connectDB()
 	defer session.Close()
-	lampcoll := session.DB("web_prog").C("lamps")
+	lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
 	err := lampcoll.Remove(bson.M{"lampid": lampID})
 	if err != nil {
 
 	}
-	//scenecoll := session.DB("web_prog").C("scenes")
+	//scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	//scenecoll.RemoveAll(bson.M{"lamps.lampid": lampID})
 	user := User{
 		UserID: -1,
 	}
 	scenes := Getsences(user)
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneLamp := range scene.Lamps {
 			if sceneLamp.LampID == lampID {
@@ -375,18 +375,18 @@ func Deletelamp(lampID int) {
 func Deleteshutter(shutterID int) {
 	session := connectDB()
 	defer session.Close()
-	shuttercoll := session.DB("web_prog").C("shutters")
+	shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
 	err := shuttercoll.Remove(bson.M{"shutterid": shutterID})
 	if err != nil {
 
 	}
-	//scenecoll := session.DB("web_prog").C("scenes")
+	//scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	//scenecoll.RemoveAll(bson.M{"shutters.shutterid": shutterID})
 	user := User{
 		UserID: -1,
 	}
 	scenes := Getsences(user)
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneShutter := range scene.Shutters {
 			if sceneShutter.ShutterID == shutterID {
@@ -406,18 +406,18 @@ func Deleteshutter(shutterID int) {
 func Deleteradiator(radiatorID int) {
 	session := connectDB()
 	defer session.Close()
-	radiatorcoll := session.DB("web_prog").C("radiators")
+	radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
 	err := radiatorcoll.Remove(bson.M{"radiatorid": radiatorID})
 	if err != nil {
 
 	}
-	//scenecoll := session.DB("web_prog").C("scenes")
+	//scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	//scenecoll.RemoveAll(bson.M{"radiators.radiatorid": radiatorID})
 	user := User{
 		UserID: -1,
 	}
 	scenes := Getsences(user)
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneRadiator := range scene.Radiators {
 			if sceneRadiator.RadiatorID == radiatorID {
@@ -437,7 +437,7 @@ func Deleteradiator(radiatorID int) {
 func Deletescene(sceneID int) {
 	session := connectDB()
 	defer session.Close()
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	err := scenecoll.Remove(bson.M{"sceneid": sceneID})
 	if err != nil {
 	}
@@ -452,7 +452,7 @@ func Deletescene(sceneID int) {
 func UpdateLamp(lamp Lamp) {
 	session := connectDB()
 	defer session.Close()
-	lampcoll := session.DB("web_prog").C("lamps")
+	lampcoll := session.DB("HA17DB_jesse_arff_590245").C("lamps")
 	err := lampcoll.Update(bson.M{"lampid": lamp.LampID}, bson.M{"$set": bson.M{"name": lamp.Name, "status": lamp.Status, "roomid": lamp.RoomID}})
 	//err := lampcoll.Remove(bson.M{"lampid": lamp.LampID})
 	//err = lampcoll.Insert(lamp)
@@ -463,7 +463,7 @@ func UpdateLamp(lamp Lamp) {
 		UserID: -1,
 	}
 	scenes := Getsences(user)
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneLamp := range scene.Lamps {
 			if sceneLamp.LampID == lamp.LampID {
@@ -478,7 +478,7 @@ func UpdateLamp(lamp Lamp) {
 func UpdateShutter(shutter Shutter) {
 	session := connectDB()
 	defer session.Close()
-	shuttercoll := session.DB("web_prog").C("shutters")
+	shuttercoll := session.DB("HA17DB_jesse_arff_590245").C("shutters")
 	err := shuttercoll.Update(bson.M{"shutterid": shutter.ShutterID}, bson.M{"$set": bson.M{"name": shutter.Name, "status": shutter.Status, "roomid": shutter.RoomID}})
 	//err := shuttercoll.Remove(bson.M{"shutterid": shutter.ShutterID})
 	//err = shuttercoll.Insert(shutter)
@@ -489,7 +489,7 @@ func UpdateShutter(shutter Shutter) {
 		UserID: -1,
 	}
 	scenes := Getsences(user)
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneShutter := range scene.Shutters {
 			if sceneShutter.ShutterID == shutter.ShutterID {
@@ -504,7 +504,7 @@ func UpdateShutter(shutter Shutter) {
 func UpdateRadiator(radiator Radiator) {
 	session := connectDB()
 	defer session.Close()
-	radiatorcoll := session.DB("web_prog").C("radiators")
+	radiatorcoll := session.DB("HA17DB_jesse_arff_590245").C("radiators")
 	err := radiatorcoll.Update(bson.M{"radiatorid": radiator.RadiatorID}, bson.M{"$set": bson.M{"name": radiator.Name, "status": radiator.Status, "roomid": radiator.RoomID}})
 	//err := radiatorcoll.Remove(bson.M{"radiatorid": radiator.RadiatorID})
 	//err = radiatorcoll.Insert(radiator)
@@ -514,7 +514,7 @@ func UpdateRadiator(radiator Radiator) {
 		UserID: -1,
 	}
 	scenes := Getsences(user)
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	for _, scene := range scenes {
 		for _, sceneRadiator := range scene.Radiators {
 			if sceneRadiator.RadiatorID == radiator.RadiatorID {
@@ -529,7 +529,7 @@ func UpdateRadiator(radiator Radiator) {
 func UpdateRoom(room Room) {
 	session := connectDB()
 	defer session.Close()
-	roomcoll := session.DB("web_prog").C("rooms")
+	roomcoll := session.DB("HA17DB_jesse_arff_590245").C("rooms")
 	err := roomcoll.Update(bson.M{"roomid": room.RoomID}, bson.M{"$set": bson.M{"name": room.Name}})
 	//err := roomcoll.Remove(bson.M{"roomid": room.RoomID})
 	//err = roomcoll.Insert(room)
@@ -542,7 +542,7 @@ func UpdateRoom(room Room) {
 func UpdateScene(scene Scene) {
 	session := connectDB()
 	defer session.Close()
-	scenecoll := session.DB("web_prog").C("scenes")
+	scenecoll := session.DB("HA17DB_jesse_arff_590245").C("scenes")
 	//Delete and reinsert (Update would not work)
 	err := scenecoll.Update(bson.M{"sceneid": scene.SceneID}, bson.M{"$set": bson.M{"name": scene.Name, "active": scene.Active, "time": scene.Time, "sunset": scene.Sunset, "sunrise": scene.Sunrise, "posoffset": scene.Posoffset, "negoffset": scene.Negoffset, "lamps": scene.Lamps, "shutters": scene.Shutters, "radiators": scene.Radiators}})
 	//err := scenecoll.Remove(bson.M{"sceneid": scene.SceneID})
@@ -558,6 +558,6 @@ func UpdateTime() {
 	session := connectDB()
 	defer session.Close()
 	timestamp := time.Now().Unix()
-	timecoll := session.DB("web_prog").C("timestamp")
+	timecoll := session.DB("HA17DB_jesse_arff_590245").C("timestamp")
 	timecoll.Upsert(nil, bson.M{"$set": bson.M{"timestamp": timestamp}})
 }
