@@ -18,9 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+    //Get the xml inputs
     let getXml = document.getElementById("getXMLDB");
     let postXml = document.getElementById("postXMLDB");
-
+    //Start/stop the simulator (disable while working)
     let startStopBtn = document.getElementById("startStopBtn");
     startStopBtn.addEventListener("click", function (e) {
         let startStopObj = {};
@@ -49,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         );
     });
-
+    //Open xml in new Tab
     getXml.addEventListener("click", function (e) {
         ajaxCallsMethod("GET", "/xmldb", "").then(
             function (res) {
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         );
     });
-
+    //send xml to server and release the used file
     postXml.addEventListener("change", function (e) {
         let file = postXml.files[0];
         var reader = new FileReader();
@@ -71,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
             postXml.value = "";
         };
     });
-
+    //Send Point in Time
     let sendTimeBtn = document.getElementById("sendTime");
     sendTimeBtn.addEventListener("click", function (e) {
         let datetime = {};
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         );
     });
-
+    //Set zoom
     let zoomRange = document.getElementById("timeZoom");
     zoomRange.addEventListener("change", function (e) {
         let zoom = {};
@@ -103,13 +104,13 @@ document.addEventListener("DOMContentLoaded", function () {
     zoomRange.addEventListener("input", function (e) {
         document.getElementById("currentZoomFaktor").textContent = zoomRange.value;
     });
-
+    //update realtime
     setInterval(function () {
         let time = new Date();
         let out = formatTime("Realzeit: ", time);
         document.getElementById("realTime").textContent = out;
     }, 1000);
-
+    //Update simtime
     setInterval(function () {
         ajaxCallsMethod("GET", "/simcon", "").then(
             function (res) {
@@ -124,6 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }, 1000);
 
+    //Format time...
     function formatTime(kind, time) {
         let out = kind;
         if (time.getHours() < 10) {

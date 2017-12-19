@@ -13,6 +13,8 @@ import (
 	"github.com/kelvins/sunrisesunset"
 )
 
+//Declare Variables
+
 var ticker *time.Ticker
 
 var outerTick = 1000
@@ -37,8 +39,8 @@ var ortTzoneDat sunrisesunset.Parameters
 var sunset int64
 var sunrise int64
 
+//Simulator is running in here
 func simFunc() {
-
 	for _ = range ticker.C {
 		h, m, s = time.Now().Clock()
 		if checkSecond != h+m+s {
@@ -238,6 +240,7 @@ func StartTicker() {
 
 }
 
+//Calculate pos and neg offset for the scenes for the day
 func calculateOffsets(scenes []database.Scene) {
 	fmt.Println("Calculate offsets")
 	if len(scenes) > 0 {

@@ -72,6 +72,7 @@ type DatabaseChanged struct {
 	Timestamp int64
 }
 
+//Connects to the DB
 func connectDB() (session *mgo.Session) {
 	//connect to DB
 	session, err := mgo.Dial("localhost:4242")

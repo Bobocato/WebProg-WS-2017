@@ -121,7 +121,7 @@ func DBinXML() (link string) {
 	session := connectDB()
 	defer session.Close()
 
-	file, _ := os.Create("../simulator/XML/db.xml")
+	file, _ := os.Create("../simulator/XML/toHuusDB.xml")
 	xmlWriter := io.Writer(file)
 	tempUser := User{
 		UserID: -1,

@@ -22,7 +22,6 @@ func InitSim() {
 	http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../simulator/CSS"))))
 	http.Handle("/JS/", http.StripPrefix("/JS/", http.FileServer(http.Dir("../simulator/JS"))))
 	http.Handle("/XML/", http.StripPrefix("/XML/", http.FileServer(http.Dir("../simulator/XML"))))
-	//http.Handle("/ICON/", http.StripPrefix("/ICON/", http.FileServer(http.Dir("../simulator/ICON"))))
 	//Hanlde diffrent pages.
 	http.HandleFunc("/", handler)
 	//Handle ajax calls
@@ -35,6 +34,7 @@ func InitSim() {
 	http.ListenAndServe(":9090", nil)
 }
 
+//Handle the xml DB stuff
 func databasexml(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		//Send link to db
@@ -58,6 +58,7 @@ func databasexml(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Start simulator on load
 func handler(w http.ResponseWriter, r *http.Request) {
 	//Show simulator page
 	database.InitSimColl()
@@ -70,6 +71,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	StartTicker()
 }
 
+//handle simulator running
 func startStopHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		res := database.ToggleRunning()
@@ -79,6 +81,7 @@ func startStopHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Sets new time in point
 func timeJumpHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
@@ -95,6 +98,7 @@ func timeJumpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//set the zoom for the simulation
 func zoomHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
@@ -111,6 +115,7 @@ func zoomHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//retrun the simcon
 func simcon(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		res := database.GetSimCon()

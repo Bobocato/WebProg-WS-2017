@@ -102,6 +102,7 @@ func DeleteUser(cookieID int) {
 	usercoll.Remove(bson.M{"userid": user.UserID})
 }
 
+//Returns all Users
 func getUser() (users []User) {
 	session := connectDB()
 	defer session.Close()

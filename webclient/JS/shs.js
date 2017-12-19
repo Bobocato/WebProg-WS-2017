@@ -1985,8 +1985,6 @@ document.addEventListener(
       }
       return out;
     }
-
-
   },
   false
 );

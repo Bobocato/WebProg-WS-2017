@@ -30,7 +30,6 @@ func InitWS() {
 	//Create a fileserver and uplaod the CSS and JS files. These will be loaded through the templates.
 	http.Handle("/CSS/", http.StripPrefix("/CSS/", http.FileServer(http.Dir("../webclient/CSS"))))
 	http.Handle("/JS/", http.StripPrefix("/JS/", http.FileServer(http.Dir("../webclient/JS"))))
-	http.Handle("/ICON/", http.StripPrefix("/ICON/", http.FileServer(http.Dir("../webclient/ICON"))))
 	//Hanlde diffrent pages.
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/login", loginHandler)
