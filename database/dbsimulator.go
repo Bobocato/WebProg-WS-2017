@@ -145,7 +145,7 @@ func DBinXML() (link string) {
 		panic(err)
 	}
 
-	return "http://localhost:9090/XML/db.xml"
+	return "http://localhost:9090/XML/toHuusDB.xml"
 
 }
 
