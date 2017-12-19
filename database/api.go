@@ -493,7 +493,7 @@ func UpdateShutter(shutter Shutter) {
 	for _, scene := range scenes {
 		for _, sceneShutter := range scene.Shutters {
 			if sceneShutter.ShutterID == shutter.ShutterID {
-				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "shutters.shutterid": sceneShutter.ShutterID}, bson.M{"$set": bson.M{"shutters.$.name": shutter.Name, "shutter.$.roomid": shutter.RoomID}})
+				scenecoll.Update(bson.M{"sceneid": scene.SceneID, "shutters.shutterid": sceneShutter.ShutterID}, bson.M{"$set": bson.M{"shutters.$.name": shutter.Name, "shutters.$.roomid": shutter.RoomID}})
 			}
 		}
 	}

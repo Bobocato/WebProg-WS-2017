@@ -180,16 +180,6 @@ body {
   width: 75%;
 }
 
-@media screen and (min-width: 1350px) {
-  .sceneTime {
-    margin-top: 2%;
-    margin-left: 4%;
-  }
-  .sceneTitle {
-    margin-left: 4%;
-  }
-}
-
 
 /** Sidebar stuff **/
 

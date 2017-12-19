@@ -15,11 +15,6 @@ import (
 
 var ticker *time.Ticker
 
-var isRunninf = make(chan bool)
-
-var day = 1000 * 60 * 60 * 24
-var thisDay time.Time
-
 var outerTick = 1000
 
 var innerTime = time.Now().Unix()
